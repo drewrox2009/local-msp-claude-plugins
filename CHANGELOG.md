@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+#### Shared: Billing Reconciliation Skill (`shared/skills/billing-reconciliation/`)
+- **Cross-vendor billing reconciliation** - Compares PSA time/ticket data against accounting invoices to find revenue leakage, unbilled work, and billing discrepancies
+- **reconcile-billing command** - Guided workflow for pulling PSA contracts, matching to accounting invoices, identifying gaps, and generating reconciliation reports
+- Supports Autotask, ConnectWise, HaloPSA (PSA side) and Xero, QuickBooks Online (accounting side)
+
 #### Xero Plugin (`xero/xero/`)
 - **Contacts Skill** - Contact CRUD, customer/supplier types, address and phone types, financial summary fields, PSA cross-referencing via ContactNumber/AccountNumber, contact groups
 - **Invoices Skill** - Sales invoices (ACCREC) and supplier bills (ACCPAY), full status lifecycle (DRAFT to PAID/VOIDED), line items with tracking categories, batch invoicing workflows
