@@ -48,7 +48,7 @@ const claudeDesktopExample = `// claude_desktop_config.json
     <li>All subsequent requests are proxied through the gateway with automatic credential injection</li>
   </ol>
 
-  <h2>Supported Vendors</h2>
+  <h2 id="supported-vendors">Supported Vendors</h2>
   <table>
     <thead><tr><th>Vendor</th><th>Gateway URL</th></tr></thead>
     <tbody>
@@ -76,54 +76,79 @@ const claudeDesktopExample = `// claude_desktop_config.json
 
   <h2>Claude Desktop</h2>
 
-  <h3>Option 1: Add via GitHub URL (Recommended)</h3>
   <p>
-    Claude Desktop can install MCP servers directly from a GitHub repository URL.
-    Open Claude Desktop and navigate to:
-  </p>
-  <ol>
-    <li>Open <strong>Settings</strong> (gear icon or <code>Cmd+,</code> / <code>Ctrl+,</code>)</li>
-    <li>Go to the <strong>MCP Servers</strong> or <strong>Integrations</strong> tab</li>
-    <li>Click <strong>Add</strong> and choose <strong>From GitHub URL</strong></li>
-    <li>Paste the repository URL:</li>
-  </ol>
-  <div class="not-prose my-4">
-    <InstallCommand command="https://github.com/wyre-technology/msp-claude-plugins" size="sm" />
-  </div>
-  <p>
-    Claude Desktop will clone the repo and detect the MCP server configurations from each
-    plugin's <code>.mcp.json</code> file. You'll be prompted to enter the required API
-    credentials (environment variables) for each server you enable.
+    Claude Desktop setup has two parts: <strong>installing the plugin</strong> (skills, commands, and
+    domain knowledge) and <strong>adding MCP servers</strong> (the actual API connections to your tools).
   </p>
 
-  <h3>Option 2: Connectors UI (Pro/Team/Enterprise)</h3>
+  <h3>Step 1: Install the Plugin via Cowork</h3>
   <p>
-    Claude Pro, Team, and Enterprise users can add remote MCP servers directly through the
-    Connectors UI without any bridge or local installation:
+    Install the MSP Claude Plugins through the Cowork plugin marketplace:
+  </p>
+  <ol>
+    <li>Click the <strong>Cowork</strong> icon in the bottom-left of Claude Desktop</li>
+    <li>Click the <strong>+</strong> button</li>
+    <li>Click <strong>Plugins</strong></li>
+    <li>Click <strong>Add Plugin</strong></li>
+    <li>Click <strong>Personal</strong></li>
+    <li>Click the <strong>+</strong> button</li>
+    <li>Click <strong>Add marketplace from Github</strong></li>
+    <li>Enter the repo owner/URL:</li>
+  </ol>
+  <div class="not-prose my-4">
+    <InstallCommand command="wyre-technology/msp-claude-plugins" size="sm" />
+  </div>
+  <ol start="9">
+    <li>Click <strong>Sync</strong></li>
+  </ol>
+  <p>
+    This installs all plugin skills, commands, and MSP domain knowledge into Claude Desktop.
+  </p>
+
+  <h3>Step 2: Add MCP Servers for Your Tools</h3>
+  <p>
+    The plugin provides skills and commands, but to actually connect to your MSP tools you need
+    to add each vendor's MCP server to your <code>claude_desktop_config.json</code>. Each tool
+    requires its own entry — add only the ones you use.
+  </p>
+  <p>
+    Claude Desktop uses stdio-based transports, so remote HTTP servers require the
+    <a href="https://www.npmjs.com/package/mcp-remote" target="_blank" rel="noopener noreferrer"><code>mcp-remote</code></a>
+    bridge. Add an entry for each tool you want to connect:
+  </p>
+  <pre><code class="language-json" set:text={claudeDesktopExample} /></pre>
+
+  <p class="mt-4">
+    <strong>Add one entry per tool.</strong> Only include the vendors you actually use. See the
+    <a href="#supported-vendors">Supported Vendors</a> table above for the full list of gateway URLs.
+  </p>
+
+  <h4>Config File Location</h4>
+  <table>
+    <thead><tr><th>Operating System</th><th>Path</th></tr></thead>
+    <tbody>
+      <tr><td>macOS</td><td><code>~/Library/Application Support/Claude/claude_desktop_config.json</code></td></tr>
+      <tr><td>Windows</td><td><code>%APPDATA%\Claude\claude_desktop_config.json</code></td></tr>
+      <tr><td>Linux</td><td><code>~/.config/Claude/claude_desktop_config.json</code></td></tr>
+    </tbody>
+  </table>
+  <p class="text-sm text-[var(--muted)] mt-2">
+    <strong>Requires Node.js 18+.</strong> The <code>npx -y mcp-remote</code> command downloads the bridge automatically on first run.
+    If the file doesn't exist yet, create it with the JSON content above. Restart Claude Desktop after editing.
+  </p>
+
+  <h3>Alternative: Connectors UI (Pro/Team/Enterprise)</h3>
+  <p>
+    Claude Pro, Team, and Enterprise users can skip the config file and add remote MCP servers
+    directly through the Connectors UI:
   </p>
   <ol>
     <li>Open <strong>Settings → Connectors</strong> in Claude Desktop</li>
     <li>Click <strong>Add Connector</strong></li>
     <li>Enter the gateway URL for your vendor (e.g., <code>https://mcp.wyretechnology.com/v1/autotask/mcp</code>)</li>
     <li>Complete the OAuth authentication flow when prompted</li>
+    <li>Repeat for each additional tool you want to connect</li>
   </ol>
-
-  <h3>Option 3: Manual Config File</h3>
-  <p>
-    For manual setup, Claude Desktop requires the
-    <a href="https://www.npmjs.com/package/mcp-remote" target="_blank" rel="noopener noreferrer"><code>mcp-remote</code></a>
-    bridge since it only supports stdio-based MCP servers natively.
-    Add to your <code>claude_desktop_config.json</code>:
-  </p>
-  <pre><code class="language-json" set:text={claudeDesktopExample} /></pre>
-  <p class="text-sm text-[var(--muted)] mt-2">
-    <strong>Requires Node.js 18+.</strong> The <code>npx -y mcp-remote</code> command downloads the bridge on first run.
-  </p>
-  <p class="text-sm text-[var(--muted)] mt-1">
-    <strong>Config file location:</strong>
-    macOS: <code>~/Library/Application Support/Claude/claude_desktop_config.json</code> —
-    Windows: <code>%APPDATA%\Claude\claude_desktop_config.json</code>
-  </p>
 
   <h2>Security</h2>
   <ul>
