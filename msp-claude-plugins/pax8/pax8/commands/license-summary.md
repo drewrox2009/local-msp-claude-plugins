@@ -20,45 +20,26 @@ Generate an aggregated license summary across all client companies. Shows per-cl
 
 ## Prerequisites
 
-- Valid Pax8 OAuth2 credentials configured (`PAX8_CLIENT_ID`, `PAX8_CLIENT_SECRET`)
-- Active bearer token (auto-refreshed)
-- Access to list companies and subscriptions
+- Pax8 MCP server connected with a valid MCP token
+- MCP tools `pax8-list-companies`, `pax8-list-subscriptions`, `pax8-get-product-by-uuid`, and `pax8-get-product-pricing-by-uuid` available
 
 ## Steps
 
-1. **Authenticate** with Pax8 OAuth2 if token is expired
+1. **Fetch all companies**
 
-   ```bash
-   TOKEN=$(curl -s -X POST https://login.pax8.com/oauth/token \
-     -H "Content-Type: application/json" \
-     -d '{
-       "client_id": "'$PAX8_CLIENT_ID'",
-       "client_secret": "'$PAX8_CLIENT_SECRET'",
-       "audience": "api://p8p.client",
-       "grant_type": "client_credentials"
-     }' | jq -r '.access_token')
-   ```
+   Call `pax8-list-companies` with `size=200`, `sort=name`, `order=asc`. Paginate through all pages if needed.
 
-2. **Fetch all companies**
+2. **For each company, fetch active subscriptions**
 
-   ```bash
-   curl -s "https://api.pax8.com/v1/companies?page=0&size=200&sort=name,ASC" \
-     -H "Authorization: Bearer $TOKEN"
-   ```
+   Call `pax8-list-subscriptions` with `companyId` set to the company UUID, `status=Active`, and `size=200`. Paginate if needed.
 
-3. **For each company, fetch active subscriptions**
+3. **Resolve product names** for each unique product ID
 
-   ```bash
-   curl -s "https://api.pax8.com/v1/subscriptions?companyId=COMPANY_ID&status=Active&page=0&size=200" \
-     -H "Authorization: Bearer $TOKEN"
-   ```
+   Call `pax8-get-product-by-uuid` with `productId` for each unique product found across all subscriptions. Cache results to avoid duplicate lookups.
 
-4. **Resolve product names** for each unique product ID
+4. **Optionally fetch pricing** for margin analysis
 
-   ```bash
-   curl -s "https://api.pax8.com/v1/products/PRODUCT_ID" \
-     -H "Authorization: Bearer $TOKEN"
-   ```
+   Call `pax8-get-product-pricing-by-uuid` with `productId` to get `partnerBuyPrice` and `suggestedRetailPrice`.
 
 5. **Aggregate data** by company, product, and vendor
 
@@ -215,54 +196,6 @@ Total Potential Annual Savings: $6,516.00
 ================================================================
 ```
 
-### Vendor-Filtered Summary
-
-```
-/license-summary --vendor Microsoft
-
-Microsoft License Summary
-================================================================
-Generated: 2026-02-23
-Companies with Microsoft: 42
-Microsoft Subscriptions: 185
-Total Microsoft Monthly: $32,100.00
-
-Per-Company Microsoft Breakdown:
-+----------------------------+----------------------------+------+---------+----------+
-| Company                    | Product                    | Qty  | Term    | Monthly  |
-+----------------------------+----------------------------+------+---------+----------+
-| Enterprise Holdings        | Microsoft 365 E3           | 200  | Annual  | $6,300   |
-| Enterprise Holdings        | Exchange Online Plan 2     | 50   | Annual  | $360     |
-| Enterprise Holdings        | Microsoft Defender         | 200  | Monthly | $540     |
-| Acme Corporation           | M365 Business Premium      | 25   | Annual  | $427.50  |
-| Acme Corporation           | M365 Business Basic        | 10   | Annual  | $54.00   |
-| Acme Corporation           | Exchange Online Plan 1     | 5    | Monthly | $18.00   |
-| Acme Corporation           | Microsoft Defender         | 25   | Monthly | $67.50   |
-| TechStart Inc              | M365 Business Premium      | 30   | Monthly | $567.00  |
-| TechStart Inc              | M365 Business Basic        | 20   | Annual  | $108.00  |
-| ...                        | ...                        | ...  | ...     | ...      |
-+----------------------------+----------------------------+------+---------+----------+
-
-Microsoft Product Totals:
-+--------------------------------------------+--------+----------+-----------+
-| Product                                    | Seats  | Companies| Monthly   |
-+--------------------------------------------+--------+----------+-----------+
-| Microsoft 365 Business Premium             | 850    | 32       | $14,535   |
-| Microsoft 365 Business Basic               | 420    | 28       | $2,268    |
-| Microsoft 365 Business Standard            | 380    | 18       | $4,788    |
-| Microsoft 365 E3                           | 350    | 5        | $6,300    |
-| Exchange Online Plan 1                     | 125    | 12       | $450      |
-| Exchange Online Plan 2                     | 80     | 6        | $576      |
-| Microsoft Defender for Business            | 600    | 30       | $1,620    |
-| Microsoft Teams Essentials                 | 95     | 8        | $342      |
-+--------------------------------------------+--------+----------+-----------+
-
-Total Microsoft seats: 2,900
-Average cost per Microsoft seat: $11.07/month
-
-================================================================
-```
-
 ### No Data
 
 ```
@@ -271,22 +204,22 @@ No active subscriptions found across any companies.
 Possible reasons:
   - No companies exist in your Pax8 account
   - All subscriptions have been cancelled
-  - API credentials may not have subscription access
+  - MCP token may not have subscription access
 
 Suggestions:
   - Verify companies exist in Pax8 portal
-  - Check API credential permissions
+  - Check MCP token permissions
   - Place your first order: /create-order
 ```
 
 ## Error Handling
 
-### Authentication Error
+### MCP Connection Error
 
 ```
-Error: Unable to authenticate with Pax8 API
+Error: Unable to connect to Pax8 MCP server
 
-Check PAX8_CLIENT_ID and PAX8_CLIENT_SECRET environment variables.
+Check your MCP configuration and regenerate the token at app.pax8.com/integrations/mcp
 ```
 
 ### Rate Limit During Aggregation
@@ -297,7 +230,7 @@ Warning: Rate limit reached during data collection.
 Partial results available for 23 of 47 companies.
 Retry in 60 seconds to complete the summary.
 
-Tip: The license-summary command makes multiple API calls.
+Tip: The license-summary command makes multiple MCP tool calls.
 For large partner accounts (100+ companies), this may take several minutes.
 ```
 
@@ -314,6 +247,15 @@ Suggestions:
   - Filter by company: /license-summary --company "Acme Corp"
   - Try again during off-peak hours
 ```
+
+## MCP Tools Used
+
+| Tool | Purpose |
+|------|---------|
+| `pax8-list-companies` | Get all companies (paginated) |
+| `pax8-list-subscriptions` | Get subscriptions per company |
+| `pax8-get-product-by-uuid` | Resolve product names and details |
+| `pax8-get-product-pricing-by-uuid` | Get pricing for margin analysis |
 
 ## Use Cases
 
@@ -343,13 +285,6 @@ Aggregate all licenses for a vendor to negotiate volume pricing:
 Find immediate savings opportunities across your client base:
 ```
 /license-summary --show_optimization true
-```
-
-### New Technician Onboarding
-
-Give a new team member a quick overview of the license landscape:
-```
-/license-summary
 ```
 
 ## Related Commands

@@ -1,9 +1,9 @@
 ---
 description: >
-  Use this skill when working with the Pax8 API - MCP server authentication,
-  REST structure, pagination, sorting, filtering, rate limiting, error
+  Use this skill when working with the Pax8 MCP tools - available tools,
+  parameters, pagination, sorting, filtering, rate limiting, error
   handling, and best practices. Covers the official hosted MCP server
-  token auth and REST API patterns.
+  connection and all 15 Pax8 MCP tools.
 triggers:
   - pax8 api
   - pax8 query
@@ -12,21 +12,21 @@ triggers:
   - pax8 rate limit
   - pax8 authentication
   - pax8 mcp
-  - pax8 rest
   - pax8 endpoint
   - pax8 request
   - pax8 token
+  - pax8 tools
 ---
 
-# Pax8 API Patterns
+# Pax8 MCP Tools & API Patterns
 
 ## Overview
 
-Pax8 provides a first-party hosted MCP server at `https://mcp.pax8.com/v1/mcp` for AI tool integration. The underlying REST API at `https://api.pax8.com/v1/` provides access to companies, contacts, products, subscriptions, orders, invoices, and usage summaries. This skill covers MCP authentication, REST patterns, pagination, sorting, error handling, and best practices.
+Pax8 provides a first-party hosted MCP server at `https://mcp.pax8.com/v1/mcp` for AI tool integration. The MCP server exposes 15 tools covering companies, products, subscriptions, orders, invoices, usage, and quotes. This skill covers MCP server connection, the complete tool reference, pagination patterns, sorting, error handling, and best practices.
 
-## Authentication
+## Connection & Authentication
 
-### MCP Server (Recommended)
+### MCP Server
 
 Pax8 hosts an official MCP server. Authentication uses a single token:
 
@@ -34,13 +34,13 @@ Pax8 hosts an official MCP server. Authentication uses a single token:
 2. Navigate to **Integrations > MCP** (or visit [app.pax8.com/integrations/mcp](https://app.pax8.com/integrations/mcp))
 3. Generate an MCP token
 
+**MCP Server URL:** `https://mcp.pax8.com/v1/mcp`
+
 **Required Header:**
 
 | Header | Value | Description |
 |--------|-------|-------------|
 | `x-pax8-mcp-token` | `<token>` | MCP token from Pax8 portal |
-
-**MCP Server URL:** `https://mcp.pax8.com/v1/mcp`
 
 ### Environment Variables
 
@@ -65,64 +65,148 @@ export PAX8_MCP_TOKEN="your-mcp-token"
 }
 ```
 
-### REST API (Direct Access)
+## Complete MCP Tool Reference
 
-For direct REST API access, Pax8 uses OAuth2 Client Credentials:
+### Company Tools
 
-```http
-POST https://api.pax8.com/v1/token
-Content-Type: application/json
-```
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `pax8-list-companies` | List and filter companies | `page`, `size`, `sort` (name/city/country/stateOrProvince/postalCode), `order` (asc/desc), `company_name`, `status` (active/inactive/deleted) |
+| `pax8-get-company-by-uuid` | Get a single company | `uuid` (required) |
 
-```json
-{
-  "client_id": "YOUR_CLIENT_ID",
-  "client_secret": "YOUR_CLIENT_SECRET",
-  "audience": "https://api.pax8.com",
-  "grant_type": "client_credentials"
-}
-```
+### Product Tools
 
-Tokens are valid for 24 hours (86,400 seconds). Include in requests as:
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `pax8-list-products` | Search the product catalog | `productName`, `page`, `size`, `vendorName`, `search` |
+| `pax8-get-product-by-uuid` | Get a single product | `productId` (required) |
+| `pax8-get-product-pricing-by-uuid` | Get product pricing | `productId` (required), `companyId` (optional) |
 
-```http
-Authorization: Bearer <access_token>
-```
+### Subscription Tools
 
-### Base URL Pattern
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `pax8-list-subscriptions` | List and filter subscriptions | `page`, `size`, `sort`, `status` (Active/Cancelled/PendingManual/PendingAutomated/PendingCancel/WaitingForDetails/Trial/Converted/PendingActivation/Activated), `billingTerm` (monthly/annual/two-year/three-year/one-time/trial/activation), `companyId`, `productId` |
+| `pax8-get-subscription-by-uuid` | Get a single subscription | `uuid` (required) |
 
-All REST API endpoints follow the pattern:
+### Order Tools
 
-```
-https://api.pax8.com/v1/[resource]
-```
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `pax8-list-orders` | List orders | `page`, `size`, `companyId` |
+| `pax8-get-order-by-uuid` | Get a single order | `uuid` (required) |
 
-Examples:
-```
-https://api.pax8.com/v1/companies
-https://api.pax8.com/v1/products
-https://api.pax8.com/v1/subscriptions
-https://api.pax8.com/v1/orders
-https://api.pax8.com/v1/invoices
-```
+### Invoice Tools
 
-## Request Format
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `pax8-list-invoices` | List and filter invoices | `page`, `size`, `sort`, `status` (unpaid/paid/void/carried/nothing due), `invoiceDate`, `invoiceDateRangeStart`, `invoiceDateRangeEnd`, `dueDate`, `total`, `balance`, `carriedBalance`, `companyId` |
+| `pax8-get-invoice-by-uuid` | Get a single invoice | `uuid` (required) |
 
-### Standard JSON Request
+### Usage Tools
 
-Pax8 uses standard JSON for request and response bodies:
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `pax8-get-usage-summary` | Get usage summary for a subscription | `subscriptionId` (required), `page`, `size`, `sort`, `resourceGroup`, `companyId` |
+| `pax8-get-detailed-usage-summary` | Get detailed usage data | `usageSummaryId` (required), `usageDate`, `page`, `size` |
 
-```json
-{
-  "companyId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "productId": "f9e8d7c6-b5a4-3210-fedc-ba0987654321",
-  "quantity": 10,
-  "startDate": "2026-03-01",
-  "billingTerm": "Monthly"
-}
-```
+### Quote Tools
 
-### Response Format
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `pax8-list-quotes` | List and filter quotes | `page`, `limit`, `sort`, `search`, `status` (accepted/closed/declined/draft/expired/pending/sent) |
+| `pax8-get-quote-by-uuid` | Get a single quote | `quoteId` (required) |
+
+## Pagination
+
+### Page-Based Pagination
+
+All list tools use zero-based page pagination with configurable page size:
+
+**Pagination Parameters:**
+
+| Parameter | Description | Default | Max |
+|-----------|-------------|---------|-----|
+| `page` | Page number (0-based) | 0 | - |
+| `size` | Results per page | 50 | 200 |
+
+**Pagination Response Metadata:**
+
+| Field | Description |
+|-------|-------------|
+| `page.size` | Number of results per page |
+| `page.totalElements` | Total number of records |
+| `page.totalPages` | Total number of pages |
+| `page.number` | Current page number (0-based) |
+
+### Iterating Through All Pages
+
+To fetch all results, call the list tool repeatedly, incrementing `page` from 0 until `page.number >= page.totalPages - 1`:
+
+1. Call the tool with `page=0` and `size=200`
+2. Check `page.totalPages` in the response
+3. If more pages exist, call again with `page=1`, then `page=2`, etc.
+4. Collect `content` arrays from each response
+
+## Sorting
+
+### Sort Parameters
+
+Use the `sort` parameter on list tools. The `order` parameter specifies direction:
+
+| Parameter | Values | Description |
+|-----------|--------|-------------|
+| `sort` | Varies by tool | Field to sort by |
+| `order` | `asc`, `desc` | Sort direction |
+
+**Company sort fields:** `name`, `city`, `country`, `stateOrProvince`, `postalCode`
+
+### Example
+
+To list companies sorted by name ascending:
+- Call `pax8-list-companies` with `sort=name`, `order=asc`, `size=200`
+
+## Filtering
+
+### Filter Parameters by Tool
+
+Each list tool supports specific filter parameters:
+
+| Tool | Filter Parameters |
+|------|-------------------|
+| `pax8-list-companies` | `company_name`, `status` (active/inactive/deleted) |
+| `pax8-list-products` | `productName`, `vendorName`, `search` |
+| `pax8-list-subscriptions` | `companyId`, `productId`, `status`, `billingTerm` |
+| `pax8-list-orders` | `companyId` |
+| `pax8-list-invoices` | `companyId`, `status`, `invoiceDate`, `invoiceDateRangeStart`, `invoiceDateRangeEnd`, `dueDate`, `total`, `balance`, `carriedBalance` |
+| `pax8-list-quotes` | `search`, `status` |
+
+### Subscription Status Values
+
+| Status | Description |
+|--------|-------------|
+| `Active` | Subscription is live and billing |
+| `Cancelled` | Subscription has been terminated |
+| `PendingManual` | Awaiting manual provisioning |
+| `PendingAutomated` | Automated provisioning in progress |
+| `PendingCancel` | Cancellation in progress |
+| `WaitingForDetails` | Additional information needed |
+| `Trial` | Free trial active |
+| `Converted` | Trial converted to paid |
+| `PendingActivation` | Activation pending |
+| `Activated` | Recently activated |
+
+### Invoice Status Values
+
+| Status | Description |
+|--------|-------------|
+| `unpaid` | Invoice issued, payment not received |
+| `paid` | Invoice has been paid |
+| `void` | Invoice has been voided |
+| `carried` | Balance carried forward |
+| `nothing due` | No payment required |
+
+## Response Format
 
 **Single Resource:**
 
@@ -161,345 +245,52 @@ Pax8 uses standard JSON for request and response bodies:
     {
       "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
       "name": "Acme Corporation"
-    },
-    {
-      "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-      "name": "TechStart Inc"
     }
   ]
 }
-```
-
-## Pagination
-
-### Page-Based Pagination
-
-Pax8 uses zero-based page pagination with configurable page size:
-
-```http
-GET /v1/companies?page=0&size=50
-GET /v1/companies?page=1&size=50
-GET /v1/companies?page=2&size=50
-```
-
-**Pagination Parameters:**
-
-| Parameter | Description | Default | Max |
-|-----------|-------------|---------|-----|
-| `page` | Page number (0-based) | 0 | - |
-| `size` | Results per page | 50 | 200 |
-
-**Pagination Response Metadata:**
-
-| Field | Description |
-|-------|-------------|
-| `page.size` | Number of results per page |
-| `page.totalElements` | Total number of records |
-| `page.totalPages` | Total number of pages |
-| `page.number` | Current page number (0-based) |
-
-### Iterating Through All Pages
-
-```javascript
-async function fetchAllResources(path) {
-  const allItems = [];
-  let page = 0;
-  let totalPages = 1;
-
-  while (page < totalPages) {
-    const response = await pax8Client.request(
-      `${path}?page=${page}&size=200`
-    );
-    const data = await response.json();
-
-    allItems.push(...data.content);
-    totalPages = data.page.totalPages;
-    page++;
-  }
-
-  return allItems;
-}
-```
-
-### curl Pagination Example
-
-```bash
-# First page
-curl -s "https://api.pax8.com/v1/companies?page=0&size=50" \
-  -H "Authorization: Bearer $TOKEN"
-
-# Second page
-curl -s "https://api.pax8.com/v1/companies?page=1&size=50" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-## Sorting
-
-### Sort Parameter
-
-Use the `sort` query parameter with field name and direction:
-
-```http
-GET /v1/companies?sort=name,ASC
-GET /v1/products?sort=vendorName,ASC
-GET /v1/subscriptions?sort=createdDate,DESC
-```
-
-**Sort Format:** `sort=fieldName,direction`
-
-| Direction | Description |
-|-----------|-------------|
-| `ASC` | Ascending (A-Z, oldest first) |
-| `DESC` | Descending (Z-A, newest first) |
-
-### Combined Sort and Pagination
-
-```http
-GET /v1/companies?sort=name,ASC&page=0&size=100
-GET /v1/subscriptions?sort=createdDate,DESC&page=0&size=50
-```
-
-## Filtering
-
-### Query Parameter Filtering
-
-Pax8 uses query parameters for filtering. Available filters vary by endpoint:
-
-```http
-GET /v1/companies?city=Springfield&stateOrProvince=IL
-GET /v1/subscriptions?companyId=a1b2c3d4&status=Active
-GET /v1/products?vendorName=Microsoft
-GET /v1/invoices?companyId=a1b2c3d4&status=Unpaid
-```
-
-### Common Filter Parameters by Endpoint
-
-| Endpoint | Parameters | Description |
-|----------|-----------|-------------|
-| `/companies` | `city`, `stateOrProvince`, `country`, `selfServiceAllowed` | Filter companies |
-| `/products` | `vendorName`, `sort` | Filter products by vendor |
-| `/subscriptions` | `companyId`, `productId`, `status` | Filter subscriptions |
-| `/orders` | `companyId`, `status` | Filter orders |
-| `/invoices` | `companyId`, `status`, `invoiceDate` | Filter invoices |
-
-### Subscription Status Filter
-
-```http
-GET /v1/subscriptions?status=Active
-GET /v1/subscriptions?status=Cancelled
-GET /v1/subscriptions?status=PendingManual
-GET /v1/subscriptions?companyId=abc123&status=Active
 ```
 
 ## Rate Limiting
 
 ### Rate Limit Details
 
-Pax8 enforces rate limits to ensure fair API usage:
-
 | Metric | Limit |
 |--------|-------|
 | Successful calls per minute | 1000 |
 
-### Rate Limit Response
-
-When rate limited (HTTP 429):
-
-```json
-{
-  "message": "Rate limit exceeded",
-  "status": 429
-}
-```
-
-### Retry Strategy
-
-```javascript
-async function requestWithRetry(path, options = {}, maxRetries = 5) {
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    try {
-      const response = await pax8Client.request(path, options);
-
-      if (response.status === 429) {
-        const retryAfter = response.headers.get('Retry-After') || 60;
-        const jitter = Math.random() * 5000;
-        await sleep(retryAfter * 1000 + jitter);
-        continue;
-      }
-
-      return response;
-    } catch (error) {
-      if (attempt === maxRetries - 1) throw error;
-
-      // Exponential backoff with jitter
-      const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
-      await sleep(delay);
-    }
-  }
-}
-```
-
-## CRUD Operations
-
-### Create (POST)
-
-```http
-POST /v1/orders
-Content-Type: application/json
-Authorization: Bearer YOUR_TOKEN
-```
-
-```json
-{
-  "companyId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "lineItems": [
-    {
-      "productId": "f9e8d7c6-b5a4-3210-fedc-ba0987654321",
-      "quantity": 10,
-      "billingTerm": "Monthly",
-      "provisionStartDate": "2026-03-01"
-    }
-  ]
-}
-```
-
-### Read (GET)
-
-**Single resource:**
-
-```http
-GET /v1/companies/a1b2c3d4-e5f6-7890-abcd-ef1234567890
-```
-
-**Collection with filters:**
-
-```http
-GET /v1/subscriptions?companyId=a1b2c3d4&status=Active&page=0&size=50
-```
-
-### Update (PUT)
-
-```http
-PUT /v1/subscriptions/a1b2c3d4-e5f6-7890-abcd-ef1234567890
-Content-Type: application/json
-Authorization: Bearer YOUR_TOKEN
-```
-
-```json
-{
-  "quantity": 15,
-  "billingTerm": "Monthly"
-}
-```
-
-### Delete (DELETE)
-
-```http
-DELETE /v1/subscriptions/a1b2c3d4-e5f6-7890-abcd-ef1234567890
-Authorization: Bearer YOUR_TOKEN
-```
-
-**Note:** Most Pax8 resources are cancelled rather than deleted. Subscriptions use a cancellation workflow rather than direct deletion.
+When rate limited, the MCP tool will return an error. Wait before retrying. The MCP server handles authentication automatically, so rate limit responses are the main error to watch for.
 
 ## Error Handling
 
-### HTTP Status Codes
+### Common Errors
 
-| Code | Meaning | Action |
-|------|---------|--------|
-| 200 | Success | Process response |
-| 201 | Created | Resource created successfully |
-| 204 | No Content | Update/delete successful |
-| 400 | Bad Request | Check request format and required fields |
-| 401 | Unauthorized | Token expired or invalid; re-authenticate |
-| 403 | Forbidden | Insufficient permissions or scope |
-| 404 | Not Found | Resource does not exist |
-| 409 | Conflict | Resource state conflict (e.g., duplicate order) |
-| 422 | Unprocessable Entity | Validation errors (invalid field values) |
-| 429 | Rate Limited | Implement backoff, wait before retrying |
-| 500 | Server Error | Retry with backoff |
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| Tool not found | MCP server not connected | Verify MCP token and server URL |
+| Invalid UUID | Malformed resource ID | Check UUID format |
+| Resource not found | ID does not exist | Verify the resource UUID |
+| Rate limited | Too many requests | Wait 60 seconds and retry |
+| Invalid parameter | Wrong filter value | Check allowed values for the parameter |
 
-### Error Response Format
+### Troubleshooting MCP Connection
 
-```json
-{
-  "message": "Company not found",
-  "status": 404
-}
-```
-
-For validation errors:
-
-```json
-{
-  "message": "Validation failed: quantity must be greater than 0",
-  "status": 400
-}
-```
-
-### Error Handling Pattern
-
-```javascript
-function handleApiError(response, body) {
-  switch (response.status) {
-    case 401:
-      console.log('Token expired or invalid. Re-authenticate with OAuth2.');
-      break;
-    case 403:
-      console.log('Forbidden. Check application scopes and permissions.');
-      break;
-    case 404:
-      console.log('Resource not found. Verify the resource ID.');
-      break;
-    case 409:
-      console.log('Conflict. Resource may already exist or be in an invalid state.');
-      break;
-    case 422:
-      console.log('Validation error:', body.message);
-      break;
-    case 429:
-      console.log('Rate limited. Wait before retrying.');
-      break;
-    default:
-      console.log(`Error ${response.status}: ${body.message}`);
-  }
-}
-```
-
-## Endpoint Reference
-
-| Endpoint | Methods | Description |
-|----------|---------|-------------|
-| `/v1/companies` | GET, POST | List/create companies |
-| `/v1/companies/{id}` | GET | Get company by ID |
-| `/v1/companies/{id}/contacts` | GET, POST | List/create contacts for a company |
-| `/v1/products` | GET | List products |
-| `/v1/products/{id}` | GET | Get product by ID |
-| `/v1/products/{id}/pricing` | GET | Get product pricing |
-| `/v1/products/{id}/provisioning-details` | GET | Get provisioning details |
-| `/v1/subscriptions` | GET | List subscriptions |
-| `/v1/subscriptions/{id}` | GET, PUT, DELETE | Get/update/cancel subscription |
-| `/v1/subscriptions/{id}/history` | GET | Get subscription change history |
-| `/v1/subscriptions/{id}/usage-summaries` | GET | Get subscription usage |
-| `/v1/orders` | GET, POST | List/create orders |
-| `/v1/orders/{id}` | GET | Get order by ID |
-| `/v1/invoices` | GET | List invoices |
-| `/v1/invoices/{id}` | GET | Get invoice by ID |
-| `/v1/invoices/{id}/items` | GET | Get invoice line items |
-| `/v1/usage-summaries` | GET | Get usage summaries |
+1. **Verify token** - Ensure the MCP token is valid and not expired
+2. **Check URL** - MCP server URL must be `https://mcp.pax8.com/v1/mcp`
+3. **Test with a simple call** - Try `pax8-list-companies` with `size=1` to verify connectivity
+4. **Regenerate token** - If authentication fails, generate a new token from the Pax8 portal
 
 ## Best Practices
 
-1. **Cache bearer tokens** - Tokens last up to 24 hours; do not request a new token on every call
-2. **Use maximum page size** - Set `size=200` to minimize total API calls when fetching all records
-3. **Implement retry logic** - Handle rate limits (429) and transient errors (500) with exponential backoff
-4. **Filter server-side** - Use query parameters to narrow results rather than fetching everything
-5. **Monitor rate limits** - Stay well under 1000 requests per minute
-6. **Sort consistently** - Use `sort=name,ASC` for predictable pagination results
-7. **Handle token expiry** - Refresh tokens before they expire to avoid failed requests
-8. **Use UUIDs** - All Pax8 resource IDs are UUIDs; validate format before sending
-9. **Log API calls** - Track requests for debugging and audit purposes
-10. **Validate before sending** - Check required fields client-side to avoid 400/422 errors
+1. **Use maximum page size** - Set `size=200` to minimize total tool calls when fetching all records
+2. **Filter server-side** - Use tool parameters to narrow results rather than fetching everything
+3. **Monitor rate limits** - Stay well under 1000 requests per minute
+4. **Sort consistently** - Use `sort=name`, `order=asc` for predictable pagination results
+5. **Use UUIDs** - All Pax8 resource IDs are UUIDs; validate format before passing to tools
+6. **Use company-scoped queries** - Always pass `companyId` when checking a specific client's data
+7. **Paginate large results** - The full Pax8 catalog has thousands of products; always paginate
+8. **Cache results when appropriate** - Company and product data changes infrequently
+9. **Validate before creating** - Check for existing records before creating duplicates
+10. **Use the search parameter** - `pax8-list-products` supports a `search` parameter for flexible text matching
 
 ## Related Skills
 

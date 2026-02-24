@@ -27,75 +27,45 @@ Place an order for a cloud product subscription on behalf of a client company. T
 
 ## Prerequisites
 
-- Valid Pax8 OAuth2 credentials configured (`PAX8_CLIENT_ID`, `PAX8_CLIENT_SECRET`)
-- Active bearer token (auto-refreshed)
+- Pax8 MCP server connected with a valid MCP token
+- MCP tools `pax8-list-companies`, `pax8-list-products`, `pax8-get-product-by-uuid`, and `pax8-get-product-pricing-by-uuid` available
 - Company must exist in Pax8
 - Product must be active and available for ordering
 - Quantity must be within the product's min/max range
 
+**Note:** Order creation is done through the Pax8 portal or direct API. The MCP tools support looking up all the information needed to prepare and validate an order.
+
 ## Steps
 
-1. **Authenticate** with Pax8 OAuth2 if token is expired
+1. **Resolve company** - Find the company by name or use the provided UUID
 
-   ```bash
-   TOKEN=$(curl -s -X POST https://login.pax8.com/oauth/token \
-     -H "Content-Type: application/json" \
-     -d '{
-       "client_id": "'$PAX8_CLIENT_ID'",
-       "client_secret": "'$PAX8_CLIENT_SECRET'",
-       "audience": "api://p8p.client",
-       "grant_type": "client_credentials"
-     }' | jq -r '.access_token')
-   ```
+   - If a name was provided, call `pax8-list-companies` with `company_name` set to the search term
+   - If a UUID was provided, call `pax8-get-company-by-uuid` with `uuid`
 
-2. **Resolve company** - Find the company by name or use the provided UUID
+2. **Resolve product** - Find the product by name or use the provided UUID
 
-   ```bash
-   curl -s "https://api.pax8.com/v1/companies?page=0&size=200&sort=name,ASC" \
-     -H "Authorization: Bearer $TOKEN"
-   ```
+   - If a name was provided, call `pax8-list-products` with `search` set to the product name
+   - If a UUID was provided, call `pax8-get-product-by-uuid` with `productId`
 
-3. **Resolve product** - Find the product by name or use the provided UUID
+3. **Validate order** - Check product availability, quantity limits, and billing term
 
-   ```bash
-   curl -s "https://api.pax8.com/v1/products?page=0&size=200&sort=name,ASC" \
-     -H "Authorization: Bearer $TOKEN"
-   ```
+   Call `pax8-get-product-by-uuid` with the resolved `productId` to verify:
+   - `active` is `true`
+   - `quantity` is within `minQuantity` and `maxQuantity`
+   - Requested billing term is in `billingTermOptions`
 
-4. **Validate order** - Check product availability, quantity limits, and billing term
+4. **Get pricing** for confirmation
 
-   ```bash
-   curl -s "https://api.pax8.com/v1/products/PRODUCT_ID" \
-     -H "Authorization: Bearer $TOKEN"
-   ```
+   Call `pax8-get-product-pricing-by-uuid` with `productId` to show the user:
+   - `partnerBuyPrice` (MSP cost)
+   - `suggestedRetailPrice` (recommended client price)
+   - Monthly and annual cost calculations
 
-5. **Get pricing** for confirmation
+5. **Present order summary** for user confirmation before placing
 
-   ```bash
-   curl -s "https://api.pax8.com/v1/products/PRODUCT_ID/pricing" \
-     -H "Authorization: Bearer $TOKEN"
-   ```
+6. **Place the order** through the Pax8 portal or API with the validated details
 
-6. **Place the order**
-
-   ```bash
-   curl -s -X POST "https://api.pax8.com/v1/orders" \
-     -H "Authorization: Bearer $TOKEN" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "companyId": "COMPANY_ID",
-       "lineItems": [
-         {
-           "productId": "PRODUCT_ID",
-           "quantity": 25,
-           "billingTerm": "Annual",
-           "provisionStartDate": "2026-03-01"
-         }
-       ]
-     }'
-   ```
-
-7. **Return order confirmation** with order ID and expected provisioning timeline
+7. **Verify order status** by calling `pax8-list-orders` with `companyId` to confirm the order was created
 
 ## Parameters
 
@@ -166,7 +136,7 @@ Next Steps:
 ================================================================
 ```
 
-### Order with Confirmation Prompt
+### Order Summary (Pre-Confirmation)
 
 ```
 Order Summary (Confirm Before Placing)
@@ -244,46 +214,12 @@ Suggestions:
 
 ## Error Handling
 
-### Authentication Error
+### MCP Connection Error
 
 ```
-Error: Unable to authenticate with Pax8 API
+Error: Unable to connect to Pax8 MCP server
 
-Check PAX8_CLIENT_ID and PAX8_CLIENT_SECRET environment variables.
-```
-
-### Provisioning Failed
-
-```
-Order submitted but provisioning failed
-Order ID: o1r2d3e4-r5s6-7890-abcd-ef1234567890
-
-Possible causes:
-  - Product requires manual provisioning by vendor
-  - Company contact information is incomplete
-  - Vendor-specific requirements not met
-
-Next Steps:
-  - Check order status in the Pax8 portal
-  - Verify company contacts are set up
-  - Contact Pax8 support if the issue persists
-```
-
-### Duplicate Order Warning
-
-```
-Warning: A similar order may already exist
-
-Existing subscription found:
-  Product: Microsoft 365 Business Premium
-  Quantity: 25
-  Status: Active
-
-Did you mean to increase seats instead?
-  - Modify existing: Adjust subscription quantity through the API
-  - Place new order: Confirm to proceed with a new order
-
-To add seats to an existing subscription, use the subscription modification API.
+Check your MCP configuration and regenerate the token at app.pax8.com/integrations/mcp
 ```
 
 ### Rate Limit
@@ -294,6 +230,18 @@ Error: Rate limit exceeded (429)
 Please wait a moment and try again.
 The Pax8 API allows 1000 requests per minute.
 ```
+
+## MCP Tools Used
+
+| Tool | Purpose |
+|------|---------|
+| `pax8-list-companies` | Find company by name |
+| `pax8-get-company-by-uuid` | Get company by UUID |
+| `pax8-list-products` | Find product by name |
+| `pax8-get-product-by-uuid` | Validate product details |
+| `pax8-get-product-pricing-by-uuid` | Get pricing for confirmation |
+| `pax8-list-orders` | Verify order was created |
+| `pax8-get-order-by-uuid` | Check order status |
 
 ## Related Commands
 

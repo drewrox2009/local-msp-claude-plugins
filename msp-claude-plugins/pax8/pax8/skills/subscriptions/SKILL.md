@@ -1,10 +1,10 @@
 ---
 description: >
-  Use this skill when working with Pax8 subscriptions - provisioning new
-  cloud licenses, modifying seat counts, cancelling subscriptions, checking
-  subscription status, reviewing change history, and optimizing license
-  usage across MSP clients. Covers the full subscription lifecycle including
-  all subscription states and quantity management.
+  Use this skill when working with Pax8 subscriptions - checking license
+  status, reviewing seat counts, filtering by company or product,
+  tracking subscription states, reviewing change history, and optimizing
+  license usage across MSP clients. Covers the full subscription
+  lifecycle including all subscription states and quantity management.
 triggers:
   - pax8 subscription
   - pax8 license
@@ -25,6 +25,41 @@ triggers:
 ## Overview
 
 Subscriptions in Pax8 represent active cloud product licenses assigned to a client company. When an order is placed and provisioned, it creates a subscription. Subscriptions are the core ongoing entity that MSPs manage -- adjusting seat counts as clients hire or leave, upgrading plans, or cancelling when a product is no longer needed. Every subscription is tied to a company and a product, with a quantity (seat count), billing term, and status.
+
+## MCP Tools
+
+### Available Tools
+
+| Tool | Description | Key Parameters |
+|------|-------------|----------------|
+| `pax8-list-subscriptions` | List and filter subscriptions | `page`, `size`, `sort`, `status`, `billingTerm`, `companyId`, `productId` |
+| `pax8-get-subscription-by-uuid` | Get a single subscription | `uuid` (required) |
+
+### List Subscriptions
+
+Call `pax8-list-subscriptions` with optional parameters:
+
+- **Filter by company:** Set `companyId` to a company UUID
+- **Filter by status:** Set `status` to one of the allowed values (see below)
+- **Filter by billing term:** Set `billingTerm` to `monthly`, `annual`, `two-year`, `three-year`, `one-time`, `trial`, or `activation`
+- **Filter by product:** Set `productId` to a product UUID
+- **Paginate:** Set `page` (0-based) and `size` (up to 200)
+
+**Example: List all active subscriptions for a company:**
+- `pax8-list-subscriptions` with `companyId=a1b2c3d4-...`, `status=Active`, `size=200`
+
+**Example: List all trial subscriptions:**
+- `pax8-list-subscriptions` with `status=Trial`, `size=200`
+
+**Example: List all annual subscriptions:**
+- `pax8-list-subscriptions` with `billingTerm=annual`, `status=Active`, `size=200`
+
+### Get a Single Subscription
+
+Call `pax8-get-subscription-by-uuid` with the `uuid` parameter.
+
+**Example:**
+- `pax8-get-subscription-by-uuid` with `uuid=s1u2b3s4-c5r6-7890-abcd-ef1234567890`
 
 ## Key Concepts
 
@@ -50,7 +85,8 @@ Order Placed --> Provisioning --> Active --> [Modify/Cancel] --> Cancelled
 | `WaitingForDetails` | Additional information needed for provisioning |
 | `Trial` | Free trial period active |
 | `Converted` | Trial converted to paid subscription |
-| `ActivePendingChange` | Active but a modification is being processed |
+| `PendingActivation` | Activation pending |
+| `Activated` | Recently activated |
 
 ### Billing Terms
 
@@ -58,7 +94,10 @@ Order Placed --> Provisioning --> Active --> [Modify/Cancel] --> Cancelled
 |------|-------------|------------|
 | Monthly | Month-to-month | Cancel anytime |
 | Annual | 12-month commitment | Locked for 12 months |
-| Triennial | 3-year commitment | Locked for 3 years |
+| Two-Year | 24-month commitment | Locked for 24 months |
+| Three-Year | 36-month commitment | Locked for 36 months |
+| One-Time | Single purchase | No recurring billing |
+| Trial | Free trial | No commitment |
 
 ### Quantity Management
 
@@ -98,61 +137,47 @@ The `quantity` field represents the number of licenses (seats, devices, or units
 | `currentCharges` | decimal | Charges for this period |
 | `date` | date | Usage date |
 
-## API Patterns
+## Common Workflows
 
-### List Subscriptions
+### Check Subscriptions for a Company
 
-```http
-GET /v1/subscriptions
-Authorization: Bearer YOUR_TOKEN
-Content-Type: application/json
-```
+1. Find the company UUID using `pax8-list-companies` with `company_name`
+2. Call `pax8-list-subscriptions` with `companyId` and `status=Active`
+3. For each subscription, optionally call `pax8-get-product-by-uuid` with the `productId` to get product names
 
-**With Filters:**
+### License Optimization Across All Clients
 
-```http
-GET /v1/subscriptions?companyId=a1b2c3d4-e5f6-7890-abcd-ef1234567890
-GET /v1/subscriptions?status=Active
-GET /v1/subscriptions?companyId=a1b2c3d4&status=Active
-GET /v1/subscriptions?productId=f9e8d7c6-b5a4-3210-fedc-ba0987654321
-```
+This is one of the most valuable MSP workflows -- finding unused or underutilized licenses:
 
-**With Pagination:**
+1. Call `pax8-list-companies` with `size=200` to get all companies
+2. For each company, call `pax8-list-subscriptions` with `companyId` and `status=Active`
+3. Build a list of all subscriptions with company name, product, quantity, billing term, and monthly cost (`quantity * price`)
+4. Sort by monthly cost descending to surface the biggest savings opportunities
+5. Flag subscriptions with very low seat counts or monthly billing that could switch to annual
 
-```http
-GET /v1/subscriptions?page=0&size=200&sort=createdDate,DESC
-GET /v1/subscriptions?companyId=a1b2c3d4&page=0&size=100
-```
+### Subscription Status Report by Company
 
-### curl Examples
+1. Find the company with `pax8-list-companies` or `pax8-get-company-by-uuid`
+2. Call `pax8-list-subscriptions` with `companyId` and `size=200` (no status filter to get all)
+3. Group results by status and calculate total monthly cost for active subscriptions
 
-```bash
-# List all active subscriptions
-curl -s "https://api.pax8.com/v1/subscriptions?status=Active&page=0&size=200" \
-  -H "Authorization: Bearer $TOKEN"
+### Renewal Management
 
-# List subscriptions for a specific company
-curl -s "https://api.pax8.com/v1/subscriptions?companyId=a1b2c3d4-e5f6-7890-abcd-ef1234567890&status=Active" \
-  -H "Authorization: Bearer $TOKEN"
+1. Call `pax8-list-subscriptions` with `status=Active` and `billingTerm=annual`
+2. Review each subscription's `endDate` to find upcoming renewals
+3. For renewals within the next 30 days, prepare a review list with company name, product, seat count, and pricing
 
-# Get all subscriptions sorted by creation date
-curl -s "https://api.pax8.com/v1/subscriptions?page=0&size=200&sort=createdDate,DESC" \
-  -H "Authorization: Bearer $TOKEN"
-```
+### Get Usage Data for a Subscription
 
-### Get Single Subscription
+For usage-based products (e.g., Azure):
 
-```http
-GET /v1/subscriptions/s1u2b3s4-c5r6-7890-abcd-ef1234567890
-Authorization: Bearer YOUR_TOKEN
-```
+1. Call `pax8-get-usage-summary` with `subscriptionId` (required)
+2. Optionally filter by `resourceGroup` or `companyId`
+3. For detailed line-item usage, call `pax8-get-detailed-usage-summary` with the `usageSummaryId`
 
-```bash
-curl -s "https://api.pax8.com/v1/subscriptions/s1u2b3s4-c5r6-7890-abcd-ef1234567890" \
-  -H "Authorization: Bearer $TOKEN"
-```
+## Response Examples
 
-**Response:**
+**Subscription:**
 
 ```json
 {
@@ -170,338 +195,41 @@ curl -s "https://api.pax8.com/v1/subscriptions/s1u2b3s4-c5r6-7890-abcd-ef1234567
 }
 ```
 
-### Modify Subscription (Change Quantity)
-
-```http
-PUT /v1/subscriptions/s1u2b3s4-c5r6-7890-abcd-ef1234567890
-Content-Type: application/json
-Authorization: Bearer YOUR_TOKEN
-```
-
-```json
-{
-  "quantity": 30,
-  "billingTerm": "Annual"
-}
-```
-
-```bash
-curl -s -X PUT "https://api.pax8.com/v1/subscriptions/s1u2b3s4-c5r6-7890-abcd-ef1234567890" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"quantity": 30, "billingTerm": "Annual"}'
-```
-
-### Cancel Subscription
-
-```http
-DELETE /v1/subscriptions/s1u2b3s4-c5r6-7890-abcd-ef1234567890
-Authorization: Bearer YOUR_TOKEN
-```
-
-```bash
-curl -s -X DELETE "https://api.pax8.com/v1/subscriptions/s1u2b3s4-c5r6-7890-abcd-ef1234567890" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-**Note:** Cancellation may transition the subscription to `PendingCancel` before it becomes `Cancelled`. Annual subscriptions may not allow mid-term cancellation.
-
-### Get Subscription History
-
-```http
-GET /v1/subscriptions/s1u2b3s4-c5r6-7890-abcd-ef1234567890/history
-Authorization: Bearer YOUR_TOKEN
-```
-
-```bash
-curl -s "https://api.pax8.com/v1/subscriptions/s1u2b3s4-c5r6-7890-abcd-ef1234567890/history" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-### Get Subscription Usage Summaries
-
-```http
-GET /v1/subscriptions/s1u2b3s4-c5r6-7890-abcd-ef1234567890/usage-summaries
-Authorization: Bearer YOUR_TOKEN
-```
-
-```bash
-curl -s "https://api.pax8.com/v1/subscriptions/s1u2b3s4-c5r6-7890-abcd-ef1234567890/usage-summaries" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-## Common Workflows
-
-### License Optimization Across All Clients
-
-This is one of the most valuable MSP workflows -- finding unused or underutilized licenses:
-
-```javascript
-async function findOptimizationOpportunities() {
-  const companies = await fetchAllResources('/companies');
-  const opportunities = [];
-
-  for (const company of companies) {
-    const subsResponse = await pax8Client.request(
-      `/subscriptions?companyId=${company.id}&status=Active&page=0&size=200`
-    );
-    const subsData = await subsResponse.json();
-
-    for (const sub of subsData.content) {
-      // Flag subscriptions with quantity of 1 or very low counts
-      // compared to similar products at other clients
-      opportunities.push({
-        companyName: company.name,
-        companyId: company.id,
-        subscriptionId: sub.id,
-        productId: sub.productId,
-        quantity: sub.quantity,
-        billingTerm: sub.billingTerm,
-        price: sub.price,
-        monthlyCost: sub.quantity * sub.price,
-        startDate: sub.startDate,
-        endDate: sub.endDate
-      });
-    }
-
-    // Respect rate limits
-    await sleep(100);
-  }
-
-  // Sort by monthly cost descending to surface biggest savings opportunities
-  return opportunities.sort((a, b) => b.monthlyCost - a.monthlyCost);
-}
-```
-
-### Modify Subscription Quantity
-
-```javascript
-async function adjustSeats(subscriptionId, newQuantity) {
-  // First, get current subscription to validate
-  const currentRes = await pax8Client.request(`/subscriptions/${subscriptionId}`);
-  const current = await currentRes.json();
-
-  if (current.status !== 'Active') {
-    throw new Error(`Cannot modify subscription in ${current.status} state`);
-  }
-
-  console.log(`Changing ${current.productId} from ${current.quantity} to ${newQuantity} seats`);
-
-  const response = await pax8Client.request(`/subscriptions/${subscriptionId}`, {
-    method: 'PUT',
-    body: JSON.stringify({
-      quantity: newQuantity,
-      billingTerm: current.billingTerm
-    })
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(`Failed to modify subscription: ${error.message}`);
-  }
-
-  return await response.json();
-}
-```
-
-### Subscription Status Report by Company
-
-```javascript
-async function subscriptionReport(companyId) {
-  const companyRes = await pax8Client.request(`/companies/${companyId}`);
-  const company = await companyRes.json();
-
-  const subsResponse = await pax8Client.request(
-    `/subscriptions?companyId=${companyId}&page=0&size=200`
-  );
-  const subsData = await subsResponse.json();
-
-  const report = {
-    companyName: company.name,
-    totalSubscriptions: subsData.page.totalElements,
-    byStatus: {},
-    totalMonthlyCost: 0,
-    subscriptions: []
-  };
-
-  for (const sub of subsData.content) {
-    // Count by status
-    report.byStatus[sub.status] = (report.byStatus[sub.status] || 0) + 1;
-
-    // Calculate cost for active subscriptions
-    if (sub.status === 'Active') {
-      const monthlyCost = sub.quantity * sub.price;
-      report.totalMonthlyCost += monthlyCost;
-    }
-
-    report.subscriptions.push({
-      id: sub.id,
-      productId: sub.productId,
-      quantity: sub.quantity,
-      status: sub.status,
-      billingTerm: sub.billingTerm,
-      price: sub.price,
-      monthlyCost: sub.quantity * sub.price,
-      startDate: sub.startDate,
-      endDate: sub.endDate
-    });
-  }
-
-  return report;
-}
-```
-
-### Renewal Management
-
-```javascript
-async function findUpcomingRenewals(daysAhead = 30) {
-  const allSubscriptions = await fetchAllResources('/subscriptions');
-  const cutoffDate = new Date();
-  cutoffDate.setDate(cutoffDate.getDate() + daysAhead);
-
-  const renewals = allSubscriptions
-    .filter(sub => {
-      if (sub.status !== 'Active' || !sub.endDate) return false;
-      const endDate = new Date(sub.endDate);
-      return endDate <= cutoffDate && endDate >= new Date();
-    })
-    .sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
-
-  // Enrich with company names
-  const companyCache = {};
-  for (const sub of renewals) {
-    if (!companyCache[sub.companyId]) {
-      const companyRes = await pax8Client.request(`/companies/${sub.companyId}`);
-      companyCache[sub.companyId] = await companyRes.json();
-    }
-    sub.companyName = companyCache[sub.companyId].name;
-  }
-
-  return renewals;
-}
-```
-
-### Bulk Subscription Inventory
-
-```javascript
-async function fullSubscriptionInventory() {
-  const companies = await fetchAllResources('/companies');
-  const inventory = [];
-
-  for (const company of companies) {
-    const subsResponse = await pax8Client.request(
-      `/subscriptions?companyId=${company.id}&status=Active&page=0&size=200`
-    );
-    const subsData = await subsResponse.json();
-
-    for (const sub of subsData.content) {
-      inventory.push({
-        companyName: company.name,
-        companyId: company.id,
-        subscriptionId: sub.id,
-        productId: sub.productId,
-        quantity: sub.quantity,
-        status: sub.status,
-        billingTerm: sub.billingTerm,
-        unitPrice: sub.price,
-        monthlyCost: sub.quantity * sub.price,
-        startDate: sub.startDate,
-        endDate: sub.endDate
-      });
-    }
-
-    await sleep(100); // Rate limit awareness
-  }
-
-  return inventory;
-}
-```
-
 ## Error Handling
 
-### Common API Errors
+### Common Errors
 
-| Code | Message | Resolution |
-|------|---------|------------|
-| 400 | Invalid quantity | Quantity must be within product min/max range |
-| 400 | Cannot decrease seats on annual plan | Annual plans restrict mid-term decreases |
-| 401 | Unauthorized | Token expired; re-authenticate |
-| 404 | Subscription not found | Verify subscription UUID |
-| 409 | Subscription already cancelled | Cannot modify a cancelled subscription |
-| 409 | Change already pending | Wait for the current change to complete |
-| 422 | Validation failed | Check field values and product constraints |
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| Subscription not found | Invalid UUID | Verify the UUID with `pax8-list-subscriptions` |
+| Invalid status filter | Wrong status value | Use one of: Active, Cancelled, PendingManual, PendingAutomated, PendingCancel, WaitingForDetails, Trial, Converted, PendingActivation, Activated |
+| Invalid billingTerm | Wrong billing term value | Use one of: monthly, annual, two-year, three-year, one-time, trial, activation |
 
 ### State Transition Errors
 
-| Current State | Attempted Action | Error |
+| Current State | Attempted Action | Notes |
 |---------------|-----------------|-------|
 | Cancelled | Modify quantity | Cannot modify cancelled subscription |
 | PendingCancel | Modify quantity | Cannot modify during cancellation |
 | PendingManual | Cancel | Cannot cancel during provisioning |
 | ActivePendingChange | Modify quantity | Wait for current change to complete |
 
-### Error Recovery Pattern
-
-```javascript
-async function safeModifySubscription(subscriptionId, newQuantity) {
-  const current = await pax8Client.request(`/subscriptions/${subscriptionId}`);
-  const sub = await current.json();
-
-  // Pre-validate state
-  const modifiableStates = ['Active'];
-  if (!modifiableStates.includes(sub.status)) {
-    return {
-      success: false,
-      error: `Cannot modify subscription in ${sub.status} state. ` +
-             `Wait for pending operations to complete.`
-    };
-  }
-
-  try {
-    const response = await pax8Client.request(`/subscriptions/${subscriptionId}`, {
-      method: 'PUT',
-      body: JSON.stringify({ quantity: newQuantity, billingTerm: sub.billingTerm })
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      return { success: false, error: error.message };
-    }
-
-    return { success: true, data: await response.json() };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-}
-```
-
-## Endpoint Reference
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/v1/subscriptions` | GET | List subscriptions with filters |
-| `/v1/subscriptions/{id}` | GET | Get subscription details |
-| `/v1/subscriptions/{id}` | PUT | Update subscription (change quantity) |
-| `/v1/subscriptions/{id}` | DELETE | Cancel subscription |
-| `/v1/subscriptions/{id}/history` | GET | Get change history |
-| `/v1/subscriptions/{id}/usage-summaries` | GET | Get usage data |
-
 ## Best Practices
 
 1. **Check state before modifying** - Always verify the subscription is in `Active` state before making changes
 2. **Understand commitment terms** - Annual subscriptions restrict quantity decreases
-3. **Track all changes** - Use the history endpoint to audit subscription modifications
-4. **Optimize regularly** - Review subscriptions monthly to find unused licenses
-5. **Use company filter** - Always filter by `companyId` when checking a specific client's subscriptions
-6. **Monitor pending states** - Subscriptions in pending states need attention
-7. **Plan renewals** - Track end dates and plan renewal conversations with clients
-8. **Batch modifications** - When adjusting multiple subscriptions, respect rate limits
-9. **Document changes** - Note why quantities were changed in your PSA or documentation
-10. **Verify after modification** - Re-fetch the subscription after PUT to confirm the change took effect
+3. **Optimize regularly** - Review subscriptions monthly to find unused licenses
+4. **Use company filter** - Always filter by `companyId` when checking a specific client's subscriptions
+5. **Monitor pending states** - Subscriptions in pending states need attention
+6. **Plan renewals** - Track end dates and plan renewal conversations with clients
+7. **Batch operations carefully** - When checking multiple companies, respect rate limits (1000/min)
+8. **Document changes** - Note why quantities were changed in your PSA or documentation
+9. **Verify after modification** - Re-fetch the subscription after changes to confirm they took effect
+10. **Use billing term filter** - Filter by `billingTerm=monthly` to quickly find candidates for annual commitment savings
 
 ## Related Skills
 
-- [Pax8 API Patterns](../api-patterns/SKILL.md) - Authentication and API reference
+- [Pax8 API Patterns](../api-patterns/SKILL.md) - MCP tools reference and connection info
 - [Pax8 Companies](../companies/SKILL.md) - Company management
 - [Pax8 Products](../products/SKILL.md) - Product catalog and pricing
 - [Pax8 Orders](../orders/SKILL.md) - Creating new subscriptions via orders

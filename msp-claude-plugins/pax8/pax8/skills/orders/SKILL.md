@@ -1,9 +1,9 @@
 ---
 description: >
-  Use this skill when placing orders in Pax8 - creating new product
-  orders for client companies, tracking provisioning status, understanding
-  order line items, and managing the order-to-subscription workflow.
-  Covers order creation, status tracking, and provisioning timelines.
+  Use this skill when working with Pax8 orders - viewing orders,
+  tracking provisioning status, understanding order line items, and
+  managing the order-to-subscription workflow. Covers order retrieval,
+  status tracking, and provisioning timelines.
 triggers:
   - pax8 order
   - pax8 purchase
@@ -21,6 +21,35 @@ triggers:
 ## Overview
 
 Orders in Pax8 are the mechanism for provisioning new cloud subscriptions for client companies. When an MSP needs to set up a new product for a client -- whether it is Microsoft 365 licenses, a security tool, or backup solution -- they create an order. The order contains one or more line items, each specifying a product, quantity, and billing term. Once submitted, the order is processed and, upon successful provisioning, creates one or more subscriptions.
+
+## MCP Tools
+
+### Available Tools
+
+| Tool | Description | Key Parameters |
+|------|-------------|----------------|
+| `pax8-list-orders` | List orders with optional filters | `page`, `size`, `companyId` |
+| `pax8-get-order-by-uuid` | Get a single order's details | `uuid` (required) |
+
+### List Orders
+
+Call `pax8-list-orders` with optional parameters:
+
+- **Filter by company:** Set `companyId` to a company UUID
+- **Paginate:** Set `page` (0-based) and `size` (up to 200)
+
+**Example: List all orders for a company:**
+- `pax8-list-orders` with `companyId=a1b2c3d4-...`, `size=200`
+
+**Example: List recent orders (first page):**
+- `pax8-list-orders` with `page=0`, `size=50`
+
+### Get a Single Order
+
+Call `pax8-get-order-by-uuid` with the `uuid` parameter.
+
+**Example:**
+- `pax8-get-order-by-uuid` with `uuid=o1r2d3e4-r5s6-7890-abcd-ef1234567890`
 
 ## Key Concepts
 
@@ -87,49 +116,40 @@ Each order contains one or more line items. Each line item corresponds to a sing
 | `provisionStartDate` | date | No | When subscription starts |
 | `lineItemNumber` | integer | System | Position in the order |
 
-## API Patterns
+## Common Workflows
 
-### List Orders
+### Track Order Provisioning Status
 
-```http
-GET /v1/orders
-Authorization: Bearer YOUR_TOKEN
-Content-Type: application/json
-```
+1. Call `pax8-get-order-by-uuid` with the order's `uuid`
+2. Check the `status` field for the current state
+3. Review each line item for product details and quantities
+4. If status is not `Completed`, check back periodically
 
-**With Filters:**
+### View Order History for a Client
 
-```http
-GET /v1/orders?companyId=a1b2c3d4-e5f6-7890-abcd-ef1234567890
-GET /v1/orders?status=Completed
-GET /v1/orders?companyId=a1b2c3d4&page=0&size=50
-```
+1. Find the company UUID using `pax8-list-companies` with `company_name`
+2. Call `pax8-list-orders` with `companyId` and `size=200`
+3. Paginate if needed to get all orders
+4. Review order dates, statuses, and line items
 
-### curl Examples
+### Verify Order Created Subscriptions
 
-```bash
-# List all orders (first page)
-curl -s "https://api.pax8.com/v1/orders?page=0&size=50&sort=createdDate,DESC" \
-  -H "Authorization: Bearer $TOKEN"
+1. After an order shows `Completed` status, call `pax8-list-subscriptions` with `companyId`
+2. Look for subscriptions matching the ordered product IDs
+3. Verify quantities and billing terms match the original order
 
-# List orders for a specific company
-curl -s "https://api.pax8.com/v1/orders?companyId=a1b2c3d4-e5f6-7890-abcd-ef1234567890" \
-  -H "Authorization: Bearer $TOKEN"
-```
+### Standard MSP Onboarding Order Verification
 
-### Get Single Order
+When onboarding a new client, verify the typical stack was ordered:
 
-```http
-GET /v1/orders/o1r2d3e4-r5s6-7890-abcd-ef1234567890
-Authorization: Bearer YOUR_TOKEN
-```
+1. Call `pax8-list-orders` with the `companyId`
+2. Check that orders exist for the expected products (M365, security, backup)
+3. Verify each order reached `Completed` status
+4. Cross-reference with `pax8-list-subscriptions` to confirm active subscriptions
 
-```bash
-curl -s "https://api.pax8.com/v1/orders/o1r2d3e4-r5s6-7890-abcd-ef1234567890" \
-  -H "Authorization: Bearer $TOKEN"
-```
+## Response Examples
 
-**Response:**
+**Order:**
 
 ```json
 {
@@ -151,320 +171,47 @@ curl -s "https://api.pax8.com/v1/orders/o1r2d3e4-r5s6-7890-abcd-ef1234567890" \
 }
 ```
 
-### Create Order
-
-```http
-POST /v1/orders
-Content-Type: application/json
-Authorization: Bearer YOUR_TOKEN
-```
-
-**Single Product Order:**
-
-```json
-{
-  "companyId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "lineItems": [
-    {
-      "productId": "f9e8d7c6-b5a4-3210-fedc-ba0987654321",
-      "quantity": 25,
-      "billingTerm": "Annual",
-      "provisionStartDate": "2026-03-01"
-    }
-  ]
-}
-```
-
-**Multi-Product Order:**
-
-```json
-{
-  "companyId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "lineItems": [
-    {
-      "productId": "f9e8d7c6-b5a4-3210-fedc-ba0987654321",
-      "quantity": 25,
-      "billingTerm": "Annual",
-      "provisionStartDate": "2026-03-01"
-    },
-    {
-      "productId": "a9b8c7d6-e5f4-3210-fedc-ba0987654322",
-      "quantity": 25,
-      "billingTerm": "Monthly",
-      "provisionStartDate": "2026-03-01"
-    }
-  ]
-}
-```
-
-### curl Create Order
-
-```bash
-curl -s -X POST "https://api.pax8.com/v1/orders" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "companyId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "lineItems": [
-      {
-        "productId": "f9e8d7c6-b5a4-3210-fedc-ba0987654321",
-        "quantity": 25,
-        "billingTerm": "Annual",
-        "provisionStartDate": "2026-03-01"
-      }
-    ]
-  }'
-```
-
-## Common Workflows
-
-### Place an Order for a New Client
-
-```javascript
-async function orderForNewClient(companyId, products) {
-  // Step 1: Verify company exists
-  const companyRes = await pax8Client.request(`/companies/${companyId}`);
-  if (companyRes.status === 404) {
-    throw new Error('Company not found. Create the company first.');
-  }
-
-  // Step 2: Validate products and build line items
-  const lineItems = [];
-  for (const item of products) {
-    // Verify product exists and is active
-    const productRes = await pax8Client.request(`/products/${item.productId}`);
-    const product = await productRes.json();
-
-    if (!product.active) {
-      console.log(`Warning: Product ${product.name} is not active. Skipping.`);
-      continue;
-    }
-
-    if (item.quantity < product.minQuantity || item.quantity > product.maxQuantity) {
-      throw new Error(
-        `Quantity ${item.quantity} is outside allowed range ` +
-        `(${product.minQuantity}-${product.maxQuantity}) for ${product.name}`
-      );
-    }
-
-    lineItems.push({
-      productId: item.productId,
-      quantity: item.quantity,
-      billingTerm: item.billingTerm || 'Annual',
-      provisionStartDate: item.startDate || new Date().toISOString().split('T')[0]
-    });
-  }
-
-  // Step 3: Place the order
-  const orderRes = await pax8Client.request('/orders', {
-    method: 'POST',
-    body: JSON.stringify({ companyId, lineItems })
-  });
-
-  if (!orderRes.ok) {
-    const error = await orderRes.json();
-    throw new Error(`Order failed: ${error.message}`);
-  }
-
-  return await orderRes.json();
-}
-```
-
-### Track Order Provisioning Status
-
-```javascript
-async function trackOrderStatus(orderId) {
-  const orderRes = await pax8Client.request(`/orders/${orderId}`);
-  const order = await orderRes.json();
-
-  const statusReport = {
-    orderId: order.id,
-    companyId: order.companyId,
-    overallStatus: order.status,
-    createdDate: order.createdDate,
-    lineItems: order.lineItems.map(item => ({
-      productId: item.productId,
-      quantity: item.quantity,
-      billingTerm: item.billingTerm,
-      startDate: item.provisionStartDate
-    }))
-  };
-
-  return statusReport;
-}
-
-// Poll for completion
-async function waitForOrderCompletion(orderId, timeoutMs = 300000) {
-  const startTime = Date.now();
-
-  while (Date.now() - startTime < timeoutMs) {
-    const status = await trackOrderStatus(orderId);
-
-    if (status.overallStatus === 'Completed') {
-      console.log('Order completed successfully.');
-      return status;
-    }
-
-    if (status.overallStatus === 'Failed') {
-      throw new Error('Order provisioning failed.');
-    }
-
-    // Wait 30 seconds between polls
-    await sleep(30000);
-  }
-
-  throw new Error('Order provisioning timed out.');
-}
-```
-
-### Standard MSP Onboarding Order
-
-A typical MSP onboarding order includes multiple products:
-
-```javascript
-async function standardOnboardingOrder(companyId, userCount) {
-  // Common MSP stack: M365, security, backup
-  const lineItems = [
-    {
-      productId: 'MICROSOFT_365_BUSINESS_PREMIUM_ID',
-      quantity: userCount,
-      billingTerm: 'Annual',
-      provisionStartDate: new Date().toISOString().split('T')[0]
-    },
-    {
-      productId: 'DEFENDER_FOR_BUSINESS_ID',
-      quantity: userCount,
-      billingTerm: 'Monthly',
-      provisionStartDate: new Date().toISOString().split('T')[0]
-    },
-    {
-      productId: 'BACKUP_SOLUTION_ID',
-      quantity: userCount,
-      billingTerm: 'Monthly',
-      provisionStartDate: new Date().toISOString().split('T')[0]
-    }
-  ];
-
-  const orderRes = await pax8Client.request('/orders', {
-    method: 'POST',
-    body: JSON.stringify({ companyId, lineItems })
-  });
-
-  return await orderRes.json();
-}
-```
-
-### Order History Report
-
-```javascript
-async function orderHistory(companyId, daysBack = 90) {
-  let allOrders = [];
-  let page = 0;
-  let totalPages = 1;
-
-  while (page < totalPages) {
-    const response = await pax8Client.request(
-      `/orders?companyId=${companyId}&page=${page}&size=200&sort=createdDate,DESC`
-    );
-    const data = await response.json();
-    allOrders.push(...data.content);
-    totalPages = data.page.totalPages;
-    page++;
-  }
-
-  // Filter by date range
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - daysBack);
-
-  return allOrders.filter(order => new Date(order.createdDate) >= cutoff);
-}
-```
-
 ## Error Handling
 
-### Common API Errors
+### Common Errors
 
-| Code | Message | Resolution |
-|------|---------|------------|
-| 400 | Company ID is required | Include `companyId` in the order |
-| 400 | Line items are required | Include at least one line item |
-| 400 | Invalid product ID | Verify the product UUID exists |
-| 400 | Quantity out of range | Check product min/max quantity |
-| 400 | Invalid billing term | Use "Monthly", "Annual", or "Triennial" |
-| 401 | Unauthorized | Token expired; re-authenticate |
-| 404 | Company not found | Verify company UUID |
-| 404 | Product not found | Verify product UUID |
-| 409 | Duplicate order | An identical order may already be processing |
-| 422 | Product not available | Product may be discontinued or restricted |
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| Order not found | Invalid UUID | Verify the order UUID with `pax8-list-orders` |
+| No orders found | Company has no orders | Verify the company UUID is correct |
 
-### Pre-Order Validation
+### Order State Issues
 
-```javascript
-async function validateOrder(companyId, lineItems) {
-  const errors = [];
+| State | Meaning | Action |
+|-------|---------|--------|
+| `Failed` | Provisioning failed | Check the Pax8 portal for details; may need to resubmit |
+| `PendingApproval` | Awaiting approval | Approve in the Pax8 portal if `orderApprovalRequired` is set |
+| `Cancelled` | Order was cancelled | Create a new order if still needed |
 
-  // Validate company
-  const companyRes = await pax8Client.request(`/companies/${companyId}`);
-  if (companyRes.status === 404) {
-    errors.push('Company not found');
-  }
+## Billing Term Reference
 
-  // Validate each line item
-  for (const item of lineItems) {
-    const productRes = await pax8Client.request(`/products/${item.productId}`);
-    if (productRes.status === 404) {
-      errors.push(`Product ${item.productId} not found`);
-      continue;
-    }
-
-    const product = await productRes.json();
-
-    if (!product.active) {
-      errors.push(`Product ${product.name} is not active`);
-    }
-
-    if (item.quantity < product.minQuantity) {
-      errors.push(`${product.name}: quantity ${item.quantity} below minimum ${product.minQuantity}`);
-    }
-
-    if (item.quantity > product.maxQuantity) {
-      errors.push(`${product.name}: quantity ${item.quantity} above maximum ${product.maxQuantity}`);
-    }
-
-    const validTerms = ['Monthly', 'Annual', 'Triennial'];
-    if (!validTerms.includes(item.billingTerm)) {
-      errors.push(`Invalid billing term: ${item.billingTerm}`);
-    }
-  }
-
-  return { valid: errors.length === 0, errors };
-}
-```
-
-## Endpoint Reference
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/v1/orders` | GET | List orders with filters |
-| `/v1/orders` | POST | Create a new order |
-| `/v1/orders/{id}` | GET | Get order details by ID |
+| Term | Commitment | Seat Changes | Discount |
+|------|-----------|--------------|----------|
+| Monthly | None | Increase/decrease anytime | Standard price |
+| Annual | 12 months | Increase anytime, decrease restricted | ~10% discount |
+| Triennial | 36 months | Increase anytime, decrease restricted | ~15% discount |
 
 ## Best Practices
 
-1. **Validate before ordering** - Check company, product, and quantity before submitting
+1. **Validate before ordering** - Check company, product, and quantity before submitting orders in the Pax8 portal
 2. **Use annual billing** - Annual commitments save money; recommend to clients
 3. **Bundle line items** - Include all products in a single order when possible
-4. **Track provisioning** - Monitor order status until completion
-5. **Set start dates** - Use `provisionStartDate` to align billing with client agreements
-6. **Check product availability** - Verify products are active before including in orders
-7. **Handle failures gracefully** - Failed orders may need to be resubmitted
-8. **Respect quantity limits** - Stay within product min/max quantity bounds
-9. **Document orders** - Record order IDs in your PSA for cross-reference
-10. **Test with small quantities** - For new products, test with minimal seats before scaling up
+4. **Track provisioning** - Monitor order status until completion using `pax8-get-order-by-uuid`
+5. **Check product availability** - Use `pax8-get-product-by-uuid` to verify products are active before ordering
+6. **Handle failures gracefully** - Failed orders may need to be resubmitted
+7. **Respect quantity limits** - Stay within product min/max quantity bounds
+8. **Document orders** - Record order IDs in your PSA for cross-reference
+9. **Test with small quantities** - For new products, test with minimal seats before scaling up
+10. **Verify subscriptions** - After order completion, confirm subscriptions are active with `pax8-list-subscriptions`
 
 ## Related Skills
 
-- [Pax8 API Patterns](../api-patterns/SKILL.md) - Authentication and API reference
+- [Pax8 API Patterns](../api-patterns/SKILL.md) - MCP tools reference and connection info
 - [Pax8 Products](../products/SKILL.md) - Product catalog and pricing
 - [Pax8 Subscriptions](../subscriptions/SKILL.md) - Managing resulting subscriptions
 - [Pax8 Companies](../companies/SKILL.md) - Company management

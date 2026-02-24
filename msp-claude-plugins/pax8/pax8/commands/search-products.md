@@ -20,47 +20,25 @@ Search the Pax8 cloud product catalog by name, vendor, or keyword. Returns match
 
 ## Prerequisites
 
-- Valid Pax8 OAuth2 credentials configured (`PAX8_CLIENT_ID`, `PAX8_CLIENT_SECRET`)
-- Active bearer token (auto-refreshed)
-- Partner account with product catalog access
+- Pax8 MCP server connected with a valid MCP token
+- MCP tools `pax8-list-products`, `pax8-get-product-by-uuid`, and `pax8-get-product-pricing-by-uuid` available
 
 ## Steps
 
-1. **Authenticate** with Pax8 OAuth2 if token is expired
+1. **Search products** using the Pax8 MCP tools
 
-   ```bash
-   TOKEN=$(curl -s -X POST https://login.pax8.com/oauth/token \
-     -H "Content-Type: application/json" \
-     -d '{
-       "client_id": "'$PAX8_CLIENT_ID'",
-       "client_secret": "'$PAX8_CLIENT_SECRET'",
-       "audience": "api://p8p.client",
-       "grant_type": "client_credentials"
-     }' | jq -r '.access_token')
-   ```
+   Call `pax8-list-products` with the appropriate parameters:
+   - Set `search` to the user's query (e.g., "Microsoft 365")
+   - If a vendor is specified, set `vendorName` (e.g., "Microsoft")
+   - Set `size=200` to get maximum results per page
 
-2. **Fetch products** with optional vendor filter
+2. **Filter results** by reviewing the returned product names against the search query
 
-   ```bash
-   # Without vendor filter
-   curl -s "https://api.pax8.com/v1/products?page=0&size=200&sort=name,ASC" \
-     -H "Authorization: Bearer $TOKEN"
+3. **Optionally fetch pricing** for each matching product
 
-   # With vendor filter
-   curl -s "https://api.pax8.com/v1/products?vendorName=Microsoft&page=0&size=200&sort=name,ASC" \
-     -H "Authorization: Bearer $TOKEN"
-   ```
+   For each product of interest, call `pax8-get-product-pricing-by-uuid` with the `productId` to get pricing tiers (Monthly, Annual, etc.)
 
-3. **Filter results** client-side by search query (name matching)
-
-4. **Optionally fetch pricing** for each matching product
-
-   ```bash
-   curl -s "https://api.pax8.com/v1/products/{productId}/pricing" \
-     -H "Authorization: Bearer $TOKEN"
-   ```
-
-5. **Format and return results** with product details and pricing
+4. **Format and return results** with product details and pricing
 
 ## Parameters
 
@@ -174,17 +152,17 @@ Popular searches:
 
 ## Error Handling
 
-### Authentication Error
+### MCP Connection Error
 
 ```
-Error: Unable to authenticate with Pax8 API
+Error: Unable to connect to Pax8 MCP server
 
 Possible causes:
-  - Invalid client credentials (check PAX8_CLIENT_ID and PAX8_CLIENT_SECRET)
-  - Credentials have been revoked
+  - MCP token is invalid or expired
+  - MCP server is not configured
   - Network connectivity issue
 
-Retry or check configuration.
+Check your MCP configuration and regenerate the token at app.pax8.com/integrations/mcp
 ```
 
 ### Rate Limit
@@ -206,35 +184,13 @@ Note: Some products require contacting Pax8 directly for pricing.
 Check the Pax8 portal at app.pax8.com for details.
 ```
 
-## Use Cases
+## MCP Tools Used
 
-### Find the Right M365 Plan
-
-Compare Microsoft 365 plans for a client:
-```
-/search-products "Microsoft 365" --vendor Microsoft --show_pricing
-```
-
-### Compare Security Products
-
-Find endpoint security options across vendors:
-```
-/search-products "endpoint" --show_pricing
-```
-
-### Check Backup Options
-
-Find backup solutions:
-```
-/search-products "backup" --show_pricing
-```
-
-### Verify a SKU Before Ordering
-
-Confirm product details before placing an order:
-```
-/search-products "CFQ7TTC0LCHC" --show_pricing
-```
+| Tool | Purpose |
+|------|---------|
+| `pax8-list-products` | Search products by name and vendor |
+| `pax8-get-product-by-uuid` | Get full product details |
+| `pax8-get-product-pricing-by-uuid` | Get pricing tiers for a product |
 
 ## Related Commands
 

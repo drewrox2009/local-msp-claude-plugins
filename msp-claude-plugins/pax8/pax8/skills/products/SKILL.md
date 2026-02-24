@@ -25,6 +25,47 @@ triggers:
 
 The Pax8 product catalog contains thousands of cloud software products from hundreds of vendors. MSPs use the catalog to find the right products for their clients, check pricing, and understand provisioning requirements. Products range from Microsoft 365 and Azure to security tools, backup solutions, and line-of-business applications. Each product has associated pricing tiers, billing terms, and provisioning details that determine how it is ordered and managed.
 
+## MCP Tools
+
+### Available Tools
+
+| Tool | Description | Key Parameters |
+|------|-------------|----------------|
+| `pax8-list-products` | Search and browse the product catalog | `productName`, `page`, `size`, `vendorName`, `search` |
+| `pax8-get-product-by-uuid` | Get a single product's details | `productId` (required) |
+| `pax8-get-product-pricing-by-uuid` | Get product pricing tiers | `productId` (required), `companyId` (optional) |
+
+### Search Products
+
+Call `pax8-list-products` with optional parameters:
+
+- **Search by name:** Set `productName` or `search` to a product name or keyword
+- **Filter by vendor:** Set `vendorName` to a vendor name (e.g., `Microsoft`, `SentinelOne`, `Acronis`)
+- **Paginate:** Set `page` (0-based) and `size` (up to 200)
+
+**Example: Find Microsoft 365 products:**
+- `pax8-list-products` with `vendorName=Microsoft`, `search=365`, `size=200`
+
+**Example: Search for backup products:**
+- `pax8-list-products` with `search=backup`, `size=200`
+
+### Get Product Details
+
+Call `pax8-get-product-by-uuid` with the `productId` parameter.
+
+**Example:**
+- `pax8-get-product-by-uuid` with `productId=f9e8d7c6-b5a4-3210-fedc-ba0987654321`
+
+### Get Product Pricing
+
+Call `pax8-get-product-pricing-by-uuid` with the `productId` parameter. Optionally pass `companyId` to get company-specific pricing.
+
+**Example:**
+- `pax8-get-product-pricing-by-uuid` with `productId=f9e8d7c6-b5a4-3210-fedc-ba0987654321`
+
+**Example with company-specific pricing:**
+- `pax8-get-product-pricing-by-uuid` with `productId=f9e8d7c6-...`, `companyId=a1b2c3d4-...`
+
 ## Key Concepts
 
 ### Product Hierarchy
@@ -87,8 +128,6 @@ Products in Pax8 follow a hierarchical structure:
 
 ### Pricing Fields
 
-Pricing is a separate endpoint per product:
-
 | Field | Type | Description |
 |-------|------|-------------|
 | `id` | UUID | Pricing record ID |
@@ -102,70 +141,47 @@ Pricing is a separate endpoint per product:
 | `startDate` | date | Pricing effective date |
 | `endDate` | date | Pricing expiration date |
 
-### Provisioning Details Fields
+## Common Workflows
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `productId` | UUID | Associated product ID |
-| `provisioningType` | string | Automated, Manual, or Hybrid |
-| `requiredFields` | array | Fields needed for provisioning |
-| `instructions` | string | Setup instructions |
-| `estimatedTime` | string | Estimated provisioning time |
+### Find the Right Product for a Client
 
-## API Patterns
+1. Call `pax8-list-products` with `search` set to the product keyword and optionally `vendorName`
+2. Review the results for matching products
+3. For each candidate, call `pax8-get-product-by-uuid` to check details (active status, min/max quantity, provisioning type)
+4. Call `pax8-get-product-pricing-by-uuid` to compare pricing tiers
 
-### List Products
+### Compare Product Pricing
 
-```http
-GET /v1/products
-Authorization: Bearer YOUR_TOKEN
-Content-Type: application/json
-```
+1. Identify the product IDs you want to compare
+2. For each product, call `pax8-get-product-pricing-by-uuid` with the `productId`
+3. Compare `partnerBuyPrice` (your cost) and `suggestedRetailPrice` (recommended client price)
+4. Calculate margin: `(suggestedRetailPrice - partnerBuyPrice) / suggestedRetailPrice * 100`
 
-**With Pagination and Sorting:**
+### Microsoft 365 Product Finder
 
-```http
-GET /v1/products?page=0&size=50&sort=name,ASC
-GET /v1/products?page=0&size=200&sort=vendorName,ASC
-```
+Common M365 plans MSPs order through Pax8:
 
-**Filter by Vendor:**
+- Microsoft 365 Business Basic
+- Microsoft 365 Business Standard
+- Microsoft 365 Business Premium
+- Microsoft 365 E3
+- Microsoft 365 E5
+- Exchange Online Plan 1/2
+- Microsoft Teams Essentials
+- Microsoft Defender for Business
 
-```http
-GET /v1/products?vendorName=Microsoft
-GET /v1/products?vendorName=SentinelOne
-GET /v1/products?vendorName=Acronis
-```
+To find these, call `pax8-list-products` with `vendorName=Microsoft` and `search=365` (or `Defender`, `Exchange`, etc.).
 
-### curl Examples
+### Build a Product Catalog Export
 
-```bash
-# List all products (first page, sorted by name)
-curl -s "https://api.pax8.com/v1/products?page=0&size=50&sort=name,ASC" \
-  -H "Authorization: Bearer $TOKEN"
+1. Call `pax8-list-products` with `size=200` and `page=0`
+2. Paginate through all pages by incrementing `page`
+3. For each product, call `pax8-get-product-pricing-by-uuid` to get pricing
+4. Compile into a catalog with product name, vendor, SKU, unit, monthly price, annual price, and margin
 
-# Filter by vendor
-curl -s "https://api.pax8.com/v1/products?vendorName=Microsoft&page=0&size=50" \
-  -H "Authorization: Bearer $TOKEN"
+## Response Examples
 
-# Get all products from a vendor (paginated)
-curl -s "https://api.pax8.com/v1/products?vendorName=Microsoft&page=0&size=200" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-### Get Single Product
-
-```http
-GET /v1/products/f9e8d7c6-b5a4-3210-fedc-ba0987654321
-Authorization: Bearer YOUR_TOKEN
-```
-
-```bash
-curl -s "https://api.pax8.com/v1/products/f9e8d7c6-b5a4-3210-fedc-ba0987654321" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-**Response:**
+**Product:**
 
 ```json
 {
@@ -183,19 +199,7 @@ curl -s "https://api.pax8.com/v1/products/f9e8d7c6-b5a4-3210-fedc-ba0987654321" 
 }
 ```
 
-### Get Product Pricing
-
-```http
-GET /v1/products/f9e8d7c6-b5a4-3210-fedc-ba0987654321/pricing
-Authorization: Bearer YOUR_TOKEN
-```
-
-```bash
-curl -s "https://api.pax8.com/v1/products/f9e8d7c6-b5a4-3210-fedc-ba0987654321/pricing" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-**Response:**
+**Pricing:**
 
 ```json
 {
@@ -207,9 +211,7 @@ curl -s "https://api.pax8.com/v1/products/f9e8d7c6-b5a4-3210-fedc-ba0987654321/p
       "unitPrice": 18.90,
       "partnerBuyPrice": 18.90,
       "suggestedRetailPrice": 22.00,
-      "currency": "USD",
-      "startDate": "2026-01-01",
-      "endDate": null
+      "currency": "USD"
     },
     {
       "id": "p2r3i4c5-f6a7-8901-bcde-f12345678901",
@@ -218,222 +220,27 @@ curl -s "https://api.pax8.com/v1/products/f9e8d7c6-b5a4-3210-fedc-ba0987654321/p
       "unitPrice": 17.10,
       "partnerBuyPrice": 17.10,
       "suggestedRetailPrice": 22.00,
-      "currency": "USD",
-      "startDate": "2026-01-01",
-      "endDate": null
+      "currency": "USD"
     }
   ]
 }
 ```
 
-### Get Provisioning Details
-
-```http
-GET /v1/products/f9e8d7c6-b5a4-3210-fedc-ba0987654321/provisioning-details
-Authorization: Bearer YOUR_TOKEN
-```
-
-```bash
-curl -s "https://api.pax8.com/v1/products/f9e8d7c6-b5a4-3210-fedc-ba0987654321/provisioning-details" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-## Common Workflows
-
-### Find the Right Product for a Client
-
-```javascript
-async function searchProducts(searchTerm, vendor = null) {
-  let url = '/products?page=0&size=200&sort=name,ASC';
-  if (vendor) {
-    url += `&vendorName=${encodeURIComponent(vendor)}`;
-  }
-
-  const response = await pax8Client.request(url);
-  const data = await response.json();
-
-  // Client-side filter by name since Pax8 API does not have a name search param
-  const filtered = data.content.filter(p =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  return filtered;
-}
-
-// Find Microsoft 365 products
-const m365Products = await searchProducts('365', 'Microsoft');
-
-// Find backup products across all vendors
-const backupProducts = await searchProducts('backup');
-```
-
-### Compare Product Pricing
-
-```javascript
-async function comparePricing(productIds) {
-  const comparisons = [];
-
-  for (const productId of productIds) {
-    const productRes = await pax8Client.request(`/products/${productId}`);
-    const product = await productRes.json();
-
-    const pricingRes = await pax8Client.request(`/products/${productId}/pricing`);
-    const pricing = await pricingRes.json();
-
-    comparisons.push({
-      name: product.name,
-      vendor: product.vendorName,
-      sku: product.sku,
-      unit: product.unitOfMeasurement,
-      pricing: pricing.content.map(p => ({
-        term: p.billingTerm,
-        cost: p.partnerBuyPrice,
-        retail: p.suggestedRetailPrice,
-        margin: ((p.suggestedRetailPrice - p.partnerBuyPrice) / p.suggestedRetailPrice * 100).toFixed(1) + '%'
-      }))
-    });
-  }
-
-  return comparisons;
-}
-```
-
-### Build a Product Catalog Export
-
-```javascript
-async function exportProductCatalog(vendorFilter = null) {
-  let allProducts = [];
-  let page = 0;
-  let totalPages = 1;
-  let url = '/products?size=200&sort=vendorName,ASC';
-
-  if (vendorFilter) {
-    url += `&vendorName=${encodeURIComponent(vendorFilter)}`;
-  }
-
-  while (page < totalPages) {
-    const response = await pax8Client.request(`${url}&page=${page}`);
-    const data = await response.json();
-    allProducts.push(...data.content);
-    totalPages = data.page.totalPages;
-    page++;
-  }
-
-  // Enrich with pricing (rate-limit aware)
-  const catalog = [];
-  for (const product of allProducts) {
-    const pricingRes = await pax8Client.request(`/products/${product.id}/pricing`);
-    const pricing = await pricingRes.json();
-
-    catalog.push({
-      id: product.id,
-      name: product.name,
-      vendor: product.vendorName,
-      sku: product.sku,
-      unit: product.unitOfMeasurement,
-      active: product.active,
-      monthlyPrice: pricing.content.find(p => p.billingTerm === 'Monthly')?.partnerBuyPrice,
-      annualPrice: pricing.content.find(p => p.billingTerm === 'Annual')?.partnerBuyPrice,
-      retailPrice: pricing.content[0]?.suggestedRetailPrice
-    });
-
-    // Respect rate limits: brief pause between calls
-    await sleep(100);
-  }
-
-  return catalog;
-}
-```
-
-### Microsoft 365 Product Finder
-
-A common MSP need is finding the right M365 SKU:
-
-```javascript
-async function findM365Product(planName) {
-  const products = await searchProducts(planName, 'Microsoft');
-
-  // Common M365 plans MSPs order:
-  // - Microsoft 365 Business Basic
-  // - Microsoft 365 Business Standard
-  // - Microsoft 365 Business Premium
-  // - Microsoft 365 E3
-  // - Microsoft 365 E5
-  // - Exchange Online Plan 1/2
-  // - Microsoft Teams Essentials
-  // - Microsoft Defender for Business
-
-  return products.map(p => ({
-    id: p.id,
-    name: p.name,
-    sku: p.sku,
-    unit: p.unitOfMeasurement,
-    maxQuantity: p.maxQuantity,
-    provisioning: p.provisioningType
-  }));
-}
-```
-
 ## Error Handling
 
-### Common API Errors
+### Common Errors
 
-| Code | Message | Resolution |
-|------|---------|------------|
-| 401 | Unauthorized | Token expired; re-authenticate |
-| 404 | Product not found | Verify product UUID |
-| 404 | Pricing not found | Product may not have pricing configured |
-
-### Product Not Found
-
-```javascript
-async function safeGetProduct(productId) {
-  try {
-    const response = await pax8Client.request(`/products/${productId}`);
-    if (response.status === 404) {
-      console.log(`Product ${productId} not found. It may have been discontinued.`);
-      return null;
-    }
-    return await response.json();
-  } catch (error) {
-    console.log(`Error fetching product: ${error.message}`);
-    return null;
-  }
-}
-```
-
-### Pricing Unavailable
-
-Some products may not have pricing visible through the API:
-
-```javascript
-async function safeGetPricing(productId) {
-  try {
-    const response = await pax8Client.request(`/products/${productId}/pricing`);
-    if (response.status === 404) {
-      return { content: [], note: 'Pricing not available via API. Check Pax8 portal.' };
-    }
-    return await response.json();
-  } catch (error) {
-    return { content: [], note: `Pricing error: ${error.message}` };
-  }
-}
-```
-
-## Endpoint Reference
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/v1/products` | GET | List all products with pagination |
-| `/v1/products/{id}` | GET | Get product details by ID |
-| `/v1/products/{id}/pricing` | GET | Get product pricing tiers |
-| `/v1/products/{id}/provisioning-details` | GET | Get provisioning requirements |
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| Product not found | Invalid product UUID | Verify the UUID with `pax8-list-products` |
+| Pricing not found | Product may not have pricing configured | Check the Pax8 portal for pricing details |
+| No results | Search term too specific | Try a shorter or broader search term |
 
 ## Best Practices
 
 1. **Cache product catalog** - Products and pricing change infrequently; cache for 1-4 hours
 2. **Use vendor filter** - Always filter by `vendorName` when you know the vendor to reduce result sets
-3. **Check pricing separately** - Product listing does not include pricing; make a separate call per product
+3. **Check pricing separately** - Product listing does not include pricing; use `pax8-get-product-pricing-by-uuid`
 4. **Verify active status** - Only order products where `active` is `true`
 5. **Check min/max quantities** - Respect `minQuantity` and `maxQuantity` before placing orders
 6. **Understand billing terms** - Annual commitments are cheaper but lock in for 12 months
@@ -444,7 +251,7 @@ async function safeGetPricing(productId) {
 
 ## Related Skills
 
-- [Pax8 API Patterns](../api-patterns/SKILL.md) - Authentication and API reference
+- [Pax8 API Patterns](../api-patterns/SKILL.md) - MCP tools reference and connection info
 - [Pax8 Subscriptions](../subscriptions/SKILL.md) - Active product subscriptions
 - [Pax8 Orders](../orders/SKILL.md) - Ordering products
 - [Pax8 Companies](../companies/SKILL.md) - Client company management

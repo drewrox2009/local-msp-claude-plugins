@@ -1,7 +1,7 @@
 ---
 description: >
   Use this skill when working with Pax8 companies (MSP clients) -
-  creating, searching, updating, and managing client records in the
+  searching, retrieving, and managing client records in the
   Pax8 marketplace. Covers company fields, contact management, billing
   settings, and cross-referencing with subscriptions and orders.
 triggers:
@@ -21,6 +21,37 @@ triggers:
 
 Companies in Pax8 represent the MSP's client organizations. Each company is associated with subscriptions, orders, invoices, and contacts. When an MSP provisions cloud software through Pax8, it is always tied to a specific company record. Companies are the foundational entity for all marketplace operations -- products are ordered for companies, subscriptions belong to companies, and invoices are generated per company.
 
+## MCP Tools
+
+### Available Tools
+
+| Tool | Description | Key Parameters |
+|------|-------------|----------------|
+| `pax8-list-companies` | List and search companies | `page`, `size`, `sort` (name/city/country/stateOrProvince/postalCode), `order` (asc/desc), `company_name`, `status` (active/inactive/deleted) |
+| `pax8-get-company-by-uuid` | Get a single company by ID | `uuid` (required) |
+
+### List Companies
+
+Call `pax8-list-companies` with optional parameters:
+
+- **Search by name:** Set `company_name` to a company name (or partial name)
+- **Filter by status:** Set `status` to `active`, `inactive`, or `deleted`
+- **Sort results:** Set `sort` to a field name (e.g., `name`) and `order` to `asc` or `desc`
+- **Paginate:** Set `page` (0-based) and `size` (up to 200)
+
+**Example: Find all active companies sorted by name:**
+- `pax8-list-companies` with `status=active`, `sort=name`, `order=asc`, `size=200`
+
+**Example: Search for a company by name:**
+- `pax8-list-companies` with `company_name=Acme`
+
+### Get a Single Company
+
+Call `pax8-get-company-by-uuid` with the `uuid` parameter set to the company's UUID.
+
+**Example:**
+- `pax8-get-company-by-uuid` with `uuid=a1b2c3d4-e5f6-7890-abcd-ef1234567890`
+
 ## Key Concepts
 
 ### Company Lifecycle
@@ -37,10 +68,10 @@ Companies in Pax8 follow a straightforward lifecycle:
 
 In Pax8's model:
 
-- **Partner** - Your MSP organization (the authenticated API user)
+- **Partner** - Your MSP organization (the authenticated user)
 - **Company** - Your MSP's clients (the end customers you manage)
 
-The API operates from the Partner perspective. All company operations are scoped to your partner account.
+All company operations are scoped to your partner account.
 
 ### Billing Configuration
 
@@ -92,54 +123,43 @@ Contacts are managed as a sub-resource of companies:
 | `phone` | string | No | Phone number |
 | `types` | array | No | Contact types (e.g., "Admin", "Billing", "Technical") |
 
-## API Patterns
+## Common Workflows
 
-### List Companies
+### Find a Company by Name
 
-```http
-GET /v1/companies
-Authorization: Bearer YOUR_TOKEN
-Content-Type: application/json
-```
+1. Call `pax8-list-companies` with `company_name` set to the search term
+2. Review the results in the `content` array
+3. If the company is found, note its `id` (UUID) for use in other tools
 
-**With Pagination and Sorting:**
+### Get a Company's Full Details
 
-```http
-GET /v1/companies?page=0&size=50&sort=name,ASC
-```
+1. Call `pax8-get-company-by-uuid` with the company's `uuid`
+2. The response includes name, address, billing settings, and creation date
 
-**With Filters:**
+### New Client Onboarding in Pax8
 
-```http
-GET /v1/companies?city=Springfield&stateOrProvince=IL
-GET /v1/companies?selfServiceAllowed=true
-```
+1. **Find or create company** - Use `pax8-list-companies` to check if the company already exists
+2. **Note the company UUID** for subsequent operations
+3. **Place initial orders** - Use `pax8-list-products` to find products, then order through the Pax8 portal
+4. **Verify subscriptions** - Use `pax8-list-subscriptions` with the `companyId` to confirm provisioning
 
-### curl Examples
+### Cross-Reference with PSA
 
-```bash
-# List all companies (first page)
-curl -s "https://api.pax8.com/v1/companies?page=0&size=50&sort=name,ASC" \
-  -H "Authorization: Bearer $TOKEN"
+Use the `externalId` field to match Pax8 companies with PSA records:
 
-# Filter by state
-curl -s "https://api.pax8.com/v1/companies?stateOrProvince=IL&page=0&size=50" \
-  -H "Authorization: Bearer $TOKEN"
-```
+1. Call `pax8-list-companies` to get all companies
+2. Match each company's `externalId` to your PSA system's company IDs
+3. Flag companies without an `externalId` as needing PSA linkage
 
-### Get Single Company
+### Company Audit Report
 
-```http
-GET /v1/companies/a1b2c3d4-e5f6-7890-abcd-ef1234567890
-Authorization: Bearer YOUR_TOKEN
-```
+1. Call `pax8-list-companies` with `size=200` to get all companies (paginate if needed)
+2. For each company, call `pax8-list-subscriptions` with `companyId` and `status=Active` to get active subscription count
+3. Build a report with company name, external ID, location, subscription count, and billing settings
 
-```bash
-curl -s "https://api.pax8.com/v1/companies/a1b2c3d4-e5f6-7890-abcd-ef1234567890" \
-  -H "Authorization: Bearer $TOKEN"
-```
+## Response Examples
 
-**Response:**
+**Single Company:**
 
 ```json
 {
@@ -163,306 +183,15 @@ curl -s "https://api.pax8.com/v1/companies/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
 }
 ```
 
-### Create Company
-
-```http
-POST /v1/companies
-Content-Type: application/json
-Authorization: Bearer YOUR_TOKEN
-```
-
-```json
-{
-  "name": "New Client Corporation",
-  "address": {
-    "street": "456 Oak Ave",
-    "city": "Portland",
-    "stateOrProvince": "OR",
-    "postalCode": "97201",
-    "country": "US"
-  },
-  "phone": "555-987-6543",
-  "website": "https://newclient.com",
-  "externalId": "PSA-67890",
-  "billOnBehalfOfEnabled": false,
-  "selfServiceAllowed": false,
-  "orderApprovalRequired": true
-}
-```
-
-```bash
-curl -s -X POST "https://api.pax8.com/v1/companies" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "New Client Corporation",
-    "address": {
-      "street": "456 Oak Ave",
-      "city": "Portland",
-      "stateOrProvince": "OR",
-      "postalCode": "97201",
-      "country": "US"
-    },
-    "phone": "555-987-6543",
-    "externalId": "PSA-67890"
-  }'
-```
-
-### Update Company
-
-```http
-PUT /v1/companies/a1b2c3d4-e5f6-7890-abcd-ef1234567890
-Content-Type: application/json
-Authorization: Bearer YOUR_TOKEN
-```
-
-```json
-{
-  "name": "Acme Corporation",
-  "phone": "555-999-0000",
-  "website": "https://newsite.acme.com",
-  "orderApprovalRequired": true
-}
-```
-
-### List Contacts for a Company
-
-```http
-GET /v1/companies/a1b2c3d4-e5f6-7890-abcd-ef1234567890/contacts
-Authorization: Bearer YOUR_TOKEN
-```
-
-```bash
-curl -s "https://api.pax8.com/v1/companies/a1b2c3d4-e5f6-7890-abcd-ef1234567890/contacts" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-**Response:**
-
-```json
-{
-  "page": {
-    "size": 50,
-    "totalElements": 3,
-    "totalPages": 1,
-    "number": 0
-  },
-  "content": [
-    {
-      "id": "c1d2e3f4-a5b6-7890-cdef-123456789012",
-      "firstName": "John",
-      "lastName": "Smith",
-      "email": "john.smith@acme.com",
-      "phone": "555-123-4567",
-      "types": ["Admin", "Billing"]
-    },
-    {
-      "id": "d2e3f4a5-b6c7-8901-defa-234567890123",
-      "firstName": "Jane",
-      "lastName": "Doe",
-      "email": "jane.doe@acme.com",
-      "phone": "555-234-5678",
-      "types": ["Technical"]
-    }
-  ]
-}
-```
-
-### Create Contact
-
-```http
-POST /v1/companies/a1b2c3d4-e5f6-7890-abcd-ef1234567890/contacts
-Content-Type: application/json
-Authorization: Bearer YOUR_TOKEN
-```
-
-```json
-{
-  "firstName": "Bob",
-  "lastName": "Manager",
-  "email": "bob.manager@acme.com",
-  "phone": "555-345-6789",
-  "types": ["Admin"]
-}
-```
-
-## Common Workflows
-
-### New Client Onboarding in Pax8
-
-1. **Create company** with basic info (name, address, phone)
-2. **Set external ID** to link with your PSA (ConnectWise, Autotask, HaloPSA)
-3. **Create contacts** for admin, billing, and technical roles
-4. **Configure billing** preferences (bill-on-behalf-of, order approval)
-5. **Place initial orders** for required products (Microsoft 365, security, backup)
-6. **Verify subscriptions** are provisioned and active
-
-```javascript
-async function onboardClient(clientData) {
-  // Step 1: Create company
-  const company = await pax8Client.request('/companies', {
-    method: 'POST',
-    body: JSON.stringify({
-      name: clientData.name,
-      address: {
-        street: clientData.street,
-        city: clientData.city,
-        stateOrProvince: clientData.state,
-        postalCode: clientData.zip,
-        country: 'US'
-      },
-      phone: clientData.phone,
-      externalId: clientData.psaId,
-      orderApprovalRequired: true
-    })
-  });
-  const companyData = await company.json();
-
-  // Step 2: Create primary contact
-  await pax8Client.request(`/companies/${companyData.id}/contacts`, {
-    method: 'POST',
-    body: JSON.stringify({
-      firstName: clientData.contactFirst,
-      lastName: clientData.contactLast,
-      email: clientData.contactEmail,
-      types: ['Admin', 'Billing']
-    })
-  });
-
-  return companyData;
-}
-```
-
-### Cross-Reference with PSA
-
-Use the `externalId` field to match Pax8 companies with PSA records:
-
-```javascript
-async function findByPsaId(psaId) {
-  const companies = await fetchAllCompanies();
-  return companies.find(c => c.externalId === psaId);
-}
-
-async function syncCompanyWithPsa(pax8Company, psaCompany) {
-  // Update Pax8 company with PSA external ID if not set
-  if (!pax8Company.externalId) {
-    await pax8Client.request(`/companies/${pax8Company.id}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        name: pax8Company.name,
-        externalId: psaCompany.id.toString()
-      })
-    });
-  }
-}
-```
-
-### Company Audit Report
-
-```javascript
-async function generateCompanyAudit() {
-  const companies = await fetchAllCompanies();
-
-  const report = [];
-  for (const company of companies) {
-    // Get subscription count for each company
-    const subsResponse = await pax8Client.request(
-      `/subscriptions?companyId=${company.id}&status=Active&page=0&size=1`
-    );
-    const subsData = await subsResponse.json();
-
-    report.push({
-      name: company.name,
-      id: company.id,
-      externalId: company.externalId || 'NOT LINKED',
-      city: company.address?.city,
-      state: company.address?.stateOrProvince,
-      activeSubscriptions: subsData.page.totalElements,
-      selfService: company.selfServiceAllowed,
-      orderApproval: company.orderApprovalRequired,
-      createdDate: company.createdDate
-    });
-  }
-
-  return report;
-}
-```
-
-### Bulk Company Export
-
-```javascript
-async function exportCompaniesForReconciliation() {
-  const companies = await fetchAllCompanies();
-
-  return companies.map(c => ({
-    pax8Id: c.id,
-    name: c.name,
-    externalId: c.externalId,
-    city: c.address?.city,
-    state: c.address?.stateOrProvince,
-    country: c.address?.country,
-    phone: c.phone,
-    website: c.website,
-    billOnBehalf: c.billOnBehalfOfEnabled,
-    selfService: c.selfServiceAllowed,
-    created: c.createdDate
-  }));
-}
-```
-
 ## Error Handling
 
-### Common API Errors
+### Common Errors
 
-| Code | Message | Resolution |
-|------|---------|------------|
-| 400 | Name is required | Provide company name in request body |
-| 400 | Invalid country code | Use ISO country code (e.g., "US", "CA", "GB") |
-| 401 | Unauthorized | Token expired; re-authenticate |
-| 404 | Company not found | Verify company UUID |
-| 409 | Company name already exists | Use a unique company name |
-| 422 | Validation failed | Check field values and formats |
-
-### Validation Errors
-
-| Error | Cause | Fix |
-|-------|-------|-----|
-| Name required | Missing name field | Add name to request body |
-| Invalid UUID | Malformed company ID | Verify UUID format |
-| Invalid country | Wrong country format | Use 2-letter ISO code |
-| Invalid email | Malformed contact email | Verify email format |
-
-### Error Recovery Pattern
-
-```javascript
-async function safeCreateCompany(data) {
-  try {
-    const response = await pax8Client.request('/companies', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw { status: response.status, message: error.message };
-    }
-
-    return await response.json();
-  } catch (error) {
-    if (error.status === 409) {
-      // Company exists - search for it
-      const companies = await fetchAllCompanies();
-      return companies.find(c => c.name === data.name);
-    }
-
-    if (error.status === 401) {
-      throw new Error('OAuth2 token expired. Re-authenticate.');
-    }
-
-    throw error;
-  }
-}
-```
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| Company not found | Invalid UUID | Verify the company UUID with `pax8-list-companies` |
+| Invalid status filter | Wrong status value | Use `active`, `inactive`, or `deleted` |
+| No results | Company name mismatch | Try a shorter or different search term |
 
 ## Best Practices
 
@@ -472,14 +201,14 @@ async function safeCreateCompany(data) {
 4. **Audit regularly** - Review company list quarterly for inactive or orphaned records
 5. **Standardize naming** - Use consistent company naming conventions across Pax8 and your PSA
 6. **Use pagination** - Always paginate when listing companies; do not assume small result sets
-7. **Cache company lists** - Company data changes infrequently; cache for short periods to reduce API calls
+7. **Cache company lists** - Company data changes infrequently; cache for short periods
 8. **Validate before creating** - Search for existing companies before creating duplicates
 9. **Track billing config** - Document which companies have bill-on-behalf-of enabled
 10. **Sync with PSA** - Regularly verify that Pax8 companies match your PSA company records
 
 ## Related Skills
 
-- [Pax8 API Patterns](../api-patterns/SKILL.md) - Authentication and API reference
+- [Pax8 API Patterns](../api-patterns/SKILL.md) - MCP tools reference and connection info
 - [Pax8 Subscriptions](../subscriptions/SKILL.md) - Subscription management per company
 - [Pax8 Orders](../orders/SKILL.md) - Ordering products for companies
 - [Pax8 Invoices](../invoices/SKILL.md) - Company billing and invoices

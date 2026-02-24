@@ -20,48 +20,28 @@ View subscription status and details for a specific company. Shows active licens
 
 ## Prerequisites
 
-- Valid Pax8 OAuth2 credentials configured (`PAX8_CLIENT_ID`, `PAX8_CLIENT_SECRET`)
-- Active bearer token (auto-refreshed)
-- Company must exist in Pax8
+- Pax8 MCP server connected with a valid MCP token
+- MCP tools `pax8-list-companies`, `pax8-list-subscriptions`, `pax8-get-subscription-by-uuid`, and `pax8-get-product-by-uuid` available
 
 ## Steps
 
-1. **Authenticate** with Pax8 OAuth2 if token is expired
+1. **Resolve company** - Find the company by name or ID
 
-   ```bash
-   TOKEN=$(curl -s -X POST https://login.pax8.com/oauth/token \
-     -H "Content-Type: application/json" \
-     -d '{
-       "client_id": "'$PAX8_CLIENT_ID'",
-       "client_secret": "'$PAX8_CLIENT_SECRET'",
-       "audience": "api://p8p.client",
-       "grant_type": "client_credentials"
-     }' | jq -r '.access_token')
-   ```
+   - If a name was provided, call `pax8-list-companies` with `company_name` set to the search term
+   - If a UUID was provided, call `pax8-get-company-by-uuid` with `uuid`
 
-2. **Resolve company** - Find the company by name or ID
+2. **Fetch subscriptions** for the company
 
-   ```bash
-   # If a name was provided, search for it
-   curl -s "https://api.pax8.com/v1/companies?page=0&size=200&sort=name,ASC" \
-     -H "Authorization: Bearer $TOKEN"
-   ```
+   Call `pax8-list-subscriptions` with:
+   - `companyId` set to the resolved company UUID
+   - `status` set to the requested filter (e.g., `Active`) -- omit if "all" was requested
+   - `size=200` for maximum results per page
 
-3. **Fetch subscriptions** for the company
+3. **Enrich with product names** by looking up product details
 
-   ```bash
-   curl -s "https://api.pax8.com/v1/subscriptions?companyId=COMPANY_ID&status=Active&page=0&size=200" \
-     -H "Authorization: Bearer $TOKEN"
-   ```
+   For each unique `productId` in the results, call `pax8-get-product-by-uuid` with `productId` to get the product name
 
-4. **Enrich with product names** by looking up product details
-
-   ```bash
-   curl -s "https://api.pax8.com/v1/products/PRODUCT_ID" \
-     -H "Authorization: Bearer $TOKEN"
-   ```
-
-5. **Format and return results** with subscription details
+4. **Format and return results** with subscription details
 
 ## Parameters
 
@@ -163,46 +143,6 @@ Summary:
 ================================================================
 ```
 
-### Single Product Filter
-
-```
-/subscription-status --company "Acme Corp" --product "Microsoft"
-
-Subscription Status for: Acme Corporation (filtered: "Microsoft")
-================================================================
-
-Microsoft Subscriptions: 4
-Total Monthly Cost: $567.00
-
-+--------------------------------------------+------+----------+--------+-----------+
-| Product                                    | Qty  | Term     | Price  | Monthly   |
-+--------------------------------------------+------+----------+--------+-----------+
-| Microsoft 365 Business Premium             | 25   | Annual   | $17.10 | $427.50   |
-| Microsoft 365 Business Basic               | 10   | Annual   | $5.40  | $54.00    |
-| Exchange Online Plan 1                     | 5    | Monthly  | $3.60  | $18.00    |
-| Microsoft Defender for Business            | 25   | Monthly  | $2.70  | $67.50    |
-+--------------------------------------------+------+----------+--------+-----------+
-
-Total Microsoft seats: 65
-================================================================
-```
-
-### No Subscriptions Found
-
-```
-No active subscriptions found for "New Client Inc"
-
-Possible reasons:
-  - Company has no subscriptions yet
-  - All subscriptions may be cancelled
-  - Company name may not match exactly
-
-Suggestions:
-  - Check all statuses: /subscription-status --company "New Client Inc" --status all
-  - Verify company name: Search in Pax8 portal
-  - Place an order: /create-order --company "New Client Inc"
-```
-
 ### Company Not Found
 
 ```
@@ -227,16 +167,17 @@ Suggestions:
 | WaitingForDetails | Needs more information |
 | Trial | Free trial active |
 | Converted | Trial converted to paid |
-| ActivePendingChange | Change being processed |
+| PendingActivation | Activation pending |
+| Activated | Recently activated |
 
 ## Error Handling
 
-### Authentication Error
+### MCP Connection Error
 
 ```
-Error: Unable to authenticate with Pax8 API
+Error: Unable to connect to Pax8 MCP server
 
-Check PAX8_CLIENT_ID and PAX8_CLIENT_SECRET environment variables.
+Check your MCP configuration and regenerate the token at app.pax8.com/integrations/mcp
 ```
 
 ### Rate Limit
@@ -248,18 +189,14 @@ Please wait a moment and try again.
 The Pax8 API allows 1000 requests per minute.
 ```
 
-### API Error
+## MCP Tools Used
 
-```
-Error connecting to Pax8 API
-
-Possible causes:
-  - Network connectivity issue
-  - Pax8 API may be experiencing issues
-  - Check https://status.pax8.com for service status
-
-Retry or check configuration.
-```
+| Tool | Purpose |
+|------|---------|
+| `pax8-list-companies` | Find company by name |
+| `pax8-get-company-by-uuid` | Get company by UUID |
+| `pax8-list-subscriptions` | List subscriptions with filters |
+| `pax8-get-product-by-uuid` | Resolve product names |
 
 ## Related Commands
 
