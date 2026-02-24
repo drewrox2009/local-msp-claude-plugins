@@ -1,9 +1,9 @@
 ---
 description: >
-  Use this skill when working with the Pax8 API - OAuth2 authentication,
+  Use this skill when working with the Pax8 API - MCP server authentication,
   REST structure, pagination, sorting, filtering, rate limiting, error
-  handling, and best practices. Covers client credentials flow, bearer
-  token management, and common request/response patterns.
+  handling, and best practices. Covers the official hosted MCP server
+  token auth and REST API patterns.
 triggers:
   - pax8 api
   - pax8 query
@@ -11,7 +11,7 @@ triggers:
   - pax8 pagination
   - pax8 rate limit
   - pax8 authentication
-  - pax8 oauth
+  - pax8 mcp
   - pax8 rest
   - pax8 endpoint
   - pax8 request
@@ -22,18 +22,55 @@ triggers:
 
 ## Overview
 
-The Pax8 API is a RESTful JSON API that provides access to companies, contacts, products, subscriptions, orders, invoices, invoice items, and usage summaries. All endpoints are served from `https://api.pax8.com/v1/` and require OAuth2 bearer token authentication. This skill covers authentication, query building, pagination, sorting, error handling, and performance optimization patterns.
+Pax8 provides a first-party hosted MCP server at `https://mcp.pax8.com/v1/mcp` for AI tool integration. The underlying REST API at `https://api.pax8.com/v1/` provides access to companies, contacts, products, subscriptions, orders, invoices, and usage summaries. This skill covers MCP authentication, REST patterns, pagination, sorting, error handling, and best practices.
 
 ## Authentication
 
-### OAuth2 Client Credentials Flow
+### MCP Server (Recommended)
 
-Pax8 uses the OAuth2 Client Credentials grant for API authentication. You must first obtain a bearer token, then include it in all subsequent requests.
+Pax8 hosts an official MCP server. Authentication uses a single token:
 
-**Step 1: Request a Bearer Token**
+1. Log into [app.pax8.com](https://app.pax8.com)
+2. Navigate to **Integrations > MCP** (or visit [app.pax8.com/integrations/mcp](https://app.pax8.com/integrations/mcp))
+3. Generate an MCP token
+
+**Required Header:**
+
+| Header | Value | Description |
+|--------|-------|-------------|
+| `x-pax8-mcp-token` | `<token>` | MCP token from Pax8 portal |
+
+**MCP Server URL:** `https://mcp.pax8.com/v1/mcp`
+
+### Environment Variables
+
+```bash
+export PAX8_MCP_TOKEN="your-mcp-token"
+```
+
+### Claude Desktop Configuration
+
+```json
+{
+  "mcpServers": {
+    "pax8": {
+      "command": "npx",
+      "args": [
+        "-y", "mcp-remote",
+        "https://mcp.pax8.com/v1/mcp",
+        "--header", "x-pax8-mcp-token:YOUR_TOKEN"
+      ]
+    }
+  }
+}
+```
+
+### REST API (Direct Access)
+
+For direct REST API access, Pax8 uses OAuth2 Client Credentials:
 
 ```http
-POST https://login.pax8.com/oauth/token
+POST https://api.pax8.com/v1/token
 Content-Type: application/json
 ```
 
@@ -41,46 +78,20 @@ Content-Type: application/json
 {
   "client_id": "YOUR_CLIENT_ID",
   "client_secret": "YOUR_CLIENT_SECRET",
-  "audience": "api://p8p.client",
+  "audience": "https://api.pax8.com",
   "grant_type": "client_credentials"
 }
 ```
 
-**Token Response:**
-
-```json
-{
-  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "token_type": "Bearer",
-  "expires_in": 86400
-}
-```
-
-**Step 2: Use the Token in Requests**
+Tokens are valid for 24 hours (86,400 seconds). Include in requests as:
 
 ```http
-GET https://api.pax8.com/v1/companies
-Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
-Content-Type: application/json
-```
-
-**Required Headers:**
-
-| Header | Value | Description |
-|--------|-------|-------------|
-| `Authorization` | `Bearer <token>` | OAuth2 bearer token |
-| `Content-Type` | `application/json` | JSON content type |
-
-### Environment Variables
-
-```bash
-export PAX8_CLIENT_ID="your-client-id"
-export PAX8_CLIENT_SECRET="your-client-secret"
+Authorization: Bearer <access_token>
 ```
 
 ### Base URL Pattern
 
-All API endpoints follow the pattern:
+All REST API endpoints follow the pattern:
 
 ```
 https://api.pax8.com/v1/[resource]
@@ -93,77 +104,6 @@ https://api.pax8.com/v1/products
 https://api.pax8.com/v1/subscriptions
 https://api.pax8.com/v1/orders
 https://api.pax8.com/v1/invoices
-```
-
-### Token Management
-
-Bearer tokens expire after a set duration (typically 24 hours). Implement automatic token refresh:
-
-```javascript
-class Pax8Client {
-  constructor(clientId, clientSecret) {
-    this.clientId = clientId;
-    this.clientSecret = clientSecret;
-    this.token = null;
-    this.tokenExpiry = null;
-  }
-
-  async getToken() {
-    if (this.token && this.tokenExpiry > Date.now()) {
-      return this.token;
-    }
-
-    const response = await fetch('https://login.pax8.com/oauth/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        client_id: this.clientId,
-        client_secret: this.clientSecret,
-        audience: 'api://p8p.client',
-        grant_type: 'client_credentials'
-      })
-    });
-
-    const data = await response.json();
-    this.token = data.access_token;
-    // Refresh 5 minutes before actual expiry
-    this.tokenExpiry = Date.now() + (data.expires_in - 300) * 1000;
-    return this.token;
-  }
-
-  async request(path, options = {}) {
-    const token = await this.getToken();
-    const url = `https://api.pax8.com/v1${path}`;
-
-    return fetch(url, {
-      ...options,
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        ...options.headers
-      }
-    });
-  }
-}
-```
-
-### Token Request with curl
-
-```bash
-# Get bearer token
-TOKEN=$(curl -s -X POST https://login.pax8.com/oauth/token \
-  -H "Content-Type: application/json" \
-  -d '{
-    "client_id": "'$PAX8_CLIENT_ID'",
-    "client_secret": "'$PAX8_CLIENT_SECRET'",
-    "audience": "api://p8p.client",
-    "grant_type": "client_credentials"
-  }' | jq -r '.access_token')
-
-# Use token in API calls
-curl -s https://api.pax8.com/v1/companies \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json"
 ```
 
 ## Request Format

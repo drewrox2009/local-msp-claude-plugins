@@ -56,7 +56,7 @@ Plus shared skills for MSP terminology, ticket triage, cross-vendor incident cor
 | **ConnectWise Automate** | 🔨 Beta | [connectwise-automate-mcp](https://github.com/wyre-technology/connectwise-automate-mcp) |
 | **NinjaOne** | 🔨 Beta | [ninjaone-mcp](https://github.com/wyre-technology/ninjaone-mcp) |
 | **SalesBuildr** | 🚧 Alpha | [salesbuildr-mcp](https://github.com/wyre-technology/salesbuildr-mcp) |
-| **Pax8** | 🔨 Beta | [pax8-mcp](https://github.com/wyre-technology/pax8-mcp) |
+| **Pax8** | 🔨 Beta | [Pax8 Hosted](https://mcp.pax8.com/v1/mcp) (official) |
 | **Xero** | 🔨 Beta | [xero-mcp](https://github.com/wyre-technology/xero-mcp) |
 | **QuickBooks Online** | 🔨 Beta | [qbo-mcp](https://github.com/wyre-technology/qbo-mcp) |
 
@@ -141,7 +141,7 @@ Each plugin uses environment variables for authentication. See the plugin's READ
 - [ConnectWise Automate](msp-claude-plugins/connectwise/automate/README.md) — Integrator credentials
 - [NinjaOne](msp-claude-plugins/ninjaone/ninjaone-rmm/README.md) — OAuth 2.0 client credentials
 - [SalesBuildr](msp-claude-plugins/salesbuildr/salesbuildr/README.md) — API key
-- [Pax8](msp-claude-plugins/pax8/pax8/README.md) — Bearer token
+- [Pax8](msp-claude-plugins/pax8/pax8/README.md) — MCP token ([official hosted server](https://mcp.pax8.com/v1/mcp))
 - [Xero](msp-claude-plugins/xero/xero/README.md) — OAuth 2.0
 - [QuickBooks Online](msp-claude-plugins/quickbooks/quickbooks-online/README.md) — OAuth 2.0
 

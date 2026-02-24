@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+#### Pax8 Plugin (`pax8/pax8/`)
+- **Switched to Pax8's official hosted MCP server** at `https://mcp.pax8.com/v1/mcp` — replaces our custom pax8-mcp server
+- **Simplified authentication** from OAuth2 client_id/client_secret to single MCP token (generated at `app.pax8.com/integrations/mcp`)
+- Updated `.mcp.json`, API patterns skill, README, and gateway vendor config
+
 ### Added
 
 #### Shared: Billing Reconciliation Skill (`shared/skills/billing-reconciliation/`)

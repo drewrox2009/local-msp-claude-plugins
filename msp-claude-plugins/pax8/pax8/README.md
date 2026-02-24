@@ -14,33 +14,47 @@ This plugin provides Claude with deep knowledge of Pax8, enabling:
 
 ## Prerequisites
 
-### API Credentials
+### MCP Token
 
-You need Pax8 OAuth2 client credentials with appropriate permissions:
+Pax8 provides a first-party hosted MCP server. You need a single MCP token:
 
 1. Log into the Pax8 Partner Portal at [app.pax8.com](https://app.pax8.com)
-2. Navigate to Settings > Developer > API Credentials
-3. Create a new application and note the Client ID and Client Secret
-4. Configure allowed scopes for your integration needs
+2. Navigate to **Integrations > MCP** (or visit [app.pax8.com/integrations/mcp](https://app.pax8.com/integrations/mcp))
+3. Generate an MCP token
+4. Set the token as an environment variable
 
 ### Environment Variables
 
-Set the following environment variables:
-
 ```bash
-export PAX8_CLIENT_ID="your-client-id"
-export PAX8_CLIENT_SECRET="your-client-secret"
+export PAX8_MCP_TOKEN="your-mcp-token"
 ```
 
 ## Installation
 
-1. Clone this plugin to your Claude plugins directory
-2. Configure environment variables
-3. The MCP server will be automatically started when needed
+### Via MCP Gateway (Recommended)
 
-### Official MCP Server
+Use the [MCP Gateway](https://mcp.wyretechnology.com) to connect — just paste your MCP token and you're done.
 
-Pax8 provides a production-ready MCP server integrated into the platform at `app.pax8.com/integrations/mcp`. This plugin adds MSP-specific skills and workflow knowledge on top of the official server.
+### Self-Hosted (Claude Desktop)
+
+Add to your Claude Desktop config:
+
+```json
+{
+  "mcpServers": {
+    "pax8": {
+      "command": "npx",
+      "args": [
+        "-y", "mcp-remote",
+        "https://mcp.pax8.com/v1/mcp",
+        "--header", "x-pax8-mcp-token:YOUR_TOKEN"
+      ]
+    }
+  }
+}
+```
+
+> **Note:** Pax8 hosts their own MCP server at `https://mcp.pax8.com/v1/mcp`. This plugin adds MSP-specific skills, commands, and workflow knowledge on top of Pax8's official server.
 
 ## Available Skills
 
@@ -90,20 +104,12 @@ Pax8 provides a production-ready MCP server integrated into the platform at `app
 
 ## Security Considerations
 
-### OAuth2 Credentials
+### MCP Token
 
-- Never commit client secrets to version control
+- Never commit MCP tokens to version control
 - Use environment variables for all credentials
-- Rotate client secrets periodically
-- Use minimum required scopes for your integration
-- Store tokens securely; they expire after a set duration
-
-### API Key Security
-
-- Client credentials grant full partner-level access
-- Audit API usage regularly in the Pax8 portal
-- Restrict application scopes to only what is needed
-- Monitor for unexpected API activity
+- Rotate tokens periodically via the Pax8 Partner Portal
+- Monitor for unexpected API activity in the portal
 
 ## API Rate Limits
 
@@ -118,17 +124,9 @@ The plugin automatically handles rate limiting with exponential backoff.
 ### Authentication Errors
 
 If you see "401 Unauthorized":
-1. Verify `PAX8_CLIENT_ID` and `PAX8_CLIENT_SECRET` are set correctly
-2. Check that the credentials have not been revoked
-3. Confirm the OAuth2 token has not expired (re-authenticate)
-4. Verify the application has the required scopes
-
-### Token Expiry
-
-If API calls suddenly fail after working:
-1. The bearer token has likely expired
-2. Request a new token from `https://login.pax8.com/oauth/token`
-3. Update the Authorization header with the new token
+1. Verify `PAX8_MCP_TOKEN` is set correctly
+2. Check that the token has not been revoked in the Pax8 portal
+3. Generate a new token at [app.pax8.com/integrations/mcp](https://app.pax8.com/integrations/mcp)
 
 ### Rate Limiting
 
@@ -137,18 +135,12 @@ If you see "429 Too Many Requests":
 2. Reduce the frequency of requests
 3. Use pagination to reduce total call count
 
-### Resource Not Found
-
-If you see "404 Not Found":
-1. Verify the resource ID exists
-2. Check that the base URL is `https://api.pax8.com/v1/`
-3. Confirm the endpoint path is correct
-
 ## API Documentation
 
-- [Pax8 API Documentation](https://docs.pax8.com)
+- [Pax8 MCP Server Docs](https://devx.pax8.com/docs/mcp-server)
+- [Pax8 MCP Setup Guide (Claude)](https://devx.pax8.com/docs/pax8-mcp-server-setup-guide-claude)
+- [Pax8 API Documentation](https://devx.pax8.com/reference)
 - [Pax8 Partner Portal](https://app.pax8.com)
-- [Pax8 MCP Integration](https://app.pax8.com/integrations/mcp)
 
 ## Contributing
 
@@ -157,6 +149,12 @@ See the main [CONTRIBUTING.md](../../CONTRIBUTING.md) for guidelines.
 All contributions require a PRD in the `prd/` directory before implementation.
 
 ## Changelog
+
+### 0.2.0 (2026-02-23)
+
+- Switched to Pax8's official hosted MCP server (`https://mcp.pax8.com/v1/mcp`)
+- Auth simplified from OAuth2 client_id/client_secret to single MCP token
+- Updated all documentation and connection instructions
 
 ### 0.1.0 (2026-02-23)
 
