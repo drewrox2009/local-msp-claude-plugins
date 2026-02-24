@@ -54,3 +54,15 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  notify-gateway:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger mcp-gateway rebuild
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GATEWAY_DISPATCH_TOKEN }}
+          repository: wyre-technology/mcp-gateway
+          event-type: docs-updated
+          client-payload: '{"sha": "${{ github.sha }}"}'
