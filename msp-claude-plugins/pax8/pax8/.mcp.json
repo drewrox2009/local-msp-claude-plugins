@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "pax8": {
+      "type": "http",
+      "url": "https://api.pax8.com/v1",
+      "auth": {
+        "type": "oauth2",
+        "tokenUrl": "https://login.pax8.com/oauth/token",
+        "clientId": "${PAX8_CLIENT_ID}",
+        "clientSecret": "${PAX8_CLIENT_SECRET}",
+        "grantType": "client_credentials"
+      },
+      "note": "Official Pax8 MCP server available at app.pax8.com/integrations/mcp"
+    }
+  }
+}

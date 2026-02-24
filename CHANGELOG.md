@@ -8,6 +8,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+#### Xero Plugin (`xero/xero/`)
+- **Contacts Skill** - Contact CRUD, customer/supplier types, address and phone types, financial summary fields, PSA cross-referencing via ContactNumber/AccountNumber, contact groups
+- **Invoices Skill** - Sales invoices (ACCREC) and supplier bills (ACCPAY), full status lifecycle (DRAFT to PAID/VOIDED), line items with tracking categories, batch invoicing workflows
+- **Payments Skill** - Payment recording (AR/AP), partial payments, batch payment creation, collections summary, bank reconciliation workflow, overpayment handling
+- **Accounts Skill** - Chart of accounts structure, MSP-specific COA layout (revenue 200-299, COGS 400-499, expenses 500-699), account CRUD, revenue breakdown
+- **Reports Skill** - P&L, Balance Sheet, Aged Receivables/Payables, Trial Balance, Bank Summary reports with MSP financial review workflows
+- **API Patterns Skill** - OAuth2 Custom Connection auth, xero-tenant-id header, where clause filtering, page-based pagination (100/page), 60 req/min + 5000/day rate limits
+
+#### Xero Commands
+- **create-invoice** - Create sales invoices with contact lookup, MSP account codes, and date calculation
+- **search-contacts** - Search contacts by name/email/account number with type and status filtering
+- **payment-status** - Outstanding balance and payment history with aging breakdown and severity indicators
+- **reconciliation-summary** - Billing completeness check — identifies unbilled clients, aged receivables, month-over-month comparison
+
+#### QuickBooks Online Plugin (`quickbooks/quickbooks-online/`)
+- **Customers Skill** - Customer entity with parent/sub-customer hierarchy, payment terms, balance tracking, MSP client onboarding/offboarding workflows
+- **Invoices Skill** - Invoice lifecycle (draft through paid/voided), line item types, MSP invoice types (recurring, project, T&M, hardware), batch send workflow
+- **Expenses Skill** - Purchase and Bill entities, per-client cost allocation via CustomerRef, billable status tracking, profitability analysis
+- **Payments Skill** - Full/partial/multi-invoice/unapplied payments, Credit Memos for SLA credits, collections workflow
+- **Reports Skill** - P&L, Balance Sheet, A/R Aging, A/P Aging, General Ledger, Customer Sales, Cash Flow with MSP financial dashboard workflows
+- **API Patterns Skill** - OAuth2 with token refresh, Intuit query language (SQL-like), minorversion header, SyncToken optimistic locking, 500 req/min rate limits
+
+#### QuickBooks Online Commands
+- **create-invoice** - Invoice creation with customer resolution, item lookup, optional email send
+- **search-customers** - Customer search with LIKE matching, status/balance filtering
+- **get-balance** - Outstanding balances across all MSP clients with A/R aging breakdown
+- **expense-summary** - Per-client expense breakdown with billable/non-billable split and profitability context
+
+#### Pax8 Plugin (`pax8/pax8/`)
+- **Companies Skill** - Company CRUD, contact management, billing configuration (billOnBehalfOf, selfService, orderApproval), PSA integration via externalId
+- **Products Skill** - Product catalog search, vendor filtering, pricing endpoint, provisioning types, billing terms, margin calculation
+- **Subscriptions Skill** - Full lifecycle with all 9 subscription states, quantity management, license optimization, renewal management, usage summaries
+- **Orders Skill** - Order creation with line items, multi-product orders, provisioning tracking, pre-order validation
+- **Invoices Skill** - Invoice retrieval, line item breakdown by company, billing reconciliation, margin analysis, trend analysis
+- **API Patterns Skill** - OAuth2 client credentials flow, 0-based pagination (max 200/page), sorting, 1000 req/min rate limits
+
+#### Pax8 Commands
+- **search-products** - Search product catalog by name/vendor with optional pricing display
+- **subscription-status** - Company subscription report with status and product filtering
+- **create-order** - Place orders with validation, pricing confirmation, and commitment warnings
+- **license-summary** - Aggregated cross-client license report with optimization recommendations and annual savings estimates
+
 - Cross-vendor incident correlation skill and `/correlate-incident` command — correlates PSA tickets, RMM device state, documentation assets, and config monitoring changes into a unified incident summary (issue #20)
 - Vendor field mappings and normalization tables for priority, status, company, and device fields across Autotask, Datto RMM, IT Glue, Liongard, and other vendors
 
