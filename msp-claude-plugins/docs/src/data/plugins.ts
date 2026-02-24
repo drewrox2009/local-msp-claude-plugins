@@ -336,7 +336,7 @@ export const plugins: Plugin[] = [
     name: 'Liongard',
     vendor: 'Liongard',
     description: 'Configuration monitoring and change detection for environments, inspections, systems, and compliance assessments.',
-    category: 'rmm',
+    category: 'security',
     maturity: 'beta',
     features: [
       'Environment Management',
