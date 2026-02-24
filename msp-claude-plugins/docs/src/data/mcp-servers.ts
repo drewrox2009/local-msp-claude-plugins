@@ -3,7 +3,7 @@ export interface McpServer {
   name: string;
   npmPackage: string;
   description: string;
-  category: 'psa' | 'rmm' | 'documentation';
+  category: 'psa' | 'rmm' | 'documentation' | 'security';
   repoUrl: string;
   companionPluginId?: string;
   envVars: EnvVar[];
@@ -715,6 +715,167 @@ export const mcpServers: McpServer[] = [
     dockerAvailable: true,
     mcpbAvailable: true,
     rateLimit: '60 requests per minute'
+  },
+  {
+    id: 'hudu',
+    name: 'Hudu MCP',
+    npmPackage: '@wyre-technology/hudu-mcp',
+    description: 'MCP server for Hudu IT documentation platform — manage companies, assets, articles, passwords, websites, folders, procedures, and activity logs.',
+    category: 'documentation',
+    repoUrl: 'https://github.com/wyre-technology/hudu-mcp',
+    companionPluginId: 'hudu',
+    envVars: [
+      { name: 'HUDU_BASE_URL', required: true, description: 'Your Hudu instance URL (e.g., https://acme.huducloud.com)' },
+      { name: 'HUDU_API_KEY', required: true, description: 'Hudu API key from Admin > API Keys' }
+    ],
+    domains: [
+      {
+        name: 'Companies',
+        description: 'Manage client companies.',
+        tools: [
+          { name: 'hudu_list_companies', description: 'List companies with filters' },
+          { name: 'hudu_get_company', description: 'Get company by ID' },
+          { name: 'hudu_create_company', description: 'Create a company' },
+          { name: 'hudu_update_company', description: 'Update a company' },
+          { name: 'hudu_delete_company', description: 'Delete a company' },
+          { name: 'hudu_archive_company', description: 'Archive a company' },
+          { name: 'hudu_unarchive_company', description: 'Unarchive a company' }
+        ]
+      },
+      {
+        name: 'Assets',
+        description: 'Manage IT assets and asset layouts.',
+        tools: [
+          { name: 'hudu_list_assets', description: 'List assets with filters' },
+          { name: 'hudu_get_asset', description: 'Get asset by ID' },
+          { name: 'hudu_create_asset', description: 'Create an asset' },
+          { name: 'hudu_update_asset', description: 'Update an asset' },
+          { name: 'hudu_delete_asset', description: 'Delete an asset' },
+          { name: 'hudu_archive_asset', description: 'Archive an asset' },
+          { name: 'hudu_list_asset_layouts', description: 'List asset layouts' },
+          { name: 'hudu_get_asset_layout', description: 'Get asset layout by ID' },
+          { name: 'hudu_create_asset_layout', description: 'Create an asset layout' },
+          { name: 'hudu_update_asset_layout', description: 'Update an asset layout' }
+        ]
+      },
+      {
+        name: 'Passwords',
+        description: 'Manage asset passwords (credentials).',
+        tools: [
+          { name: 'hudu_list_asset_passwords', description: 'List asset passwords' },
+          { name: 'hudu_get_asset_password', description: 'Get asset password by ID' },
+          { name: 'hudu_create_asset_password', description: 'Create an asset password' },
+          { name: 'hudu_update_asset_password', description: 'Update an asset password' },
+          { name: 'hudu_delete_asset_password', description: 'Delete an asset password' }
+        ]
+      },
+      {
+        name: 'Articles',
+        description: 'Manage knowledge base articles.',
+        tools: [
+          { name: 'hudu_list_articles', description: 'List knowledge base articles' },
+          { name: 'hudu_get_article', description: 'Get article by ID' },
+          { name: 'hudu_create_article', description: 'Create an article' },
+          { name: 'hudu_update_article', description: 'Update an article' },
+          { name: 'hudu_delete_article', description: 'Delete an article' },
+          { name: 'hudu_archive_article', description: 'Archive an article' }
+        ]
+      },
+      {
+        name: 'Websites',
+        description: 'Manage monitored websites.',
+        tools: [
+          { name: 'hudu_list_websites', description: 'List monitored websites' },
+          { name: 'hudu_get_website', description: 'Get website by ID' },
+          { name: 'hudu_create_website', description: 'Create a website' },
+          { name: 'hudu_update_website', description: 'Update a website' },
+          { name: 'hudu_delete_website', description: 'Delete a website' }
+        ]
+      },
+      {
+        name: 'Utilities',
+        description: 'Folders, procedures, activity logs, relations, and Magic Dash.',
+        tools: [
+          { name: 'hudu_list_folders', description: 'List folders' },
+          { name: 'hudu_list_procedures', description: 'List procedures' },
+          { name: 'hudu_list_activity_logs', description: 'List activity logs' },
+          { name: 'hudu_list_relations', description: 'List relations' },
+          { name: 'hudu_list_magic_dash', description: 'List Magic Dash items' },
+          { name: 'hudu_test_connection', description: 'Test API connectivity' }
+        ]
+      }
+    ],
+    architecture: 'Flat tool exposure with lazy SDK initialization. All 39 tools available immediately.',
+    installCommand: 'npx @wyre-technology/hudu-mcp',
+    dockerAvailable: true,
+    mcpbAvailable: false,
+    rateLimit: '300 requests per minute'
+  },
+  {
+    id: 'rocketcyber',
+    name: 'RocketCyber MCP',
+    npmPackage: '@wyre-technology/rocketcyber-mcp',
+    description: 'MCP server for RocketCyber managed SOC — read-only access to accounts, agents, incidents, events, firewalls, apps, and security status.',
+    category: 'security',
+    repoUrl: 'https://github.com/wyre-technology/rocketcyber-mcp',
+    companionPluginId: 'rocketcyber',
+    envVars: [
+      { name: 'ROCKETCYBER_API_KEY', required: true, description: 'RocketCyber API key from Provider Settings > API tab' },
+      { name: 'ROCKETCYBER_REGION', required: false, description: 'Region: us (default) or eu' }
+    ],
+    domains: [
+      {
+        name: 'Account',
+        description: 'View account information.',
+        tools: [
+          { name: 'rocketcyber_get_account', description: 'Get account info' }
+        ]
+      },
+      {
+        name: 'Incidents',
+        description: 'View and triage security incidents.',
+        tools: [
+          { name: 'rocketcyber_list_incidents', description: 'List security incidents' }
+        ]
+      },
+      {
+        name: 'Agents',
+        description: 'Monitor RocketAgent deployment and health.',
+        tools: [
+          { name: 'rocketcyber_list_agents', description: 'List monitored agents' }
+        ]
+      },
+      {
+        name: 'Events',
+        description: 'View security events and summaries.',
+        tools: [
+          { name: 'rocketcyber_list_events', description: 'List security events' },
+          { name: 'rocketcyber_get_event_summary', description: 'Get event summary/stats' }
+        ]
+      },
+      {
+        name: 'Security Status',
+        description: 'View firewall, app, Defender, and Office 365 status.',
+        tools: [
+          { name: 'rocketcyber_list_firewalls', description: 'List firewall devices' },
+          { name: 'rocketcyber_list_apps', description: 'List managed apps' },
+          { name: 'rocketcyber_get_defender', description: 'Get Defender status' },
+          { name: 'rocketcyber_get_office', description: 'Get Office 365 status' }
+        ]
+      },
+      {
+        name: 'Utilities',
+        description: 'Connection testing.',
+        tools: [
+          { name: 'rocketcyber_test_connection', description: 'Test API connectivity' }
+        ]
+      }
+    ],
+    architecture: 'Flat tool exposure with lazy SDK initialization. All 10 tools available immediately (read-only).',
+    installCommand: 'npx @wyre-technology/rocketcyber-mcp',
+    dockerAvailable: true,
+    mcpbAvailable: false,
+    rateLimit: '60 requests per minute'
   }
 ];
 
@@ -722,7 +883,7 @@ export function getMcpServerById(id: string): McpServer | undefined {
   return mcpServers.find(s => s.id === id);
 }
 
-export function getMcpServersByCategory(category: 'psa' | 'rmm' | 'documentation'): McpServer[] {
+export function getMcpServersByCategory(category: 'psa' | 'rmm' | 'documentation' | 'security'): McpServer[] {
   return mcpServers.filter(s => s.category === category);
 }
 

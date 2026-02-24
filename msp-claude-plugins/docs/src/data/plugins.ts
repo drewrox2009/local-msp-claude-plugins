@@ -3,7 +3,7 @@ export interface Plugin {
   name: string;
   vendor: string;
   description: string;
-  category: 'psa' | 'rmm' | 'documentation' | 'crm';
+  category: 'psa' | 'rmm' | 'documentation' | 'crm' | 'security' | 'marketplace' | 'accounting';
   maturity: 'production' | 'beta' | 'alpha';
   features: string[];
   skills: Skill[];
@@ -525,6 +525,192 @@ export const plugins: Plugin[] = [
     path: 'salesbuildr/salesbuildr',
     mcpRepo: 'https://github.com/wyre-technology/salesbuildr-mcp',
     compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
+  },
+  {
+    id: 'hudu',
+    name: 'Hudu',
+    vendor: 'Hudu',
+    description: 'IT documentation platform for companies, assets, articles, passwords, and website monitoring.',
+    category: 'documentation',
+    maturity: 'beta',
+    features: [
+      'Company Management',
+      'Asset Management',
+      'Knowledge Base Articles',
+      'Password Management',
+      'Website Monitoring'
+    ],
+    skills: [
+      { name: 'companies', description: 'Company (client/organization) management' },
+      { name: 'assets', description: 'Asset and asset layout management' },
+      { name: 'articles', description: 'Knowledge base article management' },
+      { name: 'passwords', description: 'Secure credential storage and retrieval (asset passwords)' },
+      { name: 'websites', description: 'Website record and monitoring management' },
+      { name: 'api-patterns', description: 'Hudu API patterns and best practices' }
+    ],
+    commands: [
+      { name: '/find-company', description: 'Search for a company by name' },
+      { name: '/lookup-asset', description: 'Find an asset by name, hostname, or serial' },
+      { name: '/search-articles', description: 'Search knowledge base articles' },
+      { name: '/get-password', description: 'Retrieve an asset password (with security logging)' }
+    ],
+    apiInfo: {
+      baseUrl: 'https://{subdomain}.huducloud.com/api/v1',
+      auth: 'x-api-key header',
+      rateLimit: '300 requests per minute',
+      docsUrl: 'https://support.hudu.com/hc/en-us/articles/how-to-use-the-hudu-api'
+    },
+    path: 'hudu/hudu',
+    mcpRepo: 'https://github.com/wyre-technology/hudu-mcp',
+    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
+  },
+  {
+    id: 'rocketcyber',
+    name: 'RocketCyber',
+    vendor: 'Kaseya',
+    description: 'Managed SOC platform for incident management, agent monitoring, threat detection, and security event analysis.',
+    category: 'security',
+    maturity: 'beta',
+    features: [
+      'Incident Management',
+      'Agent Monitoring',
+      'Account Hierarchy',
+      'Application Inventory',
+      'SOC Workflows'
+    ],
+    skills: [
+      { name: 'accounts', description: 'Provider and customer account hierarchy' },
+      { name: 'incidents', description: 'Security incident management and triage' },
+      { name: 'agents', description: 'RocketAgent deployment, health, and communication status' },
+      { name: 'apps', description: 'Application inventory and categorization' },
+      { name: 'api-patterns', description: 'RocketCyber API authentication, pagination, rate limiting' }
+    ],
+    commands: [
+      { name: '/search-incidents', description: 'Search security incidents by criteria' },
+      { name: '/account-summary', description: 'Get account overview with agent and incident counts' }
+    ],
+    apiInfo: {
+      baseUrl: 'https://api-{region}.rocketcyber.com/v3',
+      auth: 'Bearer API key',
+      rateLimit: '60 requests per minute',
+      docsUrl: 'https://api-doc.rocketcyber.com/'
+    },
+    path: 'kaseya/rocketcyber',
+    mcpRepo: 'https://github.com/wyre-technology/rocketcyber-mcp',
+    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
+  },
+  {
+    id: 'pax8',
+    name: 'Pax8',
+    vendor: 'Pax8',
+    description: 'Cloud marketplace for managing companies, products, subscriptions, orders, and invoices.',
+    category: 'marketplace',
+    maturity: 'beta',
+    features: [
+      'Company Management',
+      'Product Catalog',
+      'Subscription Lifecycle',
+      'Order Management',
+      'Invoice & Billing'
+    ],
+    skills: [
+      { name: 'companies', description: 'MSP client company management within Pax8' },
+      { name: 'products', description: 'Cloud software catalog browsing and search' },
+      { name: 'subscriptions', description: 'Subscription provisioning, modification, and cancellation' },
+      { name: 'orders', description: 'Order placement and provisioning status tracking' },
+      { name: 'invoices', description: 'Invoice reconciliation and billing' },
+      { name: 'api-patterns', description: 'Pax8 API authentication and pagination' }
+    ],
+    commands: [
+      { name: '/search-products', description: 'Search the Pax8 product catalog' },
+      { name: '/subscription-status', description: 'Check subscription status for a client' },
+      { name: '/create-order', description: 'Place an order for a cloud product' },
+      { name: '/license-summary', description: 'Summarize license counts and costs' }
+    ],
+    apiInfo: {
+      baseUrl: 'https://mcp.pax8.com/v1/mcp',
+      auth: 'MCP token (x-pax8-mcp-token header)',
+      rateLimit: 'Standard rate limits',
+      docsUrl: 'https://developer.pax8.com/'
+    },
+    path: 'pax8/pax8',
+    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
+  },
+  {
+    id: 'xero',
+    name: 'Xero',
+    vendor: 'Xero',
+    description: 'Accounting platform for contacts, invoices, payments, chart of accounts, and financial reporting.',
+    category: 'accounting',
+    maturity: 'beta',
+    features: [
+      'Contact Management',
+      'Invoice Management',
+      'Payment Tracking',
+      'Chart of Accounts',
+      'Financial Reporting'
+    ],
+    skills: [
+      { name: 'contacts', description: 'Customer and supplier contact management' },
+      { name: 'invoices', description: 'Sales invoice and bill management' },
+      { name: 'payments', description: 'Payment recording and reconciliation' },
+      { name: 'accounts', description: 'Chart of accounts and GL coding' },
+      { name: 'reports', description: 'P&L, Balance Sheet, Aged Receivables/Payables' },
+      { name: 'api-patterns', description: 'Xero OAuth2 authentication and API patterns' }
+    ],
+    commands: [
+      { name: '/create-invoice', description: 'Create a new sales invoice' },
+      { name: '/search-contacts', description: 'Search customers or suppliers' },
+      { name: '/payment-status', description: 'Check payment status for an invoice' },
+      { name: '/reconciliation-summary', description: 'Get bank reconciliation overview' }
+    ],
+    apiInfo: {
+      baseUrl: 'https://api.xero.com/api.xro/2.0',
+      auth: 'OAuth 2.0 (Custom Connection)',
+      rateLimit: '60 calls per minute',
+      docsUrl: 'https://developer.xero.com/documentation/api/accounting/overview'
+    },
+    path: 'xero/xero',
+    mcpRepo: 'https://github.com/wyre-technology/xero-mcp',
+    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
+  },
+  {
+    id: 'quickbooks-online',
+    name: 'QuickBooks Online',
+    vendor: 'Intuit',
+    description: 'Accounting platform for customers, invoices, expenses, payments, and financial reporting.',
+    category: 'accounting',
+    maturity: 'beta',
+    features: [
+      'Customer Management',
+      'Invoice Management',
+      'Payment Tracking',
+      'Expense Management',
+      'Financial Reporting'
+    ],
+    skills: [
+      { name: 'customers', description: 'MSP client record management' },
+      { name: 'invoices', description: 'Invoice creation and tracking' },
+      { name: 'payments', description: 'Payment recording and reconciliation' },
+      { name: 'expenses', description: 'Purchase and per-client cost tracking' },
+      { name: 'reports', description: 'P&L, Balance Sheet, A/R Aging reports' },
+      { name: 'api-patterns', description: 'QuickBooks Online OAuth2 and API patterns' }
+    ],
+    commands: [
+      { name: '/create-invoice', description: 'Create a new invoice' },
+      { name: '/search-customers', description: 'Search customer records' },
+      { name: '/get-balance', description: 'Get account balance or customer balance' },
+      { name: '/expense-summary', description: 'Summarize expenses by vendor or category' }
+    ],
+    apiInfo: {
+      baseUrl: 'https://quickbooks.api.intuit.com/v3',
+      auth: 'OAuth 2.0',
+      rateLimit: '500 requests per minute',
+      docsUrl: 'https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/account'
+    },
+    path: 'quickbooks/quickbooks-online',
+    mcpRepo: 'https://github.com/wyre-technology/qbo-mcp',
+    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
   }
 ];
 
@@ -532,7 +718,7 @@ export function getPluginById(id: string): Plugin | undefined {
   return plugins.find(p => p.id === id);
 }
 
-export function getPluginsByCategory(category: 'psa' | 'rmm' | 'documentation' | 'crm'): Plugin[] {
+export function getPluginsByCategory(category: 'psa' | 'rmm' | 'documentation' | 'crm' | 'security' | 'marketplace' | 'accounting'): Plugin[] {
   return plugins.filter(p => p.category === category);
 }
 
