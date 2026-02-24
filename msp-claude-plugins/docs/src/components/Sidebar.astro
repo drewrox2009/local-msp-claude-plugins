@@ -1,6 +1,6 @@
 ---
-import { plugins } from '@/data/plugins';
-import { mcpServers } from '@/data/mcp-servers';
+import { plugins, getPluginsByCategory } from '@/data/plugins';
+import { mcpServers, getMcpServersByCategory } from '@/data/mcp-servers';
 
 const baseUrl = import.meta.env.BASE_URL;
 const currentPath = Astro.url.pathname;
@@ -10,6 +10,26 @@ interface SidebarItem {
   href?: string;
   children?: SidebarItem[];
 }
+
+const pluginCategoryLabels: Record<string, string> = {
+  rmm: 'RMM',
+  psa: 'PSA',
+  documentation: 'IT Documentation',
+  security: 'Security',
+  sales: 'Sales & Distribution',
+  accounting: 'Accounting & Finance',
+};
+
+const pluginCategoryOrder = ['rmm', 'psa', 'documentation', 'security', 'sales', 'accounting'] as const;
+
+const mcpCategoryLabels: Record<string, string> = {
+  rmm: 'RMM',
+  psa: 'PSA',
+  documentation: 'IT Documentation',
+  security: 'Security',
+};
+
+const mcpCategoryOrder = ['rmm', 'psa', 'documentation', 'security'] as const;
 
 const sidebarItems: SidebarItem[] = [
   {
@@ -28,20 +48,34 @@ const sidebarItems: SidebarItem[] = [
     label: 'Plugins',
     children: [
       { label: 'Overview', href: `${baseUrl}plugins/` },
-      ...plugins.map(p => ({
-        label: p.name,
-        href: `${baseUrl}plugins/${p.id}/`
-      }))
+      ...pluginCategoryOrder.flatMap(cat => {
+        const items = getPluginsByCategory(cat);
+        if (items.length === 0) return [];
+        return [{
+          label: pluginCategoryLabels[cat],
+          children: items.map(p => ({
+            label: p.name,
+            href: `${baseUrl}plugins/${p.id}/`
+          }))
+        }];
+      })
     ]
   },
   {
     label: 'MCP Servers',
     children: [
       { label: 'Overview', href: `${baseUrl}mcp-servers/` },
-      ...mcpServers.map(s => ({
-        label: s.name,
-        href: `${baseUrl}mcp-servers/${s.id}/`
-      }))
+      ...mcpCategoryOrder.flatMap(cat => {
+        const items = getMcpServersByCategory(cat);
+        if (items.length === 0) return [];
+        return [{
+          label: mcpCategoryLabels[cat],
+          children: items.map(s => ({
+            label: s.name,
+            href: `${baseUrl}mcp-servers/${s.id}/`
+          }))
+        }];
+      })
     ]
   },
   {
@@ -75,14 +109,34 @@ function hasActiveChild(item: SidebarItem): boolean {
         </h3>
         <ul class="space-y-1">
           {section.children?.map(item => (
-            <li>
-              <a
-                href={item.href}
-                class={isActive(item.href) ? 'sidebar-link-active sidebar-link' : 'sidebar-link'}
-              >
-                {item.label}
-              </a>
-            </li>
+            item.children ? (
+              <li class="mt-3 first:mt-0">
+                <span class="block text-xs font-medium uppercase tracking-wider text-[var(--muted)] px-3 mb-1">
+                  {item.label}
+                </span>
+                <ul class="space-y-0.5">
+                  {item.children.map(child => (
+                    <li>
+                      <a
+                        href={child.href}
+                        class={`${isActive(child.href) ? 'sidebar-link-active sidebar-link' : 'sidebar-link'} pl-5 text-sm`}
+                      >
+                        {child.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ) : (
+              <li>
+                <a
+                  href={item.href}
+                  class={isActive(item.href) ? 'sidebar-link-active sidebar-link' : 'sidebar-link'}
+                >
+                  {item.label}
+                </a>
+              </li>
+            )
           ))}
         </ul>
       </div>
