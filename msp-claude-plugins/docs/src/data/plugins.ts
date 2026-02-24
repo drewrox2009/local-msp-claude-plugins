@@ -3,7 +3,7 @@ export interface Plugin {
   name: string;
   vendor: string;
   description: string;
-  category: 'psa' | 'rmm' | 'documentation' | 'crm' | 'security' | 'marketplace' | 'accounting';
+  category: 'psa' | 'rmm' | 'documentation' | 'security' | 'sales' | 'accounting';
   maturity: 'production' | 'beta' | 'alpha';
   features: string[];
   skills: Skill[];
@@ -488,7 +488,7 @@ export const plugins: Plugin[] = [
     name: 'SalesBuildr',
     vendor: 'SalesBuildr',
     description: 'CRM and quoting platform for companies, contacts, opportunities, products, and quote management.',
-    category: 'crm',
+    category: 'sales',
     maturity: 'alpha',
     features: [
       'Company Management',
@@ -604,7 +604,7 @@ export const plugins: Plugin[] = [
     name: 'Pax8',
     vendor: 'Pax8',
     description: 'Cloud marketplace for managing companies, products, subscriptions, orders, and invoices.',
-    category: 'marketplace',
+    category: 'sales',
     maturity: 'beta',
     features: [
       'Company Management',
@@ -717,7 +717,7 @@ export const plugins: Plugin[] = [
     name: 'HubSpot CRM',
     vendor: 'HubSpot',
     description: 'CRM platform for contacts, companies, deals, tickets, activities, and associations.',
-    category: 'crm',
+    category: 'sales',
     maturity: 'beta',
     features: [
       'Contact Management',
@@ -756,7 +756,7 @@ export const plugins: Plugin[] = [
     name: 'PandaDoc',
     vendor: 'PandaDoc',
     description: 'Document automation for proposals, contracts, e-signatures, and sales document management.',
-    category: 'crm',
+    category: 'sales',
     maturity: 'beta',
     features: [
       'Document Creation',
@@ -836,7 +836,7 @@ export function getPluginById(id: string): Plugin | undefined {
   return plugins.find(p => p.id === id);
 }
 
-export function getPluginsByCategory(category: 'psa' | 'rmm' | 'documentation' | 'crm' | 'security' | 'marketplace' | 'accounting'): Plugin[] {
+export function getPluginsByCategory(category: 'psa' | 'rmm' | 'documentation' | 'security' | 'sales' | 'accounting'): Plugin[] {
   return plugins.filter(p => p.category === category);
 }
 
