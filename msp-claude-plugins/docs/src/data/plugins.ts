@@ -829,6 +829,76 @@ export const plugins: Plugin[] = [
     path: 'sentinelone/sentinelone',
     mcpRepo: 'https://github.com/Sentinel-One/purple-mcp',
     compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'pagerduty',
+    name: 'PagerDuty',
+    vendor: 'PagerDuty',
+    description: 'On-call incident management platform with 66 tools covering incidents, schedules, escalation policies, services, event orchestrations, and status pages.',
+    category: 'security',
+    maturity: 'production',
+    features: [
+      'Incident Management',
+      'On-Call Scheduling',
+      'Escalation Policies',
+      'Event Orchestration',
+      'Status Pages',
+      'Service Catalog',
+      'Alert Grouping'
+    ],
+    skills: [
+      { name: 'incidents', description: 'Incident lifecycle, triage, AI analysis, PSA ticket correlation' },
+      { name: 'oncall', description: 'On-call schedules, handoff summaries, escalation policies' },
+      { name: 'api-patterns', description: 'Token token= auth, hosted MCP, 66-tool reference, pagination' }
+    ],
+    commands: [
+      { name: '/pd-incidents', description: 'List open incidents with severity and status filters' },
+      { name: '/pd-oncall', description: 'Show current on-call schedule and upcoming rotations' },
+      { name: '/pd-triage', description: 'Triage triggered/acknowledged incidents by priority' }
+    ],
+    apiInfo: {
+      baseUrl: 'https://mcp.pagerduty.com',
+      auth: 'Authorization: Token token=<User API Token>',
+      rateLimit: 'Standard PagerDuty API rate limits',
+      docsUrl: 'https://developer.pagerduty.com/docs/mcp-tooling-remote-server'
+    },
+    path: 'pagerduty/pagerduty',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'betterstack',
+    name: 'BetterStack',
+    vendor: 'BetterStack',
+    description: 'Uptime monitoring, on-call scheduling, and telemetry platform covering monitors, heartbeats, incidents, status pages, logs, and error tracking.',
+    category: 'security',
+    maturity: 'production',
+    features: [
+      'Uptime Monitoring',
+      'On-Call Scheduling',
+      'Incident Management',
+      'Status Pages',
+      'Log Management',
+      'Error Tracking',
+      'Heartbeat Monitoring'
+    ],
+    skills: [
+      { name: 'uptime', description: 'Monitors, heartbeats, incidents, and status pages' },
+      { name: 'oncall', description: 'On-call schedules, escalation policies, handoff workflows' },
+      { name: 'api-patterns', description: 'Bearer token auth, hosted MCP, tool reference, pagination' }
+    ],
+    commands: [
+      { name: '/bs-monitors', description: 'List all monitors with current status and uptime' },
+      { name: '/bs-incidents', description: 'Show active incidents and their severity' },
+      { name: '/bs-oncall', description: 'Show current on-call rotation and escalation policy' }
+    ],
+    apiInfo: {
+      baseUrl: 'https://mcp.betterstack.com',
+      auth: 'Authorization: Bearer <API Token>',
+      rateLimit: 'Standard BetterStack API rate limits',
+      docsUrl: 'https://betterstack.com/docs/getting-started/integrations/mcp/'
+    },
+    path: 'betterstack/betterstack',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
   }
 ];
 

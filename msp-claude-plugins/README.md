@@ -34,6 +34,8 @@ Community-driven Claude Code plugins for Managed Service Providers.
 | `halopsa` | Halo | 🧪 Community | ✅ | ✅ | ✅ | Tickets, clients, assets, contracts |
 | `connectwise-psa` | ConnectWise | 🧪 Community | ✅ | 🔜 | 🔜 | Tickets, companies, projects, time |
 | `connectwise-automate` | ConnectWise | 🧪 Community | ✅ | ✅ | ✅ | Computers, scripts, monitors |
+| `pagerduty` | PagerDuty | 🧪 Community | ✅ | ✅ | ✅ | Incidents, on-call, schedules, escalation, status pages |
+| `betterstack` | BetterStack | 🧪 Community | ✅ | ✅ | ✅ | Uptime monitors, on-call, incidents, logs, status pages |
 | `shared-skills` | — | ✅ Validated | ✅ | — | — | MSP terminology and ticket triage |
 
 **Status:** ✅ Validated = Tested against production APIs | 🧪 Community = May need adjustments
