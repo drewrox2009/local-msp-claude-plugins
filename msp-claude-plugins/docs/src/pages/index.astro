@@ -155,7 +155,9 @@ const features = [
           commands, and deep API knowledge.
         </p>
         <p class="text-sm text-[var(--muted)] max-w-xl mx-auto">
-          Covering Autotask PSA, Datto RMM, IT Glue, Syncro MSP, Atera, SuperOps.ai, HaloPSA, Liongard, ConnectWise PSA, ConnectWise Automate, NinjaOne, SalesBuildr, HubSpot CRM, PandaDoc, and SentinelOne.
+          Covering {plugins.map((p, i) => (
+            <span>{p.name}{i < plugins.length - 1 ? ', ' : '.'}</span>
+          ))}
         </p>
       </div>
 
