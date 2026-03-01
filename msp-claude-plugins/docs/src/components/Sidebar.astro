@@ -1,6 +1,7 @@
 ---
 import { plugins, getPluginsByCategory } from '@/data/plugins';
 import { mcpServers, getMcpServersByCategory } from '@/data/mcp-servers';
+import { roleLabels, roleOrder, getPromptsByRole } from '@/data/prompts';
 
 const baseUrl = import.meta.env.BASE_URL;
 const currentPath = Astro.url.pathname;
@@ -81,7 +82,16 @@ const sidebarItems: SidebarItem[] = [
   {
     label: 'Reference',
     children: [
-      { label: 'Prompt Bank', href: `${baseUrl}prompts/` },
+      {
+        label: 'Prompt Bank',
+        children: [
+          { label: 'All Prompts', href: `${baseUrl}prompts/` },
+          ...roleOrder.map(role => ({
+            label: roleLabels[role],
+            href: `${baseUrl}prompts/#${role}`,
+          })),
+        ],
+      },
       { label: 'Skills', href: `${baseUrl}skills/` },
       { label: 'Commands', href: `${baseUrl}commands/` },
     ]

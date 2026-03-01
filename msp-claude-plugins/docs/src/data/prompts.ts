@@ -5,7 +5,8 @@ export interface Prompt {
   title: string;
   description: string;
   role: PromptRole;
-  plugins: string[];   // plugin IDs required; empty = any PSA/RMM
+  plugins: string[];     // plugin IDs (from plugins.ts); empty = any PSA/RMM
+  mcpServers: string[];  // MCP server IDs (from mcp-servers.ts); empty = any
   prompt: string;
 }
 
@@ -37,6 +38,7 @@ export const prompts: Prompt[] = [
     title: 'QBR Client Summary',
     description: 'Full quarter recap: ticket volume, SLA performance, recurring issues, and open risks.',
     plugins: [],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage', 'ninjaone', 'atera'],
     prompt: `Pull together a QBR summary for [CLIENT NAME] covering the past 90 days.
 
 Include:
@@ -56,6 +58,7 @@ Format as a structured report I can use as talking points in the meeting.`,
     title: 'Client Health Scorecard',
     description: 'Snapshot of a client\'s current IT health across tickets, devices, and monitoring.',
     plugins: [],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage', 'ninjaone', 'atera', 'datto-rmm'],
     prompt: `Create a health scorecard for [CLIENT NAME].
 
 Cover:
@@ -74,6 +77,7 @@ Rate the overall health as Green / Amber / Red and explain your reasoning.`,
     title: 'Monthly Executive Summary',
     description: 'One-page executive summary suitable for sharing with a client\'s leadership team.',
     plugins: [],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage'],
     prompt: `Write a one-page executive summary of IT activity for [CLIENT NAME] for [MONTH].
 
 Audience: their CTO/IT director — not technical detail, focus on business impact.
@@ -94,6 +98,7 @@ Keep it concise and free of jargon.`,
     title: 'Client Risk Report',
     description: 'Identify top risk areas based on open issues, device age, and recurring problems.',
     plugins: [],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage', 'ninjaone', 'atera', 'datto-rmm', 'itglue', 'hudu'],
     prompt: `Identify the top risk areas for [CLIENT NAME] based on current data.
 
 Look for:
@@ -113,7 +118,8 @@ Rank the top 3-5 risks by potential business impact and suggest a mitigation act
     role: 'finance',
     title: 'Unbilled Work Review',
     description: 'Surface all time entries and tickets that are ready to bill but haven\'t been invoiced yet.',
-    plugins: ['autotask', 'halopsa', 'connectwise'],
+    plugins: ['autotask', 'halopsa', 'connectwise-psa'],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage'],
     prompt: `Show me all unbilled work for [CLIENT NAME] (or all clients if not specified) that is in a billing-ready status.
 
 Include:
@@ -130,7 +136,8 @@ Group by client if running for all accounts. Flag anything over 30 days old that
     role: 'finance',
     title: 'Time Entry Audit',
     description: 'Review time entries for a client or period to verify accuracy before billing.',
-    plugins: ['autotask', 'halopsa', 'connectwise'],
+    plugins: ['autotask', 'halopsa', 'connectwise-psa'],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage'],
     prompt: `Pull all time entries for [CLIENT NAME] for [DATE RANGE, e.g. March 2025].
 
 For each entry show:
@@ -147,7 +154,8 @@ Flag any entries that look unusual: very short entries (under 5 minutes), entrie
     role: 'finance',
     title: 'Managed Services Contract Compliance',
     description: 'Compare actual hours and devices against what\'s in the contract.',
-    plugins: ['autotask', 'halopsa', 'connectwise'],
+    plugins: ['autotask', 'halopsa', 'connectwise-psa'],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage', 'ninjaone', 'atera', 'datto-rmm'],
     prompt: `Check contract compliance for [CLIENT NAME] for this month.
 
 I need to know:
@@ -164,7 +172,8 @@ Highlight any discrepancies between what's contracted and what we're delivering.
     role: 'finance',
     title: 'Aged Receivables Summary',
     description: 'List all outstanding invoices by age and client for follow-up.',
-    plugins: ['autotask', 'halopsa', 'connectwise', 'xero', 'quickbooks'],
+    plugins: ['autotask', 'halopsa', 'connectwise-psa', 'xero', 'quickbooks'],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage'],
     prompt: `Give me a summary of all outstanding invoices across all clients, grouped by age.
 
 Show:
@@ -184,6 +193,7 @@ For each bucket, list the client name, invoice number(s), amount outstanding, an
     title: 'Device Refresh Opportunity Report',
     description: 'Find devices 4+ years old across clients — a natural hardware refresh conversation.',
     plugins: ['ninjaone', 'atera', 'datto', 'kaseya'],
+    mcpServers: ['ninjaone', 'atera', 'datto-rmm', 'connectwise-automate'],
     prompt: `Scan all managed devices and identify machines that are 4 or more years old and likely due for hardware refresh.
 
 Group results by client. For each device include:
@@ -201,6 +211,7 @@ Summarize by client: total aging devices and estimated replacement opportunity. 
     title: 'At-Risk Client Identification',
     description: 'Identify clients with high ticket volume, recurring issues, or SLA breaches — retention risk.',
     plugins: [],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage'],
     prompt: `Identify clients who may be at risk of churn based on their recent service experience.
 
 Look for clients with:
@@ -218,6 +229,7 @@ Rank the top 5-10 at-risk clients with a brief reason for each. This list will b
     title: 'Upsell & Expansion Opportunities',
     description: 'Find clients using fewer services than they could benefit from based on their profile.',
     plugins: [],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage', 'ninjaone', 'atera'],
     prompt: `Look across our client base and identify expansion or upsell opportunities.
 
 Flag clients who:
@@ -235,6 +247,7 @@ For each opportunity, briefly explain the gap and suggest the relevant service o
     title: 'New Client Onboarding Intelligence',
     description: 'Pull a complete picture of a newly onboarded client\'s environment.',
     plugins: [],
+    mcpServers: ['ninjaone', 'atera', 'datto-rmm', 'connectwise-automate', 'itglue', 'hudu'],
     prompt: `We've just onboarded [CLIENT NAME]. Give me a full picture of their environment based on what we've discovered so far.
 
 Cover:
@@ -255,6 +268,7 @@ This will be used to prioritize the first 30 days of work and identify quick win
     title: 'Morning Ticket Standup',
     description: 'Daily open ticket review to start the team\'s day.',
     plugins: [],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage', 'superops', 'syncro'],
     prompt: `Give me a morning standup summary of all open tickets for today.
 
 Group by:
@@ -272,6 +286,7 @@ Keep it brief — this is for a 10-minute team standup.`,
     title: 'SLA Breach Risk Report',
     description: 'Identify tickets approaching or past SLA so the team can intervene.',
     plugins: [],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage'],
     prompt: `Show me all tickets that are at risk of breaching or have already breached their SLA.
 
 Separate into:
@@ -288,6 +303,7 @@ Include the assigned technician for each. Sort by most urgent first. I need this
     title: 'Escalation & Stale Ticket Review',
     description: 'Find tickets stuck in queues too long or waiting on responses.',
     plugins: [],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage', 'superops', 'syncro'],
     prompt: `Find all tickets that are stalled and may need escalation or a nudge.
 
 Look for:
@@ -304,7 +320,8 @@ For each, show ticket number, client, summary, last activity date, and current a
     role: 'support',
     title: 'Shift Handoff Brief',
     description: 'End-of-shift summary of open work for the incoming team or on-call engineer.',
-    plugins: [],
+    plugins: ['pagerduty', 'betterstack'],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage'],
     prompt: `Prepare a shift handoff brief for the incoming team covering everything they need to know right now.
 
 Include:
@@ -320,9 +337,10 @@ Format as a structured handoff document, not a data dump.`,
   {
     id: 'support-client-ticket-history',
     role: 'support',
-    title: 'Client Ticket History Before a Call',
+    title: 'Pre-Call Client Brief',
     description: 'Quick prep brief before calling or meeting with a client.',
     plugins: [],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage'],
     prompt: `I have a call with [CLIENT NAME] in 10 minutes. Give me a quick brief.
 
 Cover:
@@ -342,7 +360,8 @@ Keep it to 200 words max — I need this fast.`,
     role: 'noc',
     title: 'Infrastructure Health Report',
     description: 'Full status sweep of all monitored devices and services.',
-    plugins: ['ninjaone', 'atera', 'datto', 'kaseya', 'betterstack'],
+    plugins: ['ninjaone', 'atera', 'datto', 'betterstack'],
+    mcpServers: ['ninjaone', 'atera', 'datto-rmm', 'connectwise-automate'],
     prompt: `Give me a full infrastructure health report across all monitored clients.
 
 Group by status:
@@ -360,6 +379,7 @@ For any client with 3 or more devices in warning or down state, flag them as nee
     title: 'Patch Compliance Report',
     description: 'Identify devices missing critical security patches across all clients.',
     plugins: ['ninjaone', 'atera', 'datto', 'kaseya'],
+    mcpServers: ['ninjaone', 'atera', 'datto-rmm', 'connectwise-automate'],
     prompt: `Generate a patch compliance report across all managed devices.
 
 Show:
@@ -376,7 +396,8 @@ Flag any device missing patches that is also exposed to the internet (server or 
     role: 'noc',
     title: 'Alert Correlation & Root Cause',
     description: 'When multiple alerts fire at once, group them by likely cause.',
-    plugins: ['ninjaone', 'atera', 'datto', 'kaseya', 'pagerduty', 'betterstack'],
+    plugins: ['ninjaone', 'atera', 'datto', 'pagerduty', 'betterstack'],
+    mcpServers: ['ninjaone', 'atera', 'datto-rmm', 'connectwise-automate'],
     prompt: `We have multiple alerts firing right now. Help me make sense of them.
 
 List all active alerts and incidents, then:
@@ -394,6 +415,7 @@ I'm trying to find the actual problem, not chase symptoms.`,
     title: 'Maintenance Window Preparation',
     description: 'Checklist of monitors to pause and on-call to notify before planned work.',
     plugins: ['betterstack', 'pagerduty'],
+    mcpServers: [],
     prompt: `I'm planning a maintenance window for [DESCRIPTION, e.g. firewall firmware upgrade] at [CLIENT NAME] on [DATE/TIME].
 
 Help me prepare by:
@@ -411,6 +433,7 @@ After the window, remind me to: resume all paused monitors, verify everything re
     title: 'Incident Post-Mortem Summary',
     description: 'Structure a post-mortem for a resolved incident with timeline and action items.',
     plugins: ['pagerduty', 'betterstack', 'rootly'],
+    mcpServers: ['autotask', 'halopsa', 'connectwise-manage'],
     prompt: `Help me write a post-mortem for the incident affecting [SERVICE/CLIENT] that occurred on [DATE].
 
 Structure it as:
