@@ -194,18 +194,20 @@ const compatibilityBadges = {
 
   <h2>Example Usage</h2>
 
-  <h3>Create a Ticket</h3>
+  {plugin.commands.map(cmd => (
+    <div>
+      <h3>{cmd.description}</h3>
+      <pre><code class="language-text">{cmd.name}</code></pre>
+    </div>
+  ))}
 
-  <pre><code class="language-text">{plugin.commands.find(c => c.name.includes('create'))?.name || '/create-ticket'} "Email issue for John at Acme Corp"</code></pre>
+  {plugin.skills.length > 0 && (
+    <div>
+      <h3>Using Skills</h3>
+      <pre><code class="language-text">/skill {plugin.id}:{plugin.skills[0].name}
 
-  <h3>Search Tickets</h3>
-
-  <pre><code class="language-text">{plugin.commands.find(c => c.name.includes('search'))?.name || '/search-tickets'} "open tickets for Acme"</code></pre>
-
-  <h3>Using Skills</h3>
-
-  <pre><code class="language-text">/skill {plugin.id}:tickets
-
-What are the available ticket statuses?</code></pre>
+{plugin.skills[0].description}</code></pre>
+    </div>
+  )}
 
 </DocsLayout>
