@@ -14,7 +14,7 @@ Then restart Claude Code. That's it.
 
 ## What you get
 
-Seventeen vendor-specific plugins with domain knowledge for PSA, RMM, documentation, security, accounting, and CRM tools:
+Eighteen vendor-specific plugins with domain knowledge for PSA, RMM, documentation, security, accounting, CRM, and productivity tools:
 
 | Plugin | Description |
 |--------|-------------|
@@ -35,6 +35,7 @@ Seventeen vendor-specific plugins with domain knowledge for PSA, RMM, documentat
 | **Pax8** | Cloud marketplace - companies, products, subscriptions, orders, invoices |
 | **Xero** | Accounting - contacts, invoices, payments, accounts, reports |
 | **QuickBooks Online** | Accounting - customers, invoices, expenses, payments, reports |
+| **Microsoft 365** | M365 admin - users, mailboxes, Teams, OneDrive, licensing, security |
 
 Plus shared skills for MSP terminology, ticket triage, cross-vendor incident correlation, and billing reconciliation.
 
@@ -59,6 +60,7 @@ Plus shared skills for MSP terminology, ticket triage, cross-vendor incident cor
 | **Pax8** | 🔨 Beta | [Pax8 Hosted](https://mcp.pax8.com/v1/mcp) (official) |
 | **Xero** | 🔨 Beta | [xero-mcp](https://github.com/wyre-technology/xero-mcp) |
 | **QuickBooks Online** | 🔨 Beta | [qbo-mcp](https://github.com/wyre-technology/qbo-mcp) |
+| **Microsoft 365** | 🔨 Beta | [ms-365-mcp-server](https://github.com/softeria/ms-365-mcp-server) (Softeria) |
 
 > Maturity levels: ✅ **Production** — used in real MSP environments with comprehensive coverage. 🔨 **Beta** — functional with core features, feedback welcome. 🚧 **Alpha** — early implementation, expect gaps.
 
@@ -68,7 +70,7 @@ Plus shared skills for MSP terminology, ticket triage, cross-vendor incident cor
 
 ### Hosted Gateway (Recommended)
 
-Use the [MCP Gateway](https://mcp.wyretechnology.com) to connect your MSP tools to Claude Desktop with zero infrastructure. OAuth 2.1 + PKCE authentication, encrypted credential storage, and all 17 vendors available immediately.
+Use the [MCP Gateway](https://mcp.wyretechnology.com) to connect your MSP tools to Claude Desktop with zero infrastructure. OAuth 2.1 + PKCE authentication, encrypted credential storage, and all 18 vendors available immediately.
 
 [Get Started Free](https://mcp.wyretechnology.com/waitlist)
 
@@ -144,6 +146,7 @@ Each plugin uses environment variables for authentication. See the plugin's READ
 - [Pax8](msp-claude-plugins/pax8/pax8/README.md) — MCP token ([official hosted server](https://mcp.pax8.com/v1/mcp))
 - [Xero](msp-claude-plugins/xero/xero/README.md) — OAuth 2.0
 - [QuickBooks Online](msp-claude-plugins/quickbooks/quickbooks-online/README.md) — OAuth 2.0
+- [Microsoft 365](msp-claude-plugins/m365/m365/README.md) — OAuth 2.0 (multi-tenant Entra ID)
 
 ---
 
