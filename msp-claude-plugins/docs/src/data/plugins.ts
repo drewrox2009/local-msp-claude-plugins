@@ -3,7 +3,7 @@ export interface Plugin {
   name: string;
   vendor: string;
   description: string;
-  category: 'psa' | 'rmm' | 'documentation' | 'security' | 'sales' | 'accounting';
+  category: 'psa' | 'rmm' | 'documentation' | 'security' | 'sales' | 'accounting' | 'productivity';
   maturity: 'production' | 'beta' | 'alpha';
   features: string[];
   skills: Skill[];
@@ -899,6 +899,46 @@ export const plugins: Plugin[] = [
     },
     path: 'betterstack/betterstack',
     compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'm365',
+    name: 'Microsoft 365',
+    vendor: 'Microsoft',
+    description: 'Microsoft 365 administration for users, mailboxes, Teams, OneDrive, licensing, and security posture. Multi-tenant via Entra ID OAuth.',
+    category: 'productivity',
+    maturity: 'beta',
+    features: [
+      'User Management',
+      'Mailbox & Email',
+      'Teams Administration',
+      'OneDrive & Files',
+      'License Auditing',
+      'Security Posture'
+    ],
+    skills: [
+      { name: 'users', description: 'Account management, MFA enrollment, groups, onboarding/offboarding' },
+      { name: 'mailboxes', description: 'Exchange Online, email search, auto-replies, shared mailboxes' },
+      { name: 'calendar', description: 'Events, free/busy, room booking, meeting creation' },
+      { name: 'teams', description: 'Team/channel membership, meetings, orphaned team detection' },
+      { name: 'files', description: 'OneDrive quota, SharePoint, sharing permissions, data transfer' },
+      { name: 'licensing', description: 'SKU inventory, seat counts, reclaim candidates' },
+      { name: 'security', description: 'MFA audit, risky sign-ins, inbox rule review, compromise response' },
+      { name: 'api-patterns', description: 'Graph OData filters, pagination, delta queries, throttling' }
+    ],
+    commands: [
+      { name: '/get-user', description: 'Full user profile — status, licenses, MFA, last login' },
+      { name: '/check-mfa-status', description: 'Tenant-wide MFA enrollment audit, prioritized by risk' },
+      { name: '/list-licenses', description: 'License inventory and unused seat detection' },
+      { name: '/offboard-user', description: 'Guided offboarding: revoke → disable → mailbox → data transfer → license' }
+    ],
+    apiInfo: {
+      baseUrl: 'https://graph.microsoft.com/v1.0',
+      auth: 'OAuth 2.0 via Microsoft Entra ID (multi-tenant)',
+      rateLimit: '10,000 requests per 10 minutes',
+      docsUrl: 'https://learn.microsoft.com/en-us/graph/overview'
+    },
+    path: 'm365/m365',
+    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
   }
 ];
 
@@ -906,7 +946,7 @@ export function getPluginById(id: string): Plugin | undefined {
   return plugins.find(p => p.id === id);
 }
 
-export function getPluginsByCategory(category: 'psa' | 'rmm' | 'documentation' | 'security' | 'sales' | 'accounting'): Plugin[] {
+export function getPluginsByCategory(category: 'psa' | 'rmm' | 'documentation' | 'security' | 'sales' | 'accounting' | 'productivity'): Plugin[] {
   return plugins.filter(p => p.category === category);
 }
 
