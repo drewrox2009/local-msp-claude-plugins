@@ -267,19 +267,29 @@ async function fetchAllTickets(filter) {
 
 ## Rate Limiting
 
-### Rate Limit Headers
+### Autotask API Hard Limits
 
-Autotask returns rate limit information in response headers:
+Autotask enforces two hard limits:
 
-| Header | Description |
-|--------|-------------|
-| `X-RateLimit-Limit` | Max requests per minute |
-| `X-RateLimit-Remaining` | Remaining requests |
-| `X-RateLimit-Reset` | Seconds until reset |
+| Limit | Value | Scope |
+|-------|-------|-------|
+| **Concurrent threads per endpoint** | **3** | Per API tracking identifier (your `integrationCode`) |
+| **Total requests per hour** | **10,000** | Per Autotask tenant database (all integrations combined) |
+
+**Concurrent thread limit** is the most common cause of slowdowns in LLM-driven integrations. When Claude issues several tool calls in parallel (e.g., tickets search + companies search + contacts search), all three may target the Tickets endpoint simultaneously and hit the 3-thread cap.
+
+When using the MCP server or `autotask-node` SDK, this is handled automatically — excess requests are queued and released as slots free up, so you won't see hard failures, but responses may be slower under load.
+
+**Multi-user / shared key risk**: The 3-thread limit applies per `integrationCode`. If multiple users or teams share the same credentials, they compete for the same 3 slots. In a team deployment, give each team their own API user:
+
+```
+Support Team  → integrationCode: SUPPORT_TEAM_CODE  (3 threads, independent)
+Projects Team → integrationCode: PROJECTS_TEAM_CODE (3 threads, independent)
+```
 
 ### Rate Limit Response
 
-When rate limited (HTTP 429):
+When the concurrent thread limit or hourly request limit is exceeded (HTTP 429):
 
 ```json
 {
@@ -318,9 +328,30 @@ async function requestWithRetry(url, options, maxRetries = 5) {
 }
 ```
 
+### Query Different Entity Types in Parallel
+
+To maximize throughput without hitting the per-endpoint thread limit, query **different endpoints in parallel** rather than the same endpoint multiple times:
+
+```javascript
+// Good: parallel requests to different endpoints — each has its own 3-thread budget
+const [tickets, companies, contacts] = await Promise.all([
+  client.tickets.query().where('status', 'in', [1, 5]).execute(),
+  client.companies.query().where('companyType', 'eq', 1).execute(),
+  client.contacts.query().where('isActive', 'eq', true).execute(),
+]);
+
+// Avoid: parallel requests to the SAME endpoint — they share 3 threads
+// (will queue automatically, but adds latency)
+const [page1, page2, page3] = await Promise.all([
+  client.tickets.query().pageNumber(1).execute(),  // ← same endpoint
+  client.tickets.query().pageNumber(2).execute(),  // ← same endpoint
+  client.tickets.query().pageNumber(3).execute(),  // ← same endpoint
+]);
+```
+
 ### Batch Processing
 
-For bulk operations, batch requests to avoid rate limits:
+For bulk operations, batch requests to avoid the hourly limit:
 
 ```javascript
 async function batchProcess(items, batchSize = 50, delayMs = 1000) {
@@ -554,6 +585,8 @@ async function getQueues() {
 8. **Monitor rate limits** - Track remaining requests
 9. **Log API calls** - Enable debugging and audit trails
 10. **Validate before sending** - Check required fields client-side
+11. **One API key per team** - Autotask limits 3 concurrent threads per `integrationCode`. Each team using the integration should have their own API user so they don't compete for the same thread budget
+12. **Parallelize across endpoints, not within** - To maximize throughput, query Tickets + Companies + Contacts simultaneously (different endpoints, independent thread budgets) rather than fetching multiple pages of the same endpoint in parallel
 
 ## Related Skills
 
