@@ -3,7 +3,7 @@ export interface McpServer {
   name: string;
   npmPackage: string;
   description: string;
-  category: 'psa' | 'rmm' | 'documentation' | 'security';
+  category: 'psa' | 'rmm' | 'documentation' | 'security' | 'accounting' | 'network' | 'sales';
   repoUrl: string;
   companionPluginId?: string;
   envVars: EnvVar[];
@@ -877,13 +877,428 @@ export const mcpServers: McpServer[] = [
     mcpbAvailable: false,
     rateLimit: '60 requests per minute'
   }
+  {
+    id: 'blumira',
+    name: 'Blumira MCP',
+    npmPackage: 'blumira-mcp',
+    description: 'MCP server for the Blumira SIEM platform. Access security findings, agents, users, resolutions, and MSP multi-account management.',
+    category: 'security',
+    repoUrl: 'https://github.com/wyre-technology/blumira-mcp',
+    envVars: [
+      { name: 'BLUMIRA_JWT_TOKEN', required: true, description: 'JWT authentication token from your Blumira account' },
+    ],
+    domains: [
+      {
+        name: 'Findings',
+        description: 'View, resolve, and comment on security findings.',
+        tools: [
+          { name: 'List findings', description: 'List security findings with filtering' },
+          { name: 'Get finding', description: 'Get details for a specific finding' },
+          { name: 'Resolve finding', description: 'Mark a finding as resolved' },
+          { name: 'Assign finding', description: 'Assign a finding to a user' },
+          { name: 'List comments', description: 'List comments on a finding' },
+          { name: 'Add comment', description: 'Add a comment to a finding' },
+        ]
+      },
+      {
+        name: 'Agents & Devices',
+        description: 'Manage Blumira agents and monitored devices.',
+        tools: [
+          { name: 'List devices', description: 'List monitored devices' },
+          { name: 'Get device', description: 'Get details for a specific device' },
+          { name: 'List agent keys', description: 'List agent deployment keys' },
+        ]
+      },
+      {
+        name: 'MSP Management',
+        description: 'Multi-account management for MSP environments.',
+        tools: [
+          { name: 'List MSP accounts', description: 'List all managed accounts' },
+          { name: 'Get MSP findings', description: 'View findings across all accounts' },
+          { name: 'List MSP devices', description: 'List devices across all accounts' },
+          { name: 'List MSP users', description: 'List users across all accounts' },
+        ]
+      },
+    ],
+    architecture: 'Single TypeScript MCP server supporting both stdio and Streamable HTTP transports.',
+    installCommand: 'npx blumira-mcp',
+    dockerAvailable: true,
+    mcpbAvailable: false,
+  },
+  {
+    id: 'domotz',
+    name: 'Domotz MCP',
+    npmPackage: 'domotz-mcp',
+    description: 'MCP server for Domotz network monitoring. Monitor agents, devices, network topology, metrics, alerts, and power outlets.',
+    category: 'network',
+    repoUrl: 'https://github.com/wyre-technology/domotz-mcp',
+    envVars: [
+      { name: 'DOMOTZ_API_KEY', required: true, description: 'Your Domotz API key' },
+      { name: 'DOMOTZ_REGION', required: false, description: 'API region endpoint (default: us-east-1)' },
+    ],
+    domains: [
+      {
+        name: 'Agents',
+        description: 'List and inspect Domotz monitoring agents.',
+        tools: [
+          { name: 'List agents', description: 'List all Domotz agents' },
+          { name: 'Get agent', description: 'Get details for a specific agent' },
+        ]
+      },
+      {
+        name: 'Devices',
+        description: 'Monitor and inspect network devices.',
+        tools: [
+          { name: 'List devices', description: 'List all devices on an agent' },
+          { name: 'Get device', description: 'Get details for a specific device' },
+          { name: 'Device uptime', description: 'Get device uptime history' },
+          { name: 'Device history', description: 'Get device status history' },
+          { name: 'Device inventory', description: 'Get device inventory details' },
+        ]
+      },
+      {
+        name: 'Network',
+        description: 'View network topology and detect conflicts.',
+        tools: [
+          { name: 'Network topology', description: 'Get network topology map' },
+          { name: 'Network interfaces', description: 'List network interfaces' },
+          { name: 'IP conflicts', description: 'Detect IP address conflicts' },
+        ]
+      },
+      {
+        name: 'Metrics & Alerts',
+        description: 'Monitor SNMP sensors and alert profiles.',
+        tools: [
+          { name: 'List metric variables', description: 'List available SNMP metric variables' },
+          { name: 'Variable history', description: 'Get metric variable history' },
+          { name: 'SNMP sensors', description: 'List SNMP sensors' },
+          { name: 'Alert profiles', description: 'List alert profiles' },
+          { name: 'Device alerts', description: 'List alerts for a device' },
+        ]
+      },
+    ],
+    architecture: 'Single TypeScript MCP server supporting both stdio and Streamable HTTP transports.',
+    installCommand: 'npx domotz-mcp',
+    dockerAvailable: true,
+    mcpbAvailable: false,
+  },
+  {
+    id: 'huntress',
+    name: 'Huntress MCP',
+    npmPackage: 'huntress-mcp',
+    description: 'MCP server for the Huntress cybersecurity platform. Manage agents, organizations, incidents, escalations, signals, and users.',
+    category: 'security',
+    repoUrl: 'https://github.com/wyre-technology/huntress-mcp',
+    envVars: [
+      { name: 'HUNTRESS_API_KEY', required: true, description: 'Your Huntress API public key' },
+      { name: 'HUNTRESS_API_SECRET', required: true, description: 'Your Huntress API secret key' },
+    ],
+    domains: [
+      {
+        name: 'Agents',
+        description: 'View and manage Huntress agents across organizations.',
+        tools: [
+          { name: 'List agents', description: 'List agents with filtering' },
+          { name: 'Get agent', description: 'Get details for a specific agent' },
+        ]
+      },
+      {
+        name: 'Organizations',
+        description: 'Manage customer organizations.',
+        tools: [
+          { name: 'List organizations', description: 'List all organizations' },
+          { name: 'Get organization', description: 'Get organization details' },
+          { name: 'Create organization', description: 'Create a new organization' },
+          { name: 'Update organization', description: 'Update an organization' },
+          { name: 'Delete organization', description: 'Delete an organization' },
+        ]
+      },
+      {
+        name: 'Incidents & Escalations',
+        description: 'Triage, resolve, and bulk-manage security incidents.',
+        tools: [
+          { name: 'List incidents', description: 'List incidents with filtering' },
+          { name: 'Get incident', description: 'Get incident details and remediations' },
+          { name: 'Resolve incident', description: 'Mark an incident as resolved' },
+          { name: 'Bulk approve remediations', description: 'Approve remediations in bulk' },
+          { name: 'List escalations', description: 'List escalated incidents' },
+          { name: 'Resolve escalation', description: 'Resolve an escalation' },
+        ]
+      },
+      {
+        name: 'Signals',
+        description: 'View and investigate threat signals.',
+        tools: [
+          { name: 'List signals', description: 'List threat signals' },
+          { name: 'Get signal', description: 'Get signal details' },
+        ]
+      },
+      {
+        name: 'Users',
+        description: 'Manage Huntress platform users.',
+        tools: [
+          { name: 'List users', description: 'List platform users' },
+          { name: 'Get user', description: 'Get user details' },
+          { name: 'Create user', description: 'Create a new user' },
+          { name: 'Update user', description: 'Update a user' },
+          { name: 'Delete user', description: 'Delete a user' },
+        ]
+      },
+    ],
+    architecture: 'Single TypeScript MCP server supporting both stdio and Streamable HTTP transports.',
+    installCommand: 'npx huntress-mcp',
+    dockerAvailable: true,
+    mcpbAvailable: false,
+  },
+  {
+    id: 'qbo',
+    name: 'QuickBooks Online MCP',
+    npmPackage: '@wyre-technology/qbo-mcp',
+    description: 'MCP server for QuickBooks Online. Manage customers, invoices, expenses, payments, and run financial reports.',
+    category: 'accounting',
+    repoUrl: 'https://github.com/wyre-technology/qbo-mcp',
+    envVars: [
+      { name: 'QBO_ACCESS_TOKEN', required: true, description: 'OAuth 2.0 access token for QuickBooks Online' },
+      { name: 'QBO_REALM_ID', required: true, description: 'Your QuickBooks Online company ID (realm ID)' },
+    ],
+    domains: [
+      {
+        name: 'Customers',
+        description: 'Manage customer records.',
+        tools: [
+          { name: 'List customers', description: 'List customers with filtering' },
+          { name: 'Get customer', description: 'Get customer details' },
+          { name: 'Create customer', description: 'Create a new customer' },
+          { name: 'Search customers', description: 'Search customers by name or email' },
+        ]
+      },
+      {
+        name: 'Invoices',
+        description: 'Create and manage invoices.',
+        tools: [
+          { name: 'List invoices', description: 'List invoices with filtering' },
+          { name: 'Get invoice', description: 'Get invoice details' },
+          { name: 'Create invoice', description: 'Create a new invoice' },
+          { name: 'Send invoice', description: 'Email an invoice to a customer' },
+        ]
+      },
+      {
+        name: 'Expenses',
+        description: 'View purchases and bills.',
+        tools: [
+          { name: 'List purchases', description: 'List expense purchases' },
+          { name: 'List bills', description: 'List vendor bills' },
+          { name: 'Get purchase', description: 'Get purchase details' },
+          { name: 'Get bill', description: 'Get bill details' },
+        ]
+      },
+      {
+        name: 'Payments',
+        description: 'Record and view customer payments.',
+        tools: [
+          { name: 'List payments', description: 'List payments received' },
+          { name: 'Get payment', description: 'Get payment details' },
+          { name: 'Create payment', description: 'Record a customer payment' },
+        ]
+      },
+      {
+        name: 'Reports',
+        description: 'Generate financial reports.',
+        tools: [
+          { name: 'Profit & Loss', description: 'Generate a P&L report' },
+          { name: 'Balance Sheet', description: 'Generate a balance sheet report' },
+          { name: 'Aged Receivables', description: 'Generate aged receivables report' },
+          { name: 'Aged Payables', description: 'Generate aged payables report' },
+          { name: 'Customer Sales', description: 'Generate customer sales report' },
+        ]
+      },
+    ],
+    architecture: 'Single TypeScript MCP server supporting both stdio and Streamable HTTP transports.',
+    installCommand: 'npx @wyre-technology/qbo-mcp',
+    dockerAvailable: true,
+    mcpbAvailable: false,
+  },
+  {
+    id: 'salesbuildr',
+    name: 'SalesBuildr MCP',
+    npmPackage: '@wyre-technology/salesbuildr-mcp',
+    description: 'MCP server for SalesBuildr. Manage companies, contacts, products, opportunities, and quotes in your sales pipeline.',
+    category: 'sales',
+    repoUrl: 'https://github.com/wyre-technology/salesbuildr-mcp',
+    envVars: [
+      { name: 'SALESBUILDR_API_KEY', required: true, description: 'Your SalesBuildr API key' },
+      { name: 'SALESBUILDR_BASE_URL', required: false, description: 'Tenant-specific base URL (e.g. https://mytenant.salesbuildr.com)' },
+    ],
+    domains: [
+      {
+        name: 'Companies',
+        description: 'Manage customer company records.',
+        tools: [
+          { name: 'List companies', description: 'List companies with filtering' },
+          { name: 'Get company', description: 'Get company details' },
+          { name: 'Create company', description: 'Create a new company' },
+          { name: 'Update company', description: 'Update a company record' },
+          { name: 'Delete company', description: 'Delete a company' },
+        ]
+      },
+      {
+        name: 'Contacts',
+        description: 'Manage contacts within companies.',
+        tools: [
+          { name: 'List contacts', description: 'List contacts with filtering' },
+          { name: 'Get contact', description: 'Get contact details' },
+          { name: 'Create contact', description: 'Create a new contact' },
+          { name: 'Update contact', description: 'Update a contact' },
+          { name: 'Delete contact', description: 'Delete a contact' },
+        ]
+      },
+      {
+        name: 'Products',
+        description: 'Browse the product catalog.',
+        tools: [
+          { name: 'List products', description: 'List available products' },
+          { name: 'Get product', description: 'Get product details and pricing' },
+        ]
+      },
+      {
+        name: 'Opportunities',
+        description: 'Track sales opportunities.',
+        tools: [
+          { name: 'List opportunities', description: 'List opportunities with filtering' },
+          { name: 'Get opportunity', description: 'Get opportunity details' },
+          { name: 'Create opportunity', description: 'Create a new opportunity' },
+          { name: 'Update opportunity', description: 'Update an opportunity' },
+        ]
+      },
+      {
+        name: 'Quotes',
+        description: 'Create and manage sales quotes.',
+        tools: [
+          { name: 'List quotes', description: 'List quotes with filtering' },
+          { name: 'Get quote', description: 'Get quote details' },
+          { name: 'Create quote', description: 'Create a new quote' },
+        ]
+      },
+    ],
+    architecture: 'Single TypeScript MCP server supporting both stdio and Streamable HTTP transports.',
+    installCommand: 'npx @wyre-technology/salesbuildr-mcp',
+    dockerAvailable: true,
+    mcpbAvailable: false,
+  },
+  {
+    id: 'spamtitan',
+    name: 'SpamTitan MCP',
+    npmPackage: '@wyre-technology/spamtitan-mcp',
+    description: 'MCP server for SpamTitan email security. Manage quarantine, allowlists, blocklists, and view email filtering statistics.',
+    category: 'security',
+    repoUrl: 'https://github.com/wyre-technology/spamtitan-mcp',
+    envVars: [
+      { name: 'SPAMTITAN_API_KEY', required: true, description: 'Your SpamTitan API key' },
+      { name: 'SPAMTITAN_BASE_URL', required: false, description: 'SpamTitan API base URL (default: https://api-spamtitan.titanhq.com)' },
+    ],
+    domains: [
+      {
+        name: 'Quarantine',
+        description: 'View and manage quarantined email messages.',
+        tools: [
+          { name: 'Get quarantine queue', description: 'List messages in quarantine' },
+          { name: 'Release message', description: 'Release a quarantined message to the recipient' },
+          { name: 'Delete message', description: 'Delete a quarantined message' },
+        ]
+      },
+      {
+        name: 'Allow & Block Lists',
+        description: 'Manage sender allowlists and blocklists.',
+        tools: [
+          { name: 'Manage allowlist', description: 'Add or remove entries from the allowlist' },
+          { name: 'Manage blocklist', description: 'Add or remove entries from the blocklist' },
+        ]
+      },
+      {
+        name: 'Statistics',
+        description: 'View email filtering statistics.',
+        tools: [
+          { name: 'Get stats', description: 'Get email filtering statistics and summary' },
+        ]
+      },
+    ],
+    architecture: 'Single TypeScript MCP server supporting both stdio and Streamable HTTP transports.',
+    installCommand: 'npx @wyre-technology/spamtitan-mcp',
+    dockerAvailable: true,
+    mcpbAvailable: false,
+  },
+  {
+    id: 'xero',
+    name: 'Xero MCP',
+    npmPackage: '@wyre-technology/xero-mcp',
+    description: 'MCP server for Xero accounting. Manage contacts, invoices, payments, chart of accounts, and run financial reports.',
+    category: 'accounting',
+    repoUrl: 'https://github.com/wyre-technology/xero-mcp',
+    envVars: [
+      { name: 'XERO_ACCESS_TOKEN', required: true, description: 'OAuth 2.0 access token for Xero' },
+      { name: 'XERO_TENANT_ID', required: true, description: 'Your Xero organisation/tenant ID' },
+    ],
+    domains: [
+      {
+        name: 'Contacts',
+        description: 'Manage customers and suppliers.',
+        tools: [
+          { name: 'List contacts', description: 'List contacts with filtering' },
+          { name: 'Get contact', description: 'Get contact details' },
+          { name: 'Create contact', description: 'Create a new contact' },
+          { name: 'Search contacts', description: 'Search contacts by name or email' },
+        ]
+      },
+      {
+        name: 'Invoices',
+        description: 'Create and manage sales invoices.',
+        tools: [
+          { name: 'List invoices', description: 'List invoices with filtering' },
+          { name: 'Get invoice', description: 'Get invoice details' },
+          { name: 'Create invoice', description: 'Create a new invoice' },
+          { name: 'Update invoice status', description: 'Approve, void, or submit an invoice' },
+        ]
+      },
+      {
+        name: 'Payments',
+        description: 'Record and view payments.',
+        tools: [
+          { name: 'List payments', description: 'List payments with filtering' },
+          { name: 'Get payment', description: 'Get payment details' },
+          { name: 'Create payment', description: 'Record a payment against an invoice' },
+        ]
+      },
+      {
+        name: 'Accounts',
+        description: 'Browse the chart of accounts.',
+        tools: [
+          { name: 'List accounts', description: 'List chart of accounts' },
+          { name: 'Get account', description: 'Get account details' },
+        ]
+      },
+      {
+        name: 'Reports',
+        description: 'Generate financial reports.',
+        tools: [
+          { name: 'Profit & Loss', description: 'Generate a P&L report' },
+          { name: 'Balance Sheet', description: 'Generate a balance sheet report' },
+          { name: 'Aged Receivables', description: 'Generate aged receivables report' },
+          { name: 'Aged Payables', description: 'Generate aged payables report' },
+        ]
+      },
+    ],
+    architecture: 'Single TypeScript MCP server supporting both stdio and Streamable HTTP transports.',
+    installCommand: 'npx @wyre-technology/xero-mcp',
+    dockerAvailable: true,
+    mcpbAvailable: false,
+  },
 ];
 
 export function getMcpServerById(id: string): McpServer | undefined {
   return mcpServers.find(s => s.id === id);
 }
 
-export function getMcpServersByCategory(category: 'psa' | 'rmm' | 'documentation' | 'security'): McpServer[] {
+export function getMcpServersByCategory(category: 'psa' | 'rmm' | 'documentation' | 'security' | 'accounting' | 'network' | 'sales'): McpServer[] {
   return mcpServers.filter(s => s.category === category);
 }
 
