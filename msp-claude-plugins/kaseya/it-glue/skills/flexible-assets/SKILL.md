@@ -106,6 +106,15 @@ Tag fields create relationships to other IT Glue resources:
 }
 ```
 
+## Critical: Discover Type IDs First
+
+**Flexible asset type IDs are instance-specific** — every IT Glue account has different IDs. Never guess or hardcode type IDs. Always call `list_flexible_asset_types` first to discover what types exist, then use the returned IDs with `search_flexible_assets`.
+
+```
+Step 1: list_flexible_asset_types → get type IDs
+Step 2: search_flexible_assets(flexible_asset_type_id=<id from step 1>)
+```
+
 ## API Patterns
 
 ### List Flexible Asset Types
