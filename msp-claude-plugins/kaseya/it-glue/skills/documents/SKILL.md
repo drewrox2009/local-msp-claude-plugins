@@ -87,26 +87,25 @@ Documents can embed:
 
 ### List Documents
 
+**Always use the organization-scoped relationship endpoint** — `GET /documents` (top-level) returns 404 in practice. Use:
+
 ```http
-GET /documents
+GET /organizations/123/relationships/documents
 x-api-key: YOUR_API_KEY
 Content-Type: application/vnd.api+json
 ```
 
-**By Organization:**
+**With Name Filter:**
 ```http
-GET /organizations/123/relationships/documents
-```
-
-**With Filters:**
-```http
-GET /documents?filter[organization-id]=123&filter[document-folder-id]=456
+GET /organizations/123/relationships/documents?filter[name]=backup
 ```
 
 **With Pagination:**
 ```http
-GET /documents?page[size]=100&page[number]=1&sort=name
+GET /organizations/123/relationships/documents?page[size]=100&page[number]=1&sort=name
 ```
+
+> **Note:** If documents return 404 for an organization, that organization likely does not have the IT Glue Documents module enabled. Use `search_flexible_assets` instead — flexible assets are the more common way documentation is stored in IT Glue.
 
 ### Get Single Document
 
