@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+#### Kaseya Autotask Plugin (`kaseya/autotask/`) - v0.2.0
+- **Expenses Skill** - Expense report and expense item management covering creation, search, billability rules, receipt tracking, payment types, and expense categories
+- Maps to MCP tools: `autotask_get_expense_report`, `autotask_search_expense_reports`, `autotask_create_expense_report`, `autotask_create_expense_item`
+
 ### Changed
 
 #### Pax8 Plugin (`pax8/pax8/`)
