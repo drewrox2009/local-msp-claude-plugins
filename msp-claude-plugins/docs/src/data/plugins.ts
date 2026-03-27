@@ -1,9 +1,11 @@
+// Auto-generated — do not edit manually. Run `npm run generate` to update.
+
 export interface Plugin {
   id: string;
   name: string;
   vendor: string;
   description: string;
-  category: 'psa' | 'rmm' | 'documentation' | 'security' | 'sales' | 'accounting' | 'productivity';
+  category: 'accounting' | 'crm' | 'documentation' | 'email-security' | 'incident-management' | 'marketplace' | 'monitoring' | 'network' | 'productivity' | 'psa' | 'rmm' | 'sales' | 'security';
   maturity: 'production' | 'beta' | 'alpha';
   features: string[];
   skills: Skill[];
@@ -37,939 +39,1290 @@ export interface ApiInfo {
 
 export const plugins: Plugin[] = [
   {
-    id: 'autotask',
-    name: 'Autotask PSA',
-    vendor: 'Kaseya',
-    description: 'Professional Services Automation for ticket management, CRM, projects, contracts, and time tracking.',
-    category: 'psa',
+    id: 'abnormal-security',
+    name: 'Abnormal Security',
+    vendor: 'Abnormal',
+    description: 'Abnormal Security - AI-powered email security, phishing detection, account takeover prevention',
+    category: 'email-security',
     maturity: 'production',
     features: [
-      'Ticket Management',
-      'CRM Operations',
-      'Project Management',
-      'Contract Management',
-      'Time Entry'
+      'Account Takeover',
+      'Cases',
+      'Messages',
+      'Threats',
+      'Vendors'
     ],
     skills: [
-      { name: 'tickets', description: 'Service ticket management and workflows' },
-      { name: 'crm', description: 'Company and contact management' },
-      { name: 'projects', description: 'Project and task management' },
-      { name: 'contracts', description: 'Service agreement and billing' },
-      { name: 'api-patterns', description: 'Common Autotask API patterns' }
+      { name: 'account-takeover', description: 'Use this skill when working with Abnormal Security account takeover (ATO) detection - suspicious sign-ins, impossible travel, compromised accounts, mailbox rule changes, and lateral movement indicators.' },
+      { name: 'cases', description: 'Use this skill when working with Abnormal Security abuse mailbox cases - user-reported emails, case triage, remediation actions, case lifecycle, and phishing simulation management.' },
+      { name: 'messages', description: 'Use this skill when working with Abnormal Security message analysis - email headers, attachments, sender reputation, delivery context, authentication results (SPF/DKIM/DMARC), and message metadata.' },
+      { name: 'threats', description: 'Use this skill when working with Abnormal Security threat detection and analysis - BEC, phishing, malware, socially-engineered attacks, spam, graymail, and credential theft.' },
+      { name: 'vendors', description: 'Use this skill when working with Abnormal Security VendorBase vendor risk assessment - vendor risk scores, compromised vendor detection, vendor domain analysis, and supply chain email threat monitoring.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the Abnormal Security REST API - Bearer token authentication, base URLs, rate limiting, pagination, OData filtering, error handling, and common API patterns.' }
     ],
     commands: [
-      { name: '/create-ticket', description: 'Create a new service ticket' },
-      { name: '/search-tickets', description: 'Search for tickets by criteria' },
-      { name: '/update-ticket', description: 'Update ticket fields (status, priority, queue, due date, assignee)' },
-      { name: '/add-note', description: 'Add internal or public notes to tickets' },
-      { name: '/my-tickets', description: 'List tickets assigned to current user with filtering' },
-      { name: '/lookup-company', description: 'Search companies by name or ID' },
-      { name: '/lookup-contact', description: 'Search contacts by name, email, phone, or company' },
-      { name: '/lookup-asset', description: 'Search configuration items/assets' },
-      { name: '/check-contract', description: 'View contract status and entitlements' },
-      { name: '/reassign-ticket', description: 'Reassign ticket to different resource or queue' },
-      { name: '/time-entry', description: 'Log time against a ticket or project' }
+      { name: '/account-audit', description: 'Audit for account takeover indicators and suspicious sign-ins in Abnormal Security' },
+      { name: '/case-review', description: 'Review and triage abuse mailbox cases in Abnormal Security' },
+      { name: '/search-threats', description: 'Search for specific threat patterns in Abnormal Security by sender, recipient, attack type, or keywords' },
+      { name: '/threat-triage', description: 'Triage recent email threats detected by Abnormal Security by severity and attack type' },
+      { name: '/vendor-risk', description: 'Check vendor risk scores and compromised vendor activity in Abnormal Security VendorBase' }
     ],
     apiInfo: {
-      baseUrl: 'https://webservicesX.autotask.net/atservicesrest/v1.0',
-      auth: 'API Integration Code + Username + Secret',
-      rateLimit: '10,000 requests per hour',
-      docsUrl: 'https://ww5.autotask.net/help/DeveloperHelp/Content/APIs/REST/REST_API_Home.htm'
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
     },
-    path: 'kaseya/autotask',
-    mcpRepo: 'https://github.com/wyre-technology/autotask-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: true, validated: true }
-  },
-  {
-    id: 'datto-rmm',
-    name: 'Datto RMM',
-    vendor: 'Kaseya',
-    description: 'Remote Monitoring and Management for device management, alerts, jobs, and automation.',
-    category: 'rmm',
-    maturity: 'production',
-    features: [
-      'Device Management',
-      'Alert Handling',
-      'Site Management',
-      'Job Execution',
-      'Audit Data'
-    ],
-    skills: [
-      { name: 'devices', description: 'Device management, status monitoring, user-defined fields' },
-      { name: 'alerts', description: 'Alert handling with 25+ context types' },
-      { name: 'sites', description: 'Site management and configuration' },
-      { name: 'jobs', description: 'Quick job execution and component scripts' },
-      { name: 'audit', description: 'Hardware and software inventory' },
-      { name: 'variables', description: 'Account and site-level variables' },
-      { name: 'api-patterns', description: 'Authentication, pagination, error handling' }
-    ],
-    commands: [
-      { name: '/device-lookup', description: 'Find a device by hostname, IP, or MAC address' },
-      { name: '/resolve-alert', description: 'Resolve open alerts' },
-      { name: '/run-job', description: 'Run a quick job on a device' },
-      { name: '/site-devices', description: 'List devices at a site' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://{platform}-api.centrastage.net',
-      auth: 'API Key + Secret',
-      rateLimit: '600 requests per minute',
-      docsUrl: 'https://rmm.datto.com/help/en/Content/2SETUP/APIv2.htm'
-    },
-    path: 'kaseya/datto-rmm',
-    mcpRepo: 'https://github.com/wyre-technology/datto-rmm-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: true }
-  },
-  {
-    id: 'it-glue',
-    name: 'IT Glue',
-    vendor: 'Kaseya',
-    description: 'Documentation platform for organizations, assets, passwords, and flexible documentation.',
-    category: 'documentation',
-    maturity: 'production',
-    features: [
-      'Organization Management',
-      'Configuration Items',
-      'Contact Management',
-      'Password Management',
-      'Documentation',
-      'Flexible Assets'
-    ],
-    skills: [
-      { name: 'organizations', description: 'Organization (company/client) management' },
-      { name: 'configurations', description: 'Configuration item (asset) management' },
-      { name: 'contacts', description: 'Contact management' },
-      { name: 'passwords', description: 'Secure credential storage and retrieval' },
-      { name: 'documents', description: 'Documentation management' },
-      { name: 'flexible-assets', description: 'Custom structured documentation' },
-      { name: 'api-patterns', description: 'IT Glue API patterns and best practices' }
-    ],
-    commands: [
-      { name: '/lookup-asset', description: 'Find a configuration by name, hostname, serial, or IP' },
-      { name: '/search-docs', description: 'Search documentation by keyword' },
-      { name: '/get-password', description: 'Retrieve a password (with security logging)' },
-      { name: '/find-organization', description: 'Find an organization by name' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://api.itglue.com',
-      auth: 'API Key (ITG.xxx)',
-      rateLimit: '3000 requests per 5 minutes',
-      docsUrl: 'https://api.itglue.com/developer/'
-    },
-    path: 'kaseya/it-glue',
-    mcpRepo: 'https://github.com/wyre-technology/itglue-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: true }
-  },
-  {
-    id: 'syncro',
-    name: 'Syncro MSP',
-    vendor: 'Syncro',
-    description: 'All-in-one PSA/RMM for ticket management, customer operations, assets, and invoicing.',
-    category: 'psa',
-    maturity: 'beta',
-    features: [
-      'Ticket Management',
-      'Customer Operations',
-      'Asset Management',
-      'Invoice Management'
-    ],
-    skills: [
-      { name: 'tickets', description: 'Service ticket management, statuses, timers' },
-      { name: 'customers', description: 'Customer and contact management' },
-      { name: 'assets', description: 'Asset tracking and RMM integration' },
-      { name: 'invoices', description: 'Invoice generation and payments' },
-      { name: 'api-patterns', description: 'Syncro API authentication, pagination, rate limits' }
-    ],
-    commands: [
-      { name: '/create-ticket', description: 'Create a new service ticket' },
-      { name: '/search-tickets', description: 'Search for tickets by criteria' },
-      { name: '/update-ticket', description: 'Update ticket fields (status, priority, assignee, due date)' },
-      { name: '/add-ticket-comment', description: 'Add comments with visibility and email notification control' },
-      { name: '/log-time', description: 'Log time entries with billable/non-billable options' },
-      { name: '/get-customer', description: 'Retrieve customer details with optional assets/tickets' },
-      { name: '/list-alerts', description: 'List RMM alerts with severity/status/customer filters' },
-      { name: '/resolve-alert', description: 'Resolve alerts with optional ticket creation' },
-      { name: '/search-assets', description: 'Search assets by name, serial, type, or customer' },
-      { name: '/create-appointment', description: 'Create calendar appointments linked to tickets/customers' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://{subdomain}.syncromsp.com/api/v1',
-      auth: 'API key as query parameter',
-      rateLimit: '180 requests per minute',
-      docsUrl: 'https://api-docs.syncromsp.com/'
-    },
-    path: 'syncro/syncro-msp',
-    mcpRepo: 'https://github.com/wyre-technology/syncro-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
+    path: 'abnormal/abnormal-security',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
   },
   {
     id: 'atera',
     name: 'Atera',
     vendor: 'Atera',
-    description: 'Cloud-native RMM/PSA for tickets, agents, customers, alerts, and device monitoring.',
+    description: 'Atera - tickets, agents, customers, alerts, SNMP/HTTP monitors',
     category: 'psa',
-    maturity: 'beta',
+    maturity: 'production',
     features: [
-      'Ticket Management',
-      'Agent Management',
+      'Agent Monitoring',
+      'Alert Handling',
       'Customer Operations',
-      'Alert Management',
-      'Device Monitoring'
+      'Device Management',
+      'Ticket Management'
     ],
     skills: [
-      { name: 'tickets', description: 'Service ticket management with filters, statuses, comments' },
-      { name: 'agents', description: 'RMM agent management and PowerShell execution' },
-      { name: 'customers', description: 'Customer and contact management' },
-      { name: 'alerts', description: 'Alert monitoring, acknowledgment, and resolution' },
-      { name: 'devices', description: 'HTTP, SNMP, and TCP device monitors' },
-      { name: 'api-patterns', description: 'X-API-KEY auth, OData pagination, rate limiting' }
+      { name: 'agents', description: 'Use this skill when working with Atera RMM agents - listing, searching, monitoring, or executing commands on managed devices.' },
+      { name: 'alerts', description: 'Use this skill when working with Atera alerts - viewing, acknowledging, resolving, or managing alerts from monitored devices.' },
+      { name: 'customers', description: 'Use this skill when working with Atera customers and contacts - creating, updating, searching, or managing customer records.' },
+      { name: 'devices', description: 'Use this skill when working with Atera device monitors - HTTP, SNMP, and TCP monitors for network devices, services, and applications.' },
+      { name: 'tickets', description: 'Use this skill when working with Atera tickets - creating, updating, searching, or managing service desk operations.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the Atera REST API - authentication, pagination, rate limiting, and error handling.' }
     ],
     commands: [
-      { name: '/create-ticket', description: 'Create a new service ticket' },
-      { name: '/search-tickets', description: 'Search for tickets by criteria' },
-      { name: '/update-ticket', description: 'Update ticket fields (status, priority, technician)' },
-      { name: '/list-alerts', description: 'List active RMM alerts with filtering' },
-      { name: '/resolve-alert', description: 'Resolve an RMM alert with optional ticket creation' },
-      { name: '/run-powershell', description: 'Execute PowerShell script on an agent' },
-      { name: '/search-customers', description: 'Search for customers by name or criteria' },
-      { name: '/create-monitor', description: 'Create HTTP, TCP, or SNMP monitors' },
-      { name: '/get-kb-articles', description: 'Search knowledge base articles' },
-      { name: '/log-time', description: 'Log work hours on a ticket' }
+      { name: '/create-monitor', description: 'Create a threshold-based monitor for an Atera agent' },
+      { name: '/create-ticket', description: 'Create a new service ticket in Atera' },
+      { name: '/get-kb-articles', description: 'Search the Atera knowledge base for articles' },
+      { name: '/list-alerts', description: 'List active RMM alerts from Atera' },
+      { name: '/log-time', description: 'Log work hours on an Atera ticket' },
+      { name: '/resolve-alert', description: 'Resolve an RMM alert in Atera' },
+      { name: '/run-powershell', description: 'Execute a PowerShell script on an Atera agent' },
+      { name: '/search-agents', description: 'Search for RMM agents in Atera by customer or machine name' },
+      { name: '/search-customers', description: 'Search for Atera customers by name or criteria' },
+      { name: '/update-ticket', description: 'Update fields on an existing Atera ticket' }
     ],
     apiInfo: {
-      baseUrl: 'https://app.atera.com/api/v3',
-      auth: 'X-API-KEY header',
-      rateLimit: '700 requests per minute',
-      docsUrl: 'https://app.atera.com/apidocs/'
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
     },
     path: 'atera/atera',
-    mcpRepo: 'https://github.com/wyre-technology/atera-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
-  },
-  {
-    id: 'superops',
-    name: 'SuperOps.ai',
-    vendor: 'SuperOps',
-    description: 'AI-powered PSA/RMM for tickets, assets, clients, alerts, and runbook automation.',
-    category: 'psa',
-    maturity: 'beta',
-    features: [
-      'Ticket Management',
-      'Asset Management',
-      'Client Operations',
-      'Alert Handling',
-      'Runbook Execution'
-    ],
-    skills: [
-      { name: 'tickets', description: 'Service ticket management and workflows' },
-      { name: 'assets', description: 'Asset inventory and management' },
-      { name: 'clients', description: 'Client and site management' },
-      { name: 'alerts', description: 'Alert monitoring and resolution' },
-      { name: 'runbooks', description: 'Script and runbook execution' },
-      { name: 'api-patterns', description: 'Common SuperOps.ai GraphQL patterns' }
-    ],
-    commands: [
-      { name: '/create-ticket', description: 'Create a new service ticket' },
-      { name: '/search-tickets', description: 'Search for tickets by criteria' },
-      { name: '/update-ticket', description: 'Update ticket fields (status, priority, technician)' },
-      { name: '/add-ticket-note', description: 'Add internal or public notes to tickets' },
-      { name: '/log-time', description: 'Log time entries against tickets for billing' },
-      { name: '/list-alerts', description: 'List active RMM alerts with filtering' },
-      { name: '/acknowledge-alert', description: 'Acknowledge alerts to indicate investigation started' },
-      { name: '/resolve-alert', description: 'Resolve alerts with optional ticket creation' },
-      { name: '/run-script', description: 'Execute scripts on remote assets' },
-      { name: '/get-asset', description: 'Retrieve detailed asset information' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://api.superops.ai/graphql',
-      auth: 'Bearer token + CustomerSubDomain header',
-      rateLimit: '800 requests per minute',
-      docsUrl: 'https://developer.superops.ai/'
-    },
-    path: 'superops/superops-ai',
-    mcpRepo: 'https://github.com/wyre-technology/superops-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
-  },
-  {
-    id: 'halopsa',
-    name: 'HaloPSA',
-    vendor: 'Halo',
-    description: 'Modern PSA for ticket management, client operations, asset tracking, and contracts.',
-    category: 'psa',
-    maturity: 'beta',
-    features: [
-      'Ticket Management',
-      'Client Operations',
-      'Asset Tracking',
-      'Contract Management'
-    ],
-    skills: [
-      { name: 'tickets', description: 'Ticket management, actions, and attachments' },
-      { name: 'clients', description: 'Client CRUD, sites, and contacts' },
-      { name: 'assets', description: 'Asset tracking and device management' },
-      { name: 'contracts', description: 'Contract management and billing' },
-      { name: 'api-patterns', description: 'OAuth 2.0 authentication, pagination, rate limiting' }
-    ],
-    commands: [
-      { name: '/create-ticket', description: 'Create a new service ticket' },
-      { name: '/search-tickets', description: 'Search for tickets by criteria' },
-      { name: '/add-action', description: 'Add actions (notes, updates, phone calls) to tickets' },
-      { name: '/update-ticket', description: 'Update ticket fields (status, priority, category, team, agent)' },
-      { name: '/show-ticket', description: 'Display comprehensive ticket information' },
-      { name: '/sla-dashboard', description: 'View SLA status across tickets (breaching, at-risk, on-track)' },
-      { name: '/search-clients', description: 'Search clients by name, domain, or attributes' },
-      { name: '/search-assets', description: 'Search assets by name, serial, type, or client' },
-      { name: '/kb-search', description: 'Search the knowledge base for articles and solutions' },
-      { name: '/contract-status', description: 'Check contract status and service entitlements' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://{tenant}.halopsa.com/api',
-      auth: 'OAuth 2.0 Client Credentials',
-      rateLimit: '500 requests per 3 minutes',
-      docsUrl: 'https://halopsa.com/apidocs/'
-    },
-    path: 'halopsa/halopsa',
-    mcpRepo: 'https://github.com/wyre-technology/halopsa-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
-  },
-  {
-    id: 'liongard',
-    name: 'Liongard',
-    vendor: 'Liongard',
-    description: 'Configuration monitoring and change detection for environments, inspections, systems, and compliance assessments.',
-    category: 'security',
-    maturity: 'production',
-    features: [
-      'Environment Management',
-      'Inspection Monitoring',
-      'System Configuration',
-      'Detection & Alerting',
-      'Change Tracking'
-    ],
-    skills: [
-      { name: 'overview', description: 'Liongard platform overview, authentication, and API patterns' },
-      { name: 'environments', description: 'Environment and agent management' },
-      { name: 'inspections', description: 'Inspection monitoring and configuration data' },
-      { name: 'systems', description: 'System (inspector) configuration and launchpoints' },
-      { name: 'detections', description: 'Change detection, alerts, and compliance metrics' }
-    ],
-    commands: [
-      { name: '/liongard-health-check', description: 'Verify Liongard connectivity and API health' },
-      { name: '/liongard-environment-summary', description: 'Summarize environments with agent and system counts' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://{instance}.app.liongard.com/api/v1 and /api/v2',
-      auth: 'X-ROAR-API-KEY header',
-      rateLimit: '300 requests per minute',
-      docsUrl: 'https://docs.liongard.com/reference/overview'
-    },
-    path: 'liongard/liongard',
-    mcpRepo: 'https://github.com/wyre-technology/liongard-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
-  },
-  {
-    id: 'connectwise-psa',
-    name: 'ConnectWise PSA',
-    vendor: 'ConnectWise',
-    description: 'Industry-leading PSA for tickets, companies, contacts, projects, and time tracking.',
-    category: 'psa',
-    maturity: 'alpha',
-    features: [
-      'Ticket Management',
-      'Company Management',
-      'Contact Management',
-      'Project Management',
-      'Time Entry Tracking'
-    ],
-    skills: [
-      { name: 'tickets', description: 'Service ticket management, statuses, priorities, boards' },
-      { name: 'companies', description: 'Company CRUD, types, sites, custom fields' },
-      { name: 'contacts', description: 'Contact management, communication items, portal access' },
-      { name: 'projects', description: 'Project CRUD, phases, templates, resource allocation' },
-      { name: 'time-entries', description: 'Time entry CRUD, billable/non-billable, work types' },
-      { name: 'api-patterns', description: 'Authentication, pagination, conditions syntax' }
-    ],
-    commands: [
-      { name: '/create-ticket', description: 'Create a new service ticket with company lookup' },
-      { name: '/search-tickets', description: 'Search tickets with filters' },
-      { name: '/get-ticket', description: 'Retrieve detailed ticket information' },
-      { name: '/update-ticket', description: 'Update ticket fields (status, priority, board)' },
-      { name: '/add-note', description: 'Add internal or discussion note to ticket' },
-      { name: '/close-ticket', description: 'Close tickets with resolution notes' },
-      { name: '/log-time', description: 'Log time entry against ticket' },
-      { name: '/lookup-config', description: 'Search configuration items/assets' },
-      { name: '/check-agreement', description: 'View agreement status and entitlements' },
-      { name: '/schedule-entry', description: 'Create schedule entry/appointment' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://api-na.myconnectwise.net/{codebase}/apis/3.0/',
-      auth: 'Basic Auth (companyId+publicKey:privateKey) + clientId',
-      rateLimit: '60 requests per minute',
-      docsUrl: 'https://developer.connectwise.com/Products/ConnectWise_PSA'
-    },
-    path: 'connectwise/manage',
-    mcpRepo: 'https://github.com/wyre-technology/connectwise-manage-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
-  },
-  {
-    id: 'connectwise-automate',
-    name: 'ConnectWise Automate',
-    vendor: 'ConnectWise',
-    description: 'Enterprise RMM for computer management, scripts, monitors, alerts, and client management.',
-    category: 'rmm',
-    maturity: 'alpha',
-    features: [
-      'Computer Management',
-      'Script Execution',
-      'Monitor Configuration',
-      'Alert Handling',
-      'Client Management'
-    ],
-    skills: [
-      { name: 'computers', description: 'Computer listing, status monitoring, inventory, patches' },
-      { name: 'clients', description: 'Client CRUD operations, locations, settings, groups' },
-      { name: 'scripts', description: 'Script listing, execution, parameters, results' },
-      { name: 'monitors', description: 'Monitor types, thresholds, templates, assignments' },
-      { name: 'alerts', description: 'Alert listing, acknowledgment, history, ticket creation' },
-      { name: 'api-patterns', description: 'Authentication, pagination, filtering, error handling' }
-    ],
-    commands: [
-      { name: '/list-computers', description: 'List computers with filters' },
-      { name: '/run-script', description: 'Execute a script on an endpoint with parameters' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://{server}/cwa/api/v1/',
-      auth: 'Token-based (Integrator or User credentials)',
-      rateLimit: '60 requests per minute',
-      docsUrl: 'https://developer.connectwise.com/Products/ConnectWise_Automate'
-    },
-    path: 'connectwise/automate',
-    mcpRepo: 'https://github.com/wyre-technology/connectwise-automate-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
-  },
-  {
-    id: 'ninjaone-rmm',
-    name: 'NinjaOne (NinjaRMM)',
-    vendor: 'NinjaOne',
-    description: 'Cloud-native RMM for device management, alerts, ticketing, and remote monitoring across Windows, Mac, and Linux endpoints.',
-    category: 'rmm',
-    maturity: 'alpha',
-    features: [
-      'Device Management',
-      'Organization Management',
-      'Alert Monitoring',
-      'Ticketing',
-      'Remote Control'
-    ],
-    skills: [
-      { name: 'devices', description: 'Device management, services, inventory, maintenance windows' },
-      { name: 'organizations', description: 'Organization and location management' },
-      { name: 'alerts', description: 'Alert monitoring, dismissal, and webhook configuration' },
-      { name: 'tickets', description: 'Ticket management and log entries' },
-      { name: 'api-patterns', description: 'OAuth 2.0 authentication, pagination, rate limiting' }
-    ],
-    commands: [
-      { name: '/ninjaone-search-devices', description: 'Search devices across organizations' },
-      { name: '/ninjaone-device-info', description: 'Get detailed device information' },
-      { name: '/ninjaone-list-alerts', description: 'List active alerts with filtering' },
-      { name: '/ninjaone-create-ticket', description: 'Create a new ticket' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://app.ninjarmm.com (US) / eu.ninjarmm.com (EU) / oc.ninjarmm.com (OC)',
-      auth: 'OAuth 2.0 Client Credentials',
-      rateLimit: 'Varies by endpoint',
-      docsUrl: 'https://app.ninjarmm.com/apidocs/'
-    },
-    path: 'ninjaone/ninjaone-rmm',
-    mcpRepo: 'https://github.com/wyre-technology/ninjaone-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
-  },
-  {
-    id: 'salesbuildr',
-    name: 'SalesBuildr',
-    vendor: 'SalesBuildr',
-    description: 'CRM and quoting platform for companies, contacts, opportunities, products, and quote management.',
-    category: 'sales',
-    maturity: 'alpha',
-    features: [
-      'Company Management',
-      'Contact Management',
-      'Opportunity Tracking',
-      'Product Catalog',
-      'Quote Generation'
-    ],
-    skills: [
-      { name: 'companies-contacts', description: 'Company and contact management' },
-      { name: 'opportunities', description: 'Opportunity tracking and pipeline management' },
-      { name: 'products', description: 'Product catalog and pricing' },
-      { name: 'quotes', description: 'Quote creation and management' },
-      { name: 'api-patterns', description: 'SalesBuildr API authentication, pagination, rate limiting' }
-    ],
-    commands: [
-      { name: '/search-companies', description: 'Search for companies by name' },
-      { name: '/create-contact', description: 'Create a new contact' },
-      { name: '/search-contacts', description: 'Search contacts by name or company' },
-      { name: '/search-opportunities', description: 'Search opportunities by criteria' },
-      { name: '/create-opportunity', description: 'Create a new sales opportunity' },
-      { name: '/update-opportunity', description: 'Update opportunity fields (stage, value)' },
-      { name: '/search-products', description: 'Search the product catalog' },
-      { name: '/create-quote', description: 'Create a new quote' },
-      { name: '/get-quote', description: 'Retrieve quote details' },
-      { name: '/search-quotes', description: 'Search quotes by criteria' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://portal.salesbuildr.com/public-api',
-      auth: 'api-key header',
-      rateLimit: '500 requests per 10 minutes',
-      docsUrl: 'https://portal.salesbuildr.com/public-api'
-    },
-    path: 'salesbuildr/salesbuildr',
-    mcpRepo: 'https://github.com/wyre-technology/salesbuildr-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
-  },
-  {
-    id: 'hudu',
-    name: 'Hudu',
-    vendor: 'Hudu',
-    description: 'IT documentation platform for companies, assets, articles, passwords, and website monitoring.',
-    category: 'documentation',
-    maturity: 'beta',
-    features: [
-      'Company Management',
-      'Asset Management',
-      'Knowledge Base Articles',
-      'Password Management',
-      'Website Monitoring'
-    ],
-    skills: [
-      { name: 'companies', description: 'Company (client/organization) management' },
-      { name: 'assets', description: 'Asset and asset layout management' },
-      { name: 'articles', description: 'Knowledge base article management' },
-      { name: 'passwords', description: 'Secure credential storage and retrieval (asset passwords)' },
-      { name: 'websites', description: 'Website record and monitoring management' },
-      { name: 'api-patterns', description: 'Hudu API patterns and best practices' }
-    ],
-    commands: [
-      { name: '/find-company', description: 'Search for a company by name' },
-      { name: '/lookup-asset', description: 'Find an asset by name, hostname, or serial' },
-      { name: '/search-articles', description: 'Search knowledge base articles' },
-      { name: '/get-password', description: 'Retrieve an asset password (with security logging)' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://{subdomain}.huducloud.com/api/v1',
-      auth: 'x-api-key header',
-      rateLimit: '300 requests per minute',
-      docsUrl: 'https://support.hudu.com/hc/en-us/articles/how-to-use-the-hudu-api'
-    },
-    path: 'hudu/hudu',
-    mcpRepo: 'https://github.com/wyre-technology/hudu-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
-  },
-  {
-    id: 'rocketcyber',
-    name: 'RocketCyber',
-    vendor: 'Kaseya',
-    description: 'Managed SOC platform for incident management, agent monitoring, threat detection, and security event analysis.',
-    category: 'security',
-    maturity: 'beta',
-    features: [
-      'Incident Management',
-      'Agent Monitoring',
-      'Account Hierarchy',
-      'Application Inventory',
-      'SOC Workflows'
-    ],
-    skills: [
-      { name: 'accounts', description: 'Provider and customer account hierarchy' },
-      { name: 'incidents', description: 'Security incident management and triage' },
-      { name: 'agents', description: 'RocketAgent deployment, health, and communication status' },
-      { name: 'apps', description: 'Application inventory and categorization' },
-      { name: 'api-patterns', description: 'RocketCyber API authentication, pagination, rate limiting' }
-    ],
-    commands: [
-      { name: '/search-incidents', description: 'Search security incidents by criteria' },
-      { name: '/account-summary', description: 'Get account overview with agent and incident counts' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://api-{region}.rocketcyber.com/v3',
-      auth: 'Bearer API key',
-      rateLimit: '60 requests per minute',
-      docsUrl: 'https://api-doc.rocketcyber.com/'
-    },
-    path: 'kaseya/rocketcyber',
-    mcpRepo: 'https://github.com/wyre-technology/rocketcyber-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
-  },
-  {
-    id: 'pax8',
-    name: 'Pax8',
-    vendor: 'Pax8',
-    description: 'Cloud marketplace for managing companies, products, subscriptions, orders, and invoices.',
-    category: 'sales',
-    maturity: 'production',
-    features: [
-      'Company Management',
-      'Product Catalog',
-      'Subscription Lifecycle',
-      'Order Management',
-      'Invoice & Billing'
-    ],
-    skills: [
-      { name: 'companies', description: 'MSP client company management within Pax8' },
-      { name: 'products', description: 'Cloud software catalog browsing and search' },
-      { name: 'subscriptions', description: 'Subscription provisioning, modification, and cancellation' },
-      { name: 'orders', description: 'Order placement and provisioning status tracking' },
-      { name: 'invoices', description: 'Invoice reconciliation and billing' },
-      { name: 'api-patterns', description: 'Pax8 API authentication and pagination' }
-    ],
-    commands: [
-      { name: '/search-products', description: 'Search the Pax8 product catalog' },
-      { name: '/subscription-status', description: 'Check subscription status for a client' },
-      { name: '/create-order', description: 'Place an order for a cloud product' },
-      { name: '/license-summary', description: 'Summarize license counts and costs' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://mcp.pax8.com/v1/mcp',
-      auth: 'MCP token (x-pax8-mcp-token header)',
-      rateLimit: 'Standard rate limits',
-      docsUrl: 'https://developer.pax8.com/'
-    },
-    path: 'pax8/pax8',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
-  },
-  {
-    id: 'xero',
-    name: 'Xero',
-    vendor: 'Xero',
-    description: 'Accounting platform for contacts, invoices, payments, chart of accounts, and financial reporting.',
-    category: 'accounting',
-    maturity: 'beta',
-    features: [
-      'Contact Management',
-      'Invoice Management',
-      'Payment Tracking',
-      'Chart of Accounts',
-      'Financial Reporting'
-    ],
-    skills: [
-      { name: 'contacts', description: 'Customer and supplier contact management' },
-      { name: 'invoices', description: 'Sales invoice and bill management' },
-      { name: 'payments', description: 'Payment recording and reconciliation' },
-      { name: 'accounts', description: 'Chart of accounts and GL coding' },
-      { name: 'reports', description: 'P&L, Balance Sheet, Aged Receivables/Payables' },
-      { name: 'api-patterns', description: 'Xero OAuth2 authentication and API patterns' }
-    ],
-    commands: [
-      { name: '/create-invoice', description: 'Create a new sales invoice' },
-      { name: '/search-contacts', description: 'Search customers or suppliers' },
-      { name: '/payment-status', description: 'Check payment status for an invoice' },
-      { name: '/reconciliation-summary', description: 'Get bank reconciliation overview' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://api.xero.com/api.xro/2.0',
-      auth: 'OAuth 2.0 (Custom Connection)',
-      rateLimit: '60 calls per minute',
-      docsUrl: 'https://developer.xero.com/documentation/api/accounting/overview'
-    },
-    path: 'xero/xero',
-    mcpRepo: 'https://github.com/wyre-technology/xero-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
-  },
-  {
-    id: 'quickbooks-online',
-    name: 'QuickBooks Online',
-    vendor: 'Intuit',
-    description: 'Accounting platform for customers, invoices, expenses, payments, and financial reporting.',
-    category: 'accounting',
-    maturity: 'beta',
-    features: [
-      'Customer Management',
-      'Invoice Management',
-      'Payment Tracking',
-      'Expense Management',
-      'Financial Reporting'
-    ],
-    skills: [
-      { name: 'customers', description: 'MSP client record management' },
-      { name: 'invoices', description: 'Invoice creation and tracking' },
-      { name: 'payments', description: 'Payment recording and reconciliation' },
-      { name: 'expenses', description: 'Purchase and per-client cost tracking' },
-      { name: 'reports', description: 'P&L, Balance Sheet, A/R Aging reports' },
-      { name: 'api-patterns', description: 'QuickBooks Online OAuth2 and API patterns' }
-    ],
-    commands: [
-      { name: '/create-invoice', description: 'Create a new invoice' },
-      { name: '/search-customers', description: 'Search customer records' },
-      { name: '/get-balance', description: 'Get account balance or customer balance' },
-      { name: '/expense-summary', description: 'Summarize expenses by vendor or category' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://quickbooks.api.intuit.com/v3',
-      auth: 'OAuth 2.0',
-      rateLimit: '500 requests per minute',
-      docsUrl: 'https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/account'
-    },
-    path: 'quickbooks/quickbooks-online',
-    mcpRepo: 'https://github.com/wyre-technology/qbo-mcp',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
-  },
-  {
-    id: 'hubspot',
-    name: 'HubSpot CRM',
-    vendor: 'HubSpot',
-    description: 'CRM platform for contacts, companies, deals, tickets, activities, and associations.',
-    category: 'sales',
-    maturity: 'beta',
-    features: [
-      'Contact Management',
-      'Company Management',
-      'Deal & Pipeline Tracking',
-      'Ticket Management',
-      'Activity Logging'
-    ],
-    skills: [
-      { name: 'api-patterns', description: 'OAuth 2.0 + PKCE authentication, Streamable HTTP transport, CRM Search API' },
-      { name: 'contacts', description: 'Contact management, lifecycle stages, and lead tracking' },
-      { name: 'companies', description: 'Company management, industry tracking, and domain-based dedup' },
-      { name: 'deals', description: 'Deal pipeline management, forecasting, and revenue tracking' },
-      { name: 'tickets', description: 'Support ticket management, priorities, and SLA tracking' },
-      { name: 'activities', description: 'Tasks, notes, associations, and engagement tracking' }
-    ],
-    commands: [
-      { name: '/search-contacts', description: 'Search contacts by name, email, or company' },
-      { name: '/search-deals', description: 'Search deals by name, stage, or company' },
-      { name: '/create-deal', description: 'Create a new deal with company association' },
-      { name: '/log-activity', description: 'Log a note or create a task on a record' },
-      { name: '/pipeline-summary', description: 'Summarize deal pipeline by stage with forecasts' },
-      { name: '/lookup-company', description: 'Find a company with associated contacts and deals' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://mcp.hubspot.com/',
-      auth: 'OAuth 2.0 + PKCE (MCP Auth App)',
-      rateLimit: '100 requests per 10 seconds',
-      docsUrl: 'https://developers.hubspot.com/mcp'
-    },
-    path: 'hubspot/hubspot',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
-  },
-  {
-    id: 'pandadoc',
-    name: 'PandaDoc',
-    vendor: 'PandaDoc',
-    description: 'Document automation for proposals, contracts, e-signatures, and sales document management.',
-    category: 'sales',
-    maturity: 'beta',
-    features: [
-      'Document Creation',
-      'Template Management',
-      'E-Signature Workflows',
-      'Proposal Tracking',
-      'Recipient Management'
-    ],
-    skills: [
-      { name: 'api-patterns', description: 'API key authentication, MCP server connection, rate limits' },
-      { name: 'documents', description: 'Document lifecycle, creation, sending, and status tracking' },
-      { name: 'templates', description: 'Template library management and MSP template types' },
-      { name: 'recipients', description: 'Recipient roles, signing order, and completion tracking' },
-      { name: 'proposals', description: 'MSP proposal workflows, pricing tables, and pipeline tracking' }
-    ],
-    commands: [
-      { name: '/create-document', description: 'Create a document from a template with recipients' },
-      { name: '/send-document', description: 'Send a document for e-signature' },
-      { name: '/document-status', description: 'Check document status and signing progress' },
-      { name: '/list-templates', description: 'List available document templates' },
-      { name: '/proposal-pipeline', description: 'Summarize proposal pipeline by status' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://developers.pandadoc.com/mcp',
-      auth: 'API Key (Authorization header)',
-      rateLimit: '300 requests per minute (Business)',
-      docsUrl: 'https://developers.pandadoc.com/reference'
-    },
-    path: 'pandadoc/pandadoc',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
-  },
-  {
-    id: 'sentinelone',
-    name: 'SentinelOne',
-    vendor: 'SentinelOne',
-    description: 'XDR platform for Purple AI threat hunting, alerts, vulnerabilities, misconfigurations, and asset inventory.',
-    category: 'security',
-    maturity: 'beta',
-    features: [
-      'Purple AI Threat Hunting',
-      'Alert Management',
-      'Vulnerability Management',
-      'Cloud Security Posture',
-      'Asset Inventory',
-      'PowerQuery Analytics'
-    ],
-    skills: [
-      { name: 'api-patterns', description: 'Service User token auth, uvx installation, transport modes' },
-      { name: 'purple-ai', description: 'Natural language cybersecurity investigation and query generation' },
-      { name: 'alerts', description: 'Unified alert management, triage, and investigation' },
-      { name: 'vulnerabilities', description: 'XSPM vulnerability tracking, EPSS scores, patch prioritization' },
-      { name: 'misconfigurations', description: 'Cloud security posture, compliance standards, remediation' },
-      { name: 'inventory', description: 'Unified asset inventory across endpoints, cloud, identity, and network' },
-      { name: 'threat-hunting', description: 'PowerQuery analytics against Singularity Data Lake' }
-    ],
-    commands: [
-      { name: '/alert-triage', description: 'Triage new alerts by severity' },
-      { name: '/investigate-alert', description: 'Deep investigation of a specific alert' },
-      { name: '/vuln-report', description: 'Vulnerability summary with patch prioritization' },
-      { name: '/hunt-threat', description: 'Threat hunting via Purple AI + PowerQuery' },
-      { name: '/asset-inventory', description: 'Asset inventory summary by surface type' },
-      { name: '/posture-review', description: 'Cloud security posture and compliance review' }
-    ],
-    apiInfo: {
-      baseUrl: 'https://{console}.sentinelone.net',
-      auth: 'Service User Token (Account/Site level)',
-      rateLimit: 'Standard rate limits',
-      docsUrl: 'https://github.com/Sentinel-One/purple-mcp'
-    },
-    path: 'sentinelone/sentinelone',
-    mcpRepo: 'https://github.com/Sentinel-One/purple-mcp',
     compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
   },
   {
-    id: 'pagerduty',
-    name: 'PagerDuty',
-    vendor: 'PagerDuty',
-    description: 'On-call incident management platform with 66 tools covering incidents, schedules, escalation policies, services, event orchestrations, and status pages.',
-    category: 'security',
+    id: 'autotask',
+    name: 'Autotask PSA',
+    vendor: 'Kaseya',
+    description: 'Kaseya Autotask PSA - tickets, CRM, projects, contracts, billing',
+    category: 'psa',
     maturity: 'production',
     features: [
-      'Incident Management',
-      'On-Call Scheduling',
-      'Escalation Policies',
-      'Event Orchestration',
-      'Status Pages',
-      'Service Catalog',
-      'Alert Grouping'
+      'Configuration Items',
+      'Contract Management',
+      'CRM Operations',
+      'Expense Management',
+      'Product Catalog',
+      'Project Management',
+      'Quote Generation',
+      'Service Calls',
+      'Ticket Management',
+      'Time Entry Tracking'
     ],
     skills: [
-      { name: 'incidents', description: 'Incident lifecycle, triage, AI analysis, PSA ticket correlation' },
-      { name: 'oncall', description: 'On-call schedules, handoff summaries, escalation policies' },
-      { name: 'api-patterns', description: 'Token token= auth, hosted MCP, 66-tool reference, pagination' }
+      { name: 'configuration-items', description: 'Use this skill when working with Autotask Configuration Items (CIs) - asset management, inventory tracking, warranty monitoring, lifecycle management, and relationship mapping.' },
+      { name: 'contracts', description: 'Use this skill when working with Autotask contracts and service agreements - recurring services, block hours, time & materials, and contract billing.' },
+      { name: 'crm', description: 'Use this skill when working with Autotask CRM - companies, contacts, sites/locations, and opportunities.' },
+      { name: 'expenses', description: 'Use this skill when working with Autotask expense reports and expense items - creating expense reports, adding line items, searching reports by status or submitter, tracking reimbursable vs billable expenses, and managing expense approval workflows.' },
+      { name: 'product-catalog', description: 'Use this skill when working with Autotask product catalog operations - searching products, checking pricing, managing inventory, and understanding the relationship between products, services, bundles, and price lists.' },
+      { name: 'projects', description: 'Use this skill when working with Autotask projects - creating projects, managing tasks, phases, milestones, and resource assignments.' },
+      { name: 'quotes', description: 'Use this skill when working with Autotask quotes and quote line items - creating quotes for customers, adding products/services/bundles as line items, managing pricing and discounts, linking quotes to opportunities, and building proposals.' },
+      { name: 'service-calls', description: 'Use this skill when working with Autotask Service Calls - creating, scheduling, updating, or completing service calls linked to tickets.' },
+      { name: 'tickets', description: 'Use this skill when working with Autotask tickets - creating, updating, searching, or managing service desk operations.' },
+      { name: 'time-entries', description: 'Use this skill when working with Autotask time entries - logging work hours, billing calculations, approval workflows, utilization tracking, and budget validation.' },
+      { name: 'tool-discovery', description: 'Use this skill when Autotask MCP tools aren\'t loading, when you can\'t find the right Autotask tool to call, or when working with a lazy-loaded MCP connection where only meta-tools are available.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the Autotask REST API - authentication, query building, pagination, includes, rate limiting, and error handling.' }
     ],
     commands: [
-      { name: '/pd-incidents', description: 'List open incidents with severity and status filters' },
-      { name: '/pd-oncall', description: 'Show current on-call schedule and upcoming rotations' },
-      { name: '/pd-triage', description: 'Triage triggered/acknowledged incidents by priority' }
+      { name: '/add-note', description: 'Add a note or comment to an existing Autotask ticket' },
+      { name: '/check-contract', description: 'View contract status, entitlements, and remaining hours for a company or specific contract' },
+      { name: '/check-pricing', description: 'Check pricing details for an Autotask product or service from price lists' },
+      { name: '/create-quote', description: 'Create a new Autotask quote with line items for products, services, and service bundles' },
+      { name: '/create-ticket', description: 'Create a new service ticket in Autotask PSA' },
+      { name: '/expenses', description: 'Use this skill when working with Autotask expense reports - creating reports, adding expense items, searching by status or submitter, and tracking reimbursable and billable expenses' },
+      { name: '/lookup-asset', description: 'Search for Autotask configuration items/assets by name, serial number, or company' },
+      { name: '/lookup-company', description: 'Search for Autotask companies by name, ID, or other attributes' },
+      { name: '/lookup-contact', description: 'Search for Autotask contacts by name, email, phone, or company' },
+      { name: '/my-tickets', description: 'List tickets currently assigned to you with optional filtering' },
+      { name: '/reassign-ticket', description: 'Reassign a ticket to a different resource or queue' },
+      { name: '/search-products', description: 'Search the Autotask product catalog for products, services, or inventory items' },
+      { name: '/search-tickets', description: 'Search for tickets in Autotask PSA by various criteria' },
+      { name: '/time-entry', description: 'Log time against tickets or projects in Autotask PSA' },
+      { name: '/update-ticket', description: 'Update fields on an existing Autotask ticket (status, priority, queue, due date)' }
     ],
     apiInfo: {
-      baseUrl: 'https://mcp.pagerduty.com',
-      auth: 'Authorization: Token token=<User API Token>',
-      rateLimit: 'Standard PagerDuty API rate limits',
-      docsUrl: 'https://developer.pagerduty.com/docs/mcp-tooling-remote-server'
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
     },
-    path: 'pagerduty/pagerduty',
+    path: 'kaseya/autotask',
     compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
   },
   {
     id: 'betterstack',
     name: 'BetterStack',
     vendor: 'BetterStack',
-    description: 'Uptime monitoring, on-call scheduling, and telemetry platform covering monitors, heartbeats, incidents, status pages, logs, and error tracking.',
+    description: 'Better Stack - uptime monitoring, logging, incident management',
+    category: 'monitoring',
+    maturity: 'production',
+    features: [
+      'Incident Management',
+      'Logging',
+      'Monitor Configuration',
+      'On-Call Scheduling',
+      'Status Pages'
+    ],
+    skills: [
+      { name: 'incidents', description: 'Use this skill when working with Better Stack incidents -- listing, triaging, acknowledging, and resolving incidents triggered by uptime monitors or manual reports.' },
+      { name: 'logging', description: 'Use this skill when working with Better Stack log management (Logtail) -- querying logs, managing log sources, structured log search, log-based alerting, and log analysis workflows.' },
+      { name: 'monitors', description: 'Use this skill when working with Better Stack uptime monitors -- listing, creating, updating, pausing, and deleting monitors, heartbeat monitors, monitor groups, and check types.' },
+      { name: 'oncall', description: 'Use this skill when working with Better Stack on-call schedules -- on-call calendars, escalation/notification policies, rotation management, understanding who is currently on-call, and responding to active incidents via the on-call flow.' },
+      { name: 'status-pages', description: 'Use this skill when working with Better Stack status pages -- managing status pages, adding resources/components, posting maintenance windows, and communicating service status to end users.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the Better Stack MCP tools -- available tools, authentication via Bearer token, API structure, cursor-based pagination, rate limiting, error handling, and best practices.' }
+    ],
+    commands: [
+      { name: '/create-monitor', description: 'Create a new Better Stack uptime monitor' },
+      { name: '/incident-triage', description: 'Triage current Better Stack incidents' },
+      { name: '/monitor-status', description: 'Check all Better Stack monitor statuses and identify downtime' },
+      { name: '/search-logs', description: 'Search logs via Better Stack Logtail' },
+      { name: '/status-page-update', description: 'Update a Better Stack status page with current status or maintenance' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'betterstack/betterstack',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'blumira',
+    name: 'Blumira',
+    vendor: 'Blumira',
+    description: 'Blumira - SIEM findings management, device inventory, MSP multi-tenant operations, and security posture analysis',
     category: 'security',
     maturity: 'production',
     features: [
-      'Uptime Monitoring',
-      'On-Call Scheduling',
-      'Incident Management',
-      'Status Pages',
-      'Log Management',
-      'Error Tracking',
-      'Heartbeat Monitoring'
+      'Agent Monitoring',
+      'Findings',
+      'Msp',
+      'Resolutions',
+      'User Management'
     ],
     skills: [
-      { name: 'uptime', description: 'Monitors, heartbeats, incidents, and status pages' },
-      { name: 'oncall', description: 'On-call schedules, escalation policies, handoff workflows' },
-      { name: 'api-patterns', description: 'Bearer token auth, hosted MCP, tool reference, pagination' }
+      { name: 'agents', description: 'Use this skill when working with Blumira agents, devices, and agent keys, including listing devices, checking agent health, and managing agent deployment keys.' },
+      { name: 'findings', description: 'Use this skill when working with Blumira findings (security alerts/detections), including listing, filtering, investigating, resolving, assigning, and commenting on findings.' },
+      { name: 'msp', description: 'Use this skill when working with Blumira MSP (Managed Service Provider) multi-tenant operations, including managing multiple client accounts, cross-account finding queries, and per-account device/user management.' },
+      { name: 'resolutions', description: 'Use this skill when resolving Blumira findings, choosing the correct resolution type, or understanding resolution workflows and their impact on security metrics.' },
+      { name: 'users', description: 'Use this skill when listing or looking up Blumira users, finding user IDs for finding assignment, or auditing user access.' },
+      { name: 'api-patterns', description: 'Use this skill when working with Blumira API authentication, understanding the dual path structure (org vs MSP), constructing filtered queries, handling pagination, or troubleshooting API errors.' }
     ],
     commands: [
-      { name: '/bs-monitors', description: 'List all monitors with current status and uptime' },
-      { name: '/bs-incidents', description: 'Show active incidents and their severity' },
-      { name: '/bs-oncall', description: 'Show current on-call rotation and escalation policy' }
+      { name: '/agent-inventory', description: 'List all devices and agents across the organization with status and health information' },
+      { name: '/finding-triage', description: 'Triage open Blumira findings by severity, presenting a prioritized list for review' },
+      { name: '/investigate-finding', description: 'Deep investigation of a specific Blumira finding with details, context, and comment history' },
+      { name: '/msp-overview', description: 'MSP dashboard showing all managed accounts with open finding counts and severity breakdown' },
+      { name: '/resolve-finding', description: 'Resolve a Blumira finding with the appropriate resolution type and notes' },
+      { name: '/security-posture', description: 'Overall security posture review including open findings by severity, agent coverage, and trends' }
     ],
     apiInfo: {
-      baseUrl: 'https://mcp.betterstack.com',
-      auth: 'Authorization: Bearer <API Token>',
-      rateLimit: 'Standard BetterStack API rate limits',
-      docsUrl: 'https://betterstack.com/docs/getting-started/integrations/mcp/'
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
     },
-    path: 'betterstack/betterstack',
+    path: 'blumira/blumira',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'checkpoint-avanan',
+    name: 'Checkpoint Avanan',
+    vendor: 'Email Security',
+    description: 'Checkpoint Harmony Email & Collaboration (Avanan) - quarantine, threats, policies, incidents, Smart Banners',
+    category: 'email-security',
+    maturity: 'production',
+    features: [
+      'Incident Management',
+      'Policies',
+      'Quarantine',
+      'Threats'
+    ],
+    skills: [
+      { name: 'incidents', description: 'Use this skill when working with Checkpoint Harmony Email security incidents - incident lifecycle, status transitions, investigation workflows, notes and evidence collection, remediation tracking.' },
+      { name: 'policies', description: 'Use this skill when working with Checkpoint Harmony Email security policies - DLP policies, anti-phishing rules, anti-malware settings, quarantine policies, allow/block lists, and policy configuration.' },
+      { name: 'quarantine', description: 'Use this skill when working with Checkpoint Harmony Email quarantine - listing, searching, releasing, deleting quarantined emails.' },
+      { name: 'threats', description: 'Use this skill when working with Checkpoint Harmony Email threat detection and analysis - phishing, malware, BEC, account takeover, IOC extraction, threat timelines, and severity assessment.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the Checkpoint Harmony Email API - OAuth2 client credentials authentication, base URLs, rate limiting, pagination, error handling, and common API patterns.' }
+    ],
+    commands: [
+      { name: '/check-threat', description: 'Get detailed threat analysis including IOCs and timeline from Checkpoint Harmony Email' },
+      { name: '/manage-policy', description: 'View or toggle email security policies in Checkpoint Harmony Email' },
+      { name: '/release-quarantine', description: 'Release quarantined email(s) back to recipients in Checkpoint Harmony Email' },
+      { name: '/search-quarantine', description: 'Search quarantined emails in Checkpoint Harmony Email by various criteria' },
+      { name: '/search-threats', description: 'Search detected threats in Checkpoint Harmony Email by type, severity, and date range' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'email-security/checkpoint-avanan',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'connectwise-automate',
+    name: 'ConnectWise Automate',
+    vendor: 'ConnectWise',
+    description: 'ConnectWise Automate - computers, clients, scripts, monitors, alerts',
+    category: 'rmm',
+    maturity: 'beta',
+    features: [
+      'Alert Handling',
+      'Client Operations',
+      'Computer Management',
+      'Monitor Configuration',
+      'Script Execution'
+    ],
+    skills: [
+      { name: 'alerts', description: 'Use this skill when working with ConnectWise Automate alerts - listing active alerts, acknowledging alerts, viewing alert history, and creating tickets from alerts.' },
+      { name: 'clients', description: 'Use this skill when working with ConnectWise Automate clients - creating, reading, updating, and deleting client organizations.' },
+      { name: 'computers', description: 'Use this skill when working with ConnectWise Automate computers/endpoints - listing, searching, managing, and monitoring devices.' },
+      { name: 'monitors', description: 'Use this skill when working with ConnectWise Automate monitors - configuring thresholds, creating templates, and assigning to computers.' },
+      { name: 'scripts', description: 'Use this skill when working with ConnectWise Automate scripts - listing, executing, passing parameters, and retrieving results.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the ConnectWise Automate REST API - authentication methods, token management, pagination, filtering with OData syntax, rate limiting, and error handling.' }
+    ],
+    commands: [
+      { name: '/list-computers', description: 'List computers in ConnectWise Automate with optional filters' },
+      { name: '/run-script', description: 'Execute a script on an endpoint in ConnectWise Automate' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'connectwise/automate',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'connectwise-psa',
+    name: 'ConnectWise PSA',
+    vendor: 'ConnectWise',
+    description: 'ConnectWise PSA - tickets, companies, contacts, projects, time',
+    category: 'psa',
+    maturity: 'production',
+    features: [
+      'Company Management',
+      'Contact Management',
+      'Project Management',
+      'Ticket Management',
+      'Time Entry Tracking'
+    ],
+    skills: [
+      { name: 'companies', description: 'Use this skill when working with ConnectWise PSA companies - creating, updating, searching, or managing company/account records.' },
+      { name: 'contacts', description: 'Use this skill when working with ConnectWise PSA contacts - creating, updating, searching, or managing contact records.' },
+      { name: 'projects', description: 'Use this skill when working with ConnectWise PSA projects - creating, updating, managing project phases, templates, and resource allocation.' },
+      { name: 'tickets', description: 'Use this skill when working with ConnectWise PSA tickets - creating, updating, searching, or managing service desk operations.' },
+      { name: 'time-entries', description: 'Use this skill when working with ConnectWise PSA time entries - creating, updating, searching, or managing time tracking.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the ConnectWise PSA REST API - authentication using public/private keys and clientId, pagination with page/pageSize, conditions query syntax, rate limiting (60/min), and error handling.' }
+    ],
+    commands: [
+      { name: '/add-note', description: 'Add an internal or external note to a ConnectWise PSA ticket' },
+      { name: '/check-agreement', description: 'View agreement status and entitlements for a company in ConnectWise PSA' },
+      { name: '/close-ticket', description: 'Close a ConnectWise PSA ticket with resolution notes' },
+      { name: '/create-ticket', description: 'Create a new service ticket in ConnectWise PSA' },
+      { name: '/get-ticket', description: 'Retrieve detailed ticket information from ConnectWise PSA' },
+      { name: '/log-time', description: 'Log a time entry against a ConnectWise PSA ticket' },
+      { name: '/lookup-config', description: 'Search for configuration items (assets) in ConnectWise PSA' },
+      { name: '/schedule-entry', description: 'Create a schedule entry/appointment in ConnectWise PSA' },
+      { name: '/search-tickets', description: 'Search for tickets in ConnectWise PSA by various criteria' },
+      { name: '/update-ticket', description: 'Update fields on an existing ConnectWise PSA ticket' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'connectwise/manage',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'datto-rmm',
+    name: 'Datto RMM',
+    vendor: 'Kaseya',
+    description: 'Datto RMM - devices, alerts, jobs, patches, monitoring',
+    category: 'rmm',
+    maturity: 'production',
+    features: [
+      'Alert Handling',
+      'Audit Data',
+      'Device Management',
+      'Job Execution',
+      'Site Management',
+      'Variable Management'
+    ],
+    skills: [
+      { name: 'alerts', description: 'Use this skill when working with Datto RMM alerts - viewing, resolving, and managing monitoring alerts.' },
+      { name: 'audit', description: 'Use this skill when working with Datto RMM audit data - hardware inventory, software inventory, network interfaces, and system information.' },
+      { name: 'devices', description: 'Use this skill when working with Datto RMM devices - listing, searching, managing, and monitoring endpoints.' },
+      { name: 'jobs', description: 'Use this skill when working with Datto RMM jobs - running quick jobs, scheduling jobs, monitoring job status, and viewing results.' },
+      { name: 'sites', description: 'Use this skill when working with Datto RMM sites - listing, managing, and configuring client locations.' },
+      { name: 'variables', description: 'Use this skill when working with Datto RMM variables - account-level and site-level variables for storing configuration data.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the Datto RMM API - authentication, OAuth 2.' }
+    ],
+    commands: [
+      { name: '/device-lookup', description: 'Find a device in Datto RMM by hostname, IP address, or MAC address' },
+      { name: '/resolve-alert', description: 'Resolve an open alert in Datto RMM' },
+      { name: '/run-job', description: 'Run a quick job on a device in Datto RMM' },
+      { name: '/site-devices', description: 'List all devices at a site in Datto RMM' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'kaseya/datto-rmm',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'domotz',
+    name: 'Domotz',
+    vendor: 'Domotz',
+    description: 'Domotz - network monitoring, SNMP discovery, device management',
+    category: 'network',
+    maturity: 'production',
+    features: [
+      'Agent Monitoring',
+      'Alert Handling',
+      'Device Management',
+      'Eyes',
+      'Network'
+    ],
+    skills: [
+      { name: 'agents', description: 'Use this skill when managing Domotz agents (collectors), sites, and network probes -- listing agents, checking agent health, viewing site details, and monitoring collector connectivity.' },
+      { name: 'alerts', description: 'Use this skill when working with Domotz alerts -- viewing active alerts, configuring alert profiles, managing alert triggers, and handling notifications for device and network events.' },
+      { name: 'devices', description: 'Use this skill when working with Domotz device inventory -- listing devices, searching by name/IP/MAC, checking device status, viewing device details, and understanding network topology.' },
+      { name: 'eyes', description: 'Use this skill when working with Domotz Eyes -- TCP and HTTP sensors, custom monitoring checks, synthetic tests, latency tracking, and service availability monitoring.' },
+      { name: 'network', description: 'Use this skill when working with Domotz network operations -- network scanning, SNMP polling, port monitoring, speed tests, and network topology discovery.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the Domotz MCP tools -- available tools, authentication via API key, API structure, pagination, rate limiting, region selection, error handling, and best practices.' }
+    ],
+    commands: [
+      { name: '/alert-status', description: 'Check current Domotz alerts across all agents' },
+      { name: '/device-inventory', description: 'List all devices at a Domotz-monitored site' },
+      { name: '/device-lookup', description: 'Find a Domotz device by name, IP address, or MAC address' },
+      { name: '/network-scan', description: 'Scan a network for devices via a Domotz agent' },
+      { name: '/site-overview', description: 'Overview of a Domotz site\'s network health' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'domotz/domotz',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'halopsa',
+    name: 'HaloPSA',
+    vendor: 'Halo',
+    description: 'HaloPSA - tickets, clients, assets, contracts (OAuth 2.0)',
+    category: 'psa',
+    maturity: 'production',
+    features: [
+      'Asset Management',
+      'Client Operations',
+      'Contract Management',
+      'Ticket Management'
+    ],
+    skills: [
+      { name: 'assets', description: 'Use this skill when working with HaloPSA assets - tracking devices, managing configuration items, hardware lifecycle, and asset relationships.' },
+      { name: 'clients', description: 'Use this skill when working with HaloPSA clients - creating, updating, searching, or managing customer relationships.' },
+      { name: 'contracts', description: 'Use this skill when working with HaloPSA contracts - managing service agreements, recurring billing, prepaid hours, and contract renewals.' },
+      { name: 'tickets', description: 'Use this skill when working with HaloPSA tickets - creating, updating, searching, or managing service desk operations.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the HaloPSA REST API - OAuth 2.' }
+    ],
+    commands: [
+      { name: '/add-action', description: 'Add an action (note, update, or response) to an existing HaloPSA ticket' },
+      { name: '/contract-status', description: 'Check contract status, service entitlements, and billing information for a client' },
+      { name: '/create-ticket', description: 'Create a new service ticket in HaloPSA' },
+      { name: '/kb-search', description: 'Search the HaloPSA knowledge base for articles and solutions' },
+      { name: '/search-assets', description: 'Search for configuration items/assets by name, serial number, type, or client' },
+      { name: '/search-clients', description: 'Search for HaloPSA clients by name, domain, or other attributes' },
+      { name: '/search-tickets', description: 'Search for tickets in HaloPSA by various criteria' },
+      { name: '/show-ticket', description: 'Display comprehensive ticket information including history, actions, and related entities' },
+      { name: '/sla-dashboard', description: 'View SLA status across tickets, including approaching breaches and at-risk tickets' },
+      { name: '/update-ticket', description: 'Update fields on an existing HaloPSA ticket including status, priority, and assignment' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'halopsa/halopsa',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'hubspot',
+    name: 'HubSpot CRM',
+    vendor: 'HubSpot',
+    description: 'HubSpot CRM - contacts, companies, deals, tickets, activities, and associations',
+    category: 'crm',
+    maturity: 'production',
+    features: [
+      'Activity Logging',
+      'Company Management',
+      'Contact Management',
+      'Deal & Pipeline Tracking',
+      'Ticket Management'
+    ],
+    skills: [
+      { name: 'activities', description: 'Use this skill when working with HubSpot activities - creating tasks, logging notes, managing associations between CRM objects, and tracking engagement history.' },
+      { name: 'companies', description: 'Use this skill when working with HubSpot companies - searching, creating, updating, and auditing company records in HubSpot CRM.' },
+      { name: 'contacts', description: 'Use this skill when working with HubSpot contacts - searching, creating, updating, and managing contact records in HubSpot CRM.' },
+      { name: 'deals', description: 'Use this skill when working with HubSpot deals - searching, creating, updating, and managing deal records and pipelines in HubSpot CRM.' },
+      { name: 'tickets', description: 'Use this skill when working with HubSpot tickets - creating, searching, updating, and managing support tickets in HubSpot CRM.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the HubSpot MCP tools - available tools, OAuth 2.' }
+    ],
+    commands: [
+      { name: '/create-deal', description: 'Create a new deal in HubSpot with company association' },
+      { name: '/log-activity', description: 'Log a note or create a task on a HubSpot contact, company, or deal' },
+      { name: '/lookup-company', description: 'Find a HubSpot company by name or domain and show associated contacts and deals' },
+      { name: '/pipeline-summary', description: 'Summarize the HubSpot deal pipeline - deals per stage, total value, and expected close dates' },
+      { name: '/search-contacts', description: 'Search HubSpot contacts by name, email, or company' },
+      { name: '/search-deals', description: 'Search HubSpot deals by name, stage, or company' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'hubspot/hubspot',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'hudu',
+    name: 'Hudu',
+    vendor: 'Hudu',
+    description: 'Hudu IT documentation - companies, assets, articles, passwords, websites',
+    category: 'documentation',
+    maturity: 'production',
+    features: [
+      'Knowledge Base Articles',
+      'Asset Management',
+      'Company Management',
+      'Password Management',
+      'Website Monitoring'
+    ],
+    skills: [
+      { name: 'articles', description: 'Use this skill when working with Hudu articles (knowledge base) - creating, searching, updating, and managing documentation articles.' },
+      { name: 'assets', description: 'Use this skill when working with Hudu assets and asset layouts - servers, workstations, network devices, and other documented items.' },
+      { name: 'companies', description: 'Use this skill when working with Hudu companies (clients/organizations) - creating, searching, updating, archiving, and managing client documentation.' },
+      { name: 'passwords', description: 'Use this skill when working with Hudu passwords (asset passwords) - secure credential storage, retrieval, folders, and access patterns.' },
+      { name: 'websites', description: 'Use this skill when working with Hudu website records - website monitoring, SSL/TLS tracking, email security (DMARC, DKIM, SPF), DNS records, and linking websites to companies.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the Hudu API - authentication, REST structure, filtering, pagination, rate limiting, error handling, and best practices.' }
+    ],
+    commands: [
+      { name: '/find-company', description: 'Find a company in Hudu by name' },
+      { name: '/get-password', description: 'Retrieve a password from Hudu (with security logging)' },
+      { name: '/lookup-asset', description: 'Find an asset in Hudu by name, hostname, serial number, or IP address' },
+      { name: '/search-articles', description: 'Search Hudu knowledge base articles by keyword or phrase' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'hudu/hudu',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'huntress',
+    name: 'Huntress',
+    vendor: 'Huntress',
+    description: 'Huntress - managed threat detection, incident response, endpoint agent management, escalations, and billing reports',
+    category: 'security',
+    maturity: 'production',
+    features: [
+      'Agent Monitoring',
+      'Billing',
+      'Escalations',
+      'Incident Management',
+      'Organization Management',
+      'Signals'
+    ],
+    skills: [
+      { name: 'agents', description: 'Use this skill when managing Huntress endpoint agents — listing agents, filtering by organization or platform, checking agent health and status, and investigating specific agent details.' },
+      { name: 'billing', description: 'Use this skill when generating Huntress billing and summary reports — listing available reports, retrieving billing details, and creating client-facing summaries for MSP invoicing.' },
+      { name: 'escalations', description: 'Use this skill when working with Huntress escalations — listing, reviewing, and resolving escalations from the Huntress SOC team.' },
+      { name: 'incidents', description: 'Use this skill when working with Huntress incidents — listing, triaging, investigating, resolving incidents, and managing remediations including bulk approve and reject workflows.' },
+      { name: 'organizations', description: 'Use this skill when managing Huntress organizations — creating, listing, updating, deleting organizations, and managing client org structure for MSP multi-tenancy.' },
+      { name: 'signals', description: 'Use this skill when working with Huntress security signals — monitoring, listing, filtering, and investigating signals across managed endpoints.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the Huntress MCP tools — available tools, authentication via HTTP Basic Auth, API structure, pagination with page tokens, rate limiting (60 req/min), error handling, and best practices.' }
+    ],
+    commands: [
+      { name: '/agent-inventory', description: 'List and filter Huntress agents across organizations' },
+      { name: '/billing-report', description: 'Generate a Huntress billing summary for a period' },
+      { name: '/incident-triage', description: 'Triage open Huntress incidents by severity' },
+      { name: '/investigate-incident', description: 'Deep dive investigation into a specific Huntress incident with remediations' },
+      { name: '/org-health', description: 'Organization health check covering agents, incidents, and escalations' },
+      { name: '/resolve-escalation', description: 'Review and resolve a Huntress escalation' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'huntress/huntress',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'it-glue',
+    name: 'IT Glue',
+    vendor: 'Kaseya',
+    description: 'IT Glue - organizations, assets, passwords, flexible assets',
+    category: 'documentation',
+    maturity: 'production',
+    features: [
+      'Configuration Items',
+      'Contact Management',
+      'Documentation',
+      'Flexible Assets',
+      'Organization Management',
+      'Password Management'
+    ],
+    skills: [
+      { name: 'configurations', description: 'Use this skill when working with IT Glue configurations (assets) - servers, workstations, network devices, and other infrastructure.' },
+      { name: 'contacts', description: 'Use this skill when working with IT Glue contacts - managing client contacts, contact types, locations, and communication details.' },
+      { name: 'documents', description: 'Use this skill when working with IT Glue documents - creating, organizing, and managing documentation.' },
+      { name: 'flexible-assets', description: 'Use this skill when working with IT Glue flexible assets - custom asset types for structured documentation.' },
+      { name: 'organizations', description: 'Use this skill when working with IT Glue organizations (companies/clients) - creating, searching, updating, and managing client documentation.' },
+      { name: 'passwords', description: 'Use this skill when working with IT Glue passwords - secure credential storage, password categories, folders, embedded passwords, and access patterns.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the IT Glue API - authentication, JSON:API structure, filtering, sorting, pagination, rate limiting, sideloading with includes, and error handling.' }
+    ],
+    commands: [
+      { name: '/edit-doc-sections', description: 'Read, edit, and restructure sections of an IT Glue document' },
+      { name: '/find-organization', description: 'Find an organization in IT Glue by name' },
+      { name: '/get-password', description: 'Retrieve a password from IT Glue (with security logging)' },
+      { name: '/lookup-asset', description: 'Find a configuration item (asset) in IT Glue by name, hostname, serial number, or IP address' },
+      { name: '/search-docs', description: 'Search IT Glue documentation by keyword or phrase' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'kaseya/it-glue',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'knowbe4',
+    name: 'Knowbe4',
+    vendor: 'Email Security',
+    description: 'KnowBe4 - phishing simulation, security awareness training, user risk management',
+    category: 'email-security',
+    maturity: 'production',
+    features: [
+      'Phishing',
+      'Reporting',
+      'Training',
+      'User Management'
+    ],
+    skills: [
+      { name: 'phishing', description: 'Use this skill when working with KnowBe4 phishing simulations - creating campaigns, managing security tests, tracking recipient interactions (sent, opened, clicked, reported), calculating phish-prone percentages, and analyzing phishing simulation results.' },
+      { name: 'reporting', description: 'Use this skill when generating KnowBe4 security awareness reports - phishing summary statistics, training completion rates, risk score overviews, trend analysis, organizational benchmarks, and executive dashboards.' },
+      { name: 'training', description: 'Use this skill when working with KnowBe4 training campaigns - creating and managing training assignments, tracking enrollment and completion, browsing training modules and content library, managing store purchases, and monitoring compliance deadlines.' },
+      { name: 'users', description: 'Use this skill when working with KnowBe4 users and groups - user lifecycle management, group creation and membership, risk scores, risk score history, user event tracking, and user status management.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the KnowBe4 REST API - Bearer token authentication, multi-region base URLs, pagination, rate limiting, error handling, and common request patterns.' }
+    ],
+    commands: [
+      { name: '/campaign-summary', description: 'Get summary of recent phishing and training campaigns from KnowBe4' },
+      { name: '/group-report', description: 'Get security awareness metrics for a KnowBe4 group' },
+      { name: '/phishing-results', description: 'View phishing campaign results and click rates from KnowBe4' },
+      { name: '/training-status', description: 'Check training completion status for users or groups in KnowBe4' },
+      { name: '/user-risk', description: 'Get risk score and risk history for a KnowBe4 user' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'email-security/knowbe4',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'liongard',
+    name: 'Liongard',
+    vendor: 'Liongard',
+    description: 'Liongard - environments, inspections, systems, detections, alerts, configuration monitoring',
+    category: 'rmm',
+    maturity: 'beta',
+    features: [
+      'Detection & Alerting',
+      'Environment Management',
+      'Inspection Monitoring',
+      'System Configuration'
+    ],
+    skills: [
+      { name: 'detections', description: 'Use this skill when working with Liongard detections, change monitoring, alerts, metrics, or timeline events.' },
+      { name: 'environments', description: 'Use this skill when working with Liongard environments (customer organizations), environment groups, or related entities.' },
+      { name: 'inspections', description: 'Use this skill when working with Liongard inspectors, launchpoints, inspection scheduling, or triggering inspections on demand.' },
+      { name: 'overview', description: 'Use this skill when Claude needs context about the Liongard platform, terminology, capabilities, authentication patterns, or API structure.' },
+      { name: 'systems', description: 'Use this skill when working with Liongard systems, system details, dataprints for JMESPath evaluation, or asset inventory.' }
+    ],
+    commands: [
+      { name: '/liongard-environment-summary', description: 'Generate a detailed summary of a Liongard environment' },
+      { name: '/liongard-health-check', description: 'Check Liongard connectivity and return system health summary' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'liongard/liongard',
     compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
   },
   {
     id: 'm365',
     name: 'Microsoft 365',
     vendor: 'Microsoft',
-    description: 'Microsoft 365 administration for users, mailboxes, Teams, OneDrive, licensing, and security posture. Multi-tenant via Entra ID OAuth.',
+    description: 'Microsoft 365 - users, mailboxes, Teams, OneDrive, licensing, and security posture',
     category: 'productivity',
-    maturity: 'beta',
+    maturity: 'production',
     features: [
-      'User Management',
-      'Mailbox & Email',
-      'Teams Administration',
-      'OneDrive & Files',
+      'Calendar Management',
+      'File Management',
       'License Auditing',
-      'Security Posture'
+      'Mailbox & Email',
+      'Security Posture',
+      'Teams Administration',
+      'User Management'
     ],
     skills: [
-      { name: 'users', description: 'Account management, MFA enrollment, groups, onboarding/offboarding' },
-      { name: 'mailboxes', description: 'Exchange Online, email search, auto-replies, shared mailboxes' },
-      { name: 'calendar', description: 'Events, free/busy, room booking, meeting creation' },
-      { name: 'teams', description: 'Team/channel membership, meetings, orphaned team detection' },
-      { name: 'files', description: 'OneDrive quota, SharePoint, sharing permissions, data transfer' },
-      { name: 'licensing', description: 'SKU inventory, seat counts, reclaim candidates' },
-      { name: 'security', description: 'MFA audit, risky sign-ins, inbox rule review, compromise response' },
-      { name: 'api-patterns', description: 'Graph OData filters, pagination, delta queries, throttling' }
+      { name: 'calendar', description: 'Use this skill when working with Microsoft 365 calendars - viewing events, finding free/busy times, creating meetings, managing room bookings, or checking a user\'s schedule.' },
+      { name: 'files', description: 'Use this skill when working with Microsoft 365 files - OneDrive personal storage, SharePoint document libraries, file sharing permissions, storage quotas, or searching across a user\'s files.' },
+      { name: 'licensing', description: 'Use this skill when managing Microsoft 365 licenses - checking available seats, assigning or removing licenses, auditing license usage, finding unused licenses, or planning license optimization for a customer tenant.' },
+      { name: 'mailboxes', description: 'Use this skill when working with Microsoft 365 mailboxes - reading email, searching messages, managing shared mailboxes, setting out-of-office replies, checking mailbox size, or diagnosing mail flow issues.' },
+      { name: 'security', description: 'Use this skill for Microsoft 365 security posture checks - MFA enrollment status, conditional access policies, risky sign-ins, suspicious inbox rules, compromised account indicators, and security audit tasks.' },
+      { name: 'teams', description: 'Use this skill when working with Microsoft Teams - listing teams and channels, managing team membership, finding meetings, checking Teams usage, or troubleshooting Teams access issues.' },
+      { name: 'users', description: 'Use this skill when working with Microsoft 365 users - listing, searching, creating, disabling, or checking user properties.' },
+      { name: 'api-patterns', description: 'Use this skill for Microsoft Graph API fundamentals - authentication patterns, OData query operators, pagination, throttling/retry, batch requests, and delta queries.' }
     ],
     commands: [
-      { name: '/get-user', description: 'Full user profile — status, licenses, MFA, last login' },
-      { name: '/check-mfa-status', description: 'Tenant-wide MFA enrollment audit, prioritized by risk' },
-      { name: '/list-licenses', description: 'License inventory and unused seat detection' },
-      { name: '/offboard-user', description: 'Guided offboarding: revoke → disable → mailbox → data transfer → license' }
+      { name: '/check-mfa-status', description: 'Audit MFA enrollment across all M365 users, highlighting accounts with no MFA' },
+      { name: '/get-user', description: 'Look up a Microsoft 365 user by name or email, showing account status, licenses, MFA, and last sign-in' },
+      { name: '/list-licenses', description: 'Show Microsoft 365 license inventory - available SKUs, consumed seats, and optimization opportunities' },
+      { name: '/offboard-user', description: 'Run the complete M365 offboarding workflow for a departing user - revoke access, handle mailbox, transfer data' }
     ],
     apiInfo: {
-      baseUrl: 'https://graph.microsoft.com/v1.0',
-      auth: 'OAuth 2.0 via Microsoft Entra ID (multi-tenant)',
-      rateLimit: '10,000 requests per 10 minutes',
-      docsUrl: 'https://learn.microsoft.com/en-us/graph/overview'
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
     },
     path: 'm365/m365',
-    compatibility: { claudeCode: true, claudeDesktop: 'coming-soon', validated: false }
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'ninjaone-rmm',
+    name: 'NinjaOne (NinjaRMM)',
+    vendor: 'NinjaOne',
+    description: 'NinjaOne (NinjaRMM) - devices, organizations, alerts, tickets',
+    category: 'rmm',
+    maturity: 'production',
+    features: [
+      'Alert Handling',
+      'Device Management',
+      'Organization Management',
+      'Ticket Management'
+    ],
+    skills: [
+      { name: 'alerts', description: 'Use this skill when working with NinjaOne alerts - viewing active conditions, dismissing alerts, and understanding alert severity levels.' },
+      { name: 'devices', description: 'Use this skill when working with NinjaOne devices - listing, searching, managing services, viewing inventory, scheduling maintenance, and monitoring device health.' },
+      { name: 'organizations', description: 'Use this skill when working with NinjaOne organizations - creating, listing, managing locations, and configuring policies.' },
+      { name: 'tickets', description: 'Use this skill when working with NinjaOne tickets - creating, updating, searching, and managing ticketing operations.' },
+      { name: 'api-patterns', description: 'Use this skill for NinjaOne API authentication, pagination, rate limiting, and error handling patterns.' }
+    ],
+    commands: [
+      { name: '/create-ticket', description: 'Create a new ticket in NinjaOne' },
+      { name: '/device-info', description: 'Get detailed information about a NinjaOne device' },
+      { name: '/list-alerts', description: 'List active alerts across NinjaOne devices' },
+      { name: '/search-devices', description: 'Search for devices across NinjaOne organizations' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'ninjaone/ninjaone-rmm',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'pagerduty',
+    name: 'PagerDuty',
+    vendor: 'PagerDuty',
+    description: 'PagerDuty - incident management, on-call scheduling, alerting',
+    category: 'incident-management',
+    maturity: 'production',
+    features: [
+      'Alert Handling',
+      'Analytics',
+      'Incident Management',
+      'On-Call Scheduling',
+      'Services'
+    ],
+    skills: [
+      { name: 'alerts', description: 'Use this skill when working with PagerDuty alerts -- alert management, alert grouping, suppression, event routing, and the Events API v2 for sending trigger, acknowledge, and resolve events.' },
+      { name: 'analytics', description: 'Use this skill when working with PagerDuty analytics -- incident analytics, MTTA and MTTR metrics, service-level performance, team workload reporting, and operational maturity assessment.' },
+      { name: 'incidents', description: 'Use this skill when working with PagerDuty incidents - listing, triaging, creating, updating, resolving, and investigating incidents.' },
+      { name: 'oncall', description: 'Use this skill when working with PagerDuty on-call management - viewing who is currently on-call, managing schedules and rotation layers, configuring escalation policies, creating temporary overrides, and adding or removing team members.' },
+      { name: 'services', description: 'Use this skill when working with PagerDuty services -- service catalog, service configuration, integrations, dependencies, maintenance windows, and service health monitoring.' },
+      { name: 'api-patterns', description: 'Use this skill when working with PagerDuty MCP tools - authentication setup, complete 66-tool reference, REST API pagination, token format (Token token=), rate limits, error handling, and hosted MCP connection details.' }
+    ],
+    commands: [
+      { name: '/create-incident', description: 'Create a new PagerDuty incident on a service' },
+      { name: '/escalate-incident', description: 'Escalate a PagerDuty incident to the next level in the escalation policy' },
+      { name: '/incident-triage', description: 'Triage current open PagerDuty incidents by urgency and priority' },
+      { name: '/oncall-schedule', description: 'Show who is currently on call across schedules and escalation policies' },
+      { name: '/service-health', description: 'Check PagerDuty service health status and recent incident activity' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'pagerduty/pagerduty',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'pandadoc',
+    name: 'PandaDoc',
+    vendor: 'PandaDoc',
+    description: 'PandaDoc - documents, templates, e-signatures, and proposal management',
+    category: 'sales',
+    maturity: 'production',
+    features: [
+      'Documentation',
+      'Proposal Tracking',
+      'Recipient Management',
+      'Template Management'
+    ],
+    skills: [
+      { name: 'documents', description: 'Use this skill when working with PandaDoc documents - creating proposals, quotes, contracts, SOWs, and MSAs from templates, sending documents for signature, checking document status, downloading signed copies, and managing the full document lifecycle.' },
+      { name: 'proposals', description: 'Use this skill when working with MSP proposal workflows in PandaDoc - creating managed service agreements (MSAs), statements of work (SOWs), hardware quotes, project proposals, and tracking the MSP sales pipeline.' },
+      { name: 'recipients', description: 'Use this skill when working with PandaDoc recipients and signatures - adding recipients to documents, setting signing order, tracking who has signed, managing multi-party agreements, and understanding recipient roles.' },
+      { name: 'templates', description: 'Use this skill when working with PandaDoc templates - browsing the template library, finding the right template for a document type, understanding template fields and tokens, and using templates to create new documents.' },
+      { name: 'api-patterns', description: 'Use this skill when working with PandaDoc MCP tools - available tools, API key authentication, the hosted MCP server connection, documentation search, code generation assistance, rate limiting, error handling, and best practices for the PandaDoc API.' }
+    ],
+    commands: [
+      { name: '/create-document', description: 'Create a new PandaDoc document from a template with recipients and content' },
+      { name: '/document-status', description: 'Check the status of a PandaDoc document and its recipients' },
+      { name: '/list-templates', description: 'List all available PandaDoc templates with details' },
+      { name: '/proposal-pipeline', description: 'Summarize the PandaDoc proposal pipeline by status, value, and age' },
+      { name: '/send-document', description: 'Send a PandaDoc document for e-signature' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'pandadoc/pandadoc',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'pax8',
+    name: 'Pax8',
+    vendor: 'Pax8',
+    description: 'Pax8 cloud marketplace - companies, products, subscriptions, orders, invoices',
+    category: 'marketplace',
+    maturity: 'production',
+    features: [
+      'Company Management',
+      'Invoice Management',
+      'Order Management',
+      'Product Catalog',
+      'Subscription Lifecycle'
+    ],
+    skills: [
+      { name: 'companies', description: 'Use this skill when working with Pax8 companies (MSP clients) - searching, retrieving, and managing client records in the Pax8 marketplace.' },
+      { name: 'invoices', description: 'Use this skill when working with Pax8 invoices and billing - retrieving invoices, analyzing billing data, reconciling costs with client charges, reviewing usage summaries, and understanding the MSP billing cycle.' },
+      { name: 'orders', description: 'Use this skill when working with Pax8 orders - viewing orders, tracking provisioning status, understanding order line items, and managing the order-to-subscription workflow.' },
+      { name: 'products', description: 'Use this skill when working with the Pax8 product catalog - searching for cloud software, browsing vendors, checking pricing, reviewing provisioning details, and finding the right SKU for a client need.' },
+      { name: 'subscriptions', description: 'Use this skill when working with Pax8 subscriptions - checking license status, reviewing seat counts, filtering by company or product, tracking subscription states, reviewing change history, and optimizing license usage across MSP clients.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the Pax8 MCP tools - available tools, parameters, pagination, sorting, filtering, rate limiting, error handling, and best practices.' }
+    ],
+    commands: [
+      { name: '/create-order', description: 'Place an order for a product subscription in Pax8' },
+      { name: '/license-summary', description: 'Aggregate license counts and costs across all Pax8 client companies' },
+      { name: '/search-products', description: 'Search the Pax8 product catalog by name or vendor' },
+      { name: '/subscription-status', description: 'Check subscription status for a company in Pax8' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'pax8/pax8',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'proofpoint',
+    name: 'Proofpoint',
+    vendor: 'Email Security',
+    description: 'Proofpoint Email Protection - TAP, quarantine, threat intel, forensics, URL defense, VAP reports',
+    category: 'email-security',
+    maturity: 'production',
+    features: [
+      'Forensics',
+      'People',
+      'Quarantine',
+      'Tap',
+      'Threat Intel',
+      'Url Defense'
+    ],
+    skills: [
+      { name: 'forensics', description: 'Use this skill when working with Proofpoint forensics and threat response - auto-pull, search and destroy, message trace, evidence collection, and remediation workflows.' },
+      { name: 'people', description: 'Use this skill when working with Proofpoint people-centric security - Very Attacked People (VAP) reports, top clickers, user risk scoring, attack index, and user-level threat analytics.' },
+      { name: 'quarantine', description: 'Use this skill when working with Proofpoint email quarantine - listing, searching, releasing, and deleting quarantined messages.' },
+      { name: 'tap', description: 'Use this skill when working with Proofpoint Targeted Attack Protection (TAP) - retrieving threat events, click tracking, message delivery and blocking data, SIEM integration feeds, and threat type analysis.' },
+      { name: 'threat-intel', description: 'Use this skill when working with Proofpoint threat intelligence - campaign tracking, threat families, indicators of compromise (IOCs), forensic evidence, and threat landscape analysis.' },
+      { name: 'url-defense', description: 'Use this skill when working with Proofpoint URL Defense - URL rewriting, URL decoding, real-time URL analysis, click-time protection, and URL investigation.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the Proofpoint API - authentication using HTTP Basic Auth with service principal and secret, base URLs, rate limits, pagination, error codes, and common integration patterns.' }
+    ],
+    commands: [
+      { name: '/check-threats', description: 'View recent TAP threat events including blocked messages, delivered threats, and click activity' },
+      { name: '/decode-url', description: 'Decode a Proofpoint URL Defense rewritten URL back to the original URL' },
+      { name: '/investigate-threat', description: 'Deep-dive threat investigation with forensics, campaign context, and remediation options' },
+      { name: '/release-quarantine', description: 'Release one or more quarantined messages to their intended recipients' },
+      { name: '/search-quarantine', description: 'Search quarantined messages in Proofpoint by sender, recipient, subject, or reason' },
+      { name: '/vap-report', description: 'Get the Very Attacked People (VAP) report showing the most targeted users' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'email-security/proofpoint',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'quickbooks-online',
+    name: 'QuickBooks Online',
+    vendor: 'Intuit',
+    description: 'QuickBooks Online - customers, invoices, expenses, payments, reports',
+    category: 'accounting',
+    maturity: 'production',
+    features: [
+      'Customer Operations',
+      'Expense Management',
+      'Invoice Management',
+      'Payment Tracking',
+      'Financial Reporting'
+    ],
+    skills: [
+      { name: 'customers', description: 'Use this skill when working with QuickBooks Online customers (clients) - creating, searching, updating, and managing MSP client records.' },
+      { name: 'expenses', description: 'Use this skill when working with QuickBooks Online expenses and purchases - creating, searching, and managing expense records, bills, and vendor payments.' },
+      { name: 'invoices', description: 'Use this skill when working with QuickBooks Online invoices - creating, sending, voiding, and managing invoices for MSP clients.' },
+      { name: 'payments', description: 'Use this skill when working with QuickBooks Online payments - recording customer payments, applying payments to invoices, handling overpayments, refunds, credit memos, and payment reconciliation.' },
+      { name: 'reports', description: 'Use this skill when working with QuickBooks Online reports - generating Profit & Loss, Balance Sheet, Accounts Receivable Aging, Accounts Payable Aging, General Ledger, and other financial reports.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the QuickBooks Online API - OAuth2 authentication, REST structure, Intuit query language, pagination, rate limiting, error handling, minor version headers, and best practices.' }
+    ],
+    commands: [
+      { name: '/create-invoice', description: 'Create an invoice for a client\'s managed services in QuickBooks Online' },
+      { name: '/expense-summary', description: 'Summarize expenses by client, vendor, or date range in QuickBooks Online' },
+      { name: '/get-balance', description: 'View outstanding balances across all MSP clients in QuickBooks Online' },
+      { name: '/search-customers', description: 'Find a customer in QuickBooks Online by name or other criteria' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'quickbooks/quickbooks-online',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'rocketcyber',
+    name: 'RocketCyber',
+    vendor: 'Kaseya',
+    description: 'RocketCyber managed SOC - incidents, agents, events, threat detection',
+    category: 'security',
+    maturity: 'beta',
+    features: [
+      'Account Hierarchy',
+      'Agent Monitoring',
+      'Application Inventory',
+      'Incident Management'
+    ],
+    skills: [
+      { name: 'accounts', description: 'Use this skill when working with RocketCyber accounts - provider/customer hierarchy, account management, sub-account navigation, account settings, and security policy configuration.' },
+      { name: 'agents', description: 'Use this skill when working with RocketCyber agents (RocketAgent) - deployment, communication status, health monitoring, and troubleshooting.' },
+      { name: 'apps', description: 'Use this skill when working with RocketCyber application inventory - detecting, categorizing, and monitoring applications across managed endpoints.' },
+      { name: 'incidents', description: 'Use this skill when working with RocketCyber security incidents - searching, triaging, investigating, and resolving incidents.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the RocketCyber API - authentication, Bearer token flow, base URL selection, pagination, rate limiting, error handling, and account hierarchy.' }
+    ],
+    commands: [
+      { name: '/account-summary', description: 'Get a security posture summary for a RocketCyber customer account' },
+      { name: '/search-incidents', description: 'Search RocketCyber security incidents by account, status, severity, verdict, and date range' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'kaseya/rocketcyber',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
   },
   {
     id: 'rootly',
     name: 'Rootly',
     vendor: 'Rootly',
-    description: 'Incident management and on-call platform with 25 tools covering incidents, alerts, AI analysis, on-call scheduling, and postmortem workflows.',
-    category: 'security',
-    maturity: 'beta',
+    description: 'Rootly - incident management, postmortems, SRE automation',
+    category: 'incident-management',
+    maturity: 'production',
     features: [
+      'Alert Handling',
       'Incident Management',
       'On-Call Scheduling',
-      'AI Incident Analysis',
-      'Alert Management',
-      'Postmortem Workflows',
-      'Service Catalog',
-      'Automation Workflows'
+      'Postmortems',
+      'Services',
+      'Workflows'
     ],
     skills: [
-      { name: 'incidents', description: 'Incident lifecycle, AI analysis (find_related_incidents, suggest_solutions), action items' },
-      { name: 'oncall', description: 'Handoff summaries, shift metrics, health risk detection' },
-      { name: 'api-patterns', description: 'Bearer auth, hosted MCP, 25-tool reference, JSON:API pagination' }
+      { name: 'alerts', description: 'Use this skill when working with Rootly alerts -- alert routing, escalation policies, integration with monitoring tools (Datadog, PagerDuty, etc.' },
+      { name: 'incidents', description: 'Use this skill when working with Rootly incidents - creating, searching, triaging, updating, and resolving incidents.' },
+      { name: 'oncall', description: 'Use this skill when working with Rootly on-call management - viewing shift metrics, generating handoff summaries, reviewing shift incidents, detecting on-call health risk, and understanding schedule coverage.' },
+      { name: 'postmortems', description: 'Use this skill when working with Rootly postmortems -- creating retrospectives, managing action items, applying templates, and conducting blameless reviews after incidents are resolved.' },
+      { name: 'services', description: 'Use this skill when working with the Rootly service catalog -- listing services, managing dependencies, ownership, service health, and understanding how services relate to incidents and alerts.' },
+      { name: 'workflows', description: 'Use this skill when working with Rootly workflows -- creating automated incident response workflows, configuring triggers, actions, conditions, and managing workflow lifecycle.' },
+      { name: 'api-patterns', description: 'Use this skill when working with Rootly MCP tools - authentication setup, complete tool reference, JSON:API pagination, request patterns, rate limits, and error handling.' }
     ],
-    commands: [],
+    commands: [
+      { name: '/action-items', description: 'List outstanding action items from Rootly postmortems and incidents' },
+      { name: '/create-incident', description: 'Create a new incident in Rootly with title, severity, and affected services' },
+      { name: '/incident-triage', description: 'Triage active Rootly incidents by severity and status' },
+      { name: '/postmortem-summary', description: 'Generate a postmortem summary for a resolved Rootly incident' },
+      { name: '/service-status', description: 'Check service health and dependency status across the Rootly service catalog' }
+    ],
     apiInfo: {
-      baseUrl: 'https://mcp.rootly.com',
-      auth: 'Authorization: Bearer <API Token>',
-      rateLimit: 'Standard Rootly API rate limits; back off 30-60s on 429',
-      docsUrl: 'https://rootly.com/docs'
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
     },
     path: 'rootly/rootly',
-    mcpRepo: 'https://mcp.rootly.com',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'runzero',
+    name: 'Runzero',
+    vendor: 'Runzero',
+    description: 'runZero - asset discovery, network scanning, inventory management',
+    category: 'security',
+    maturity: 'production',
+    features: [
+      'Asset Management',
+      'Services',
+      'Site Management',
+      'Tasks',
+      'Wireless'
+    ],
+    skills: [
+      { name: 'assets', description: 'Use this skill when working with RunZero assets — searching and browsing the asset inventory, inspecting asset attributes, OS fingerprinting, hardware details, and network interfaces.' },
+      { name: 'services', description: 'Use this skill when working with RunZero services — listing discovered services, filtering by port or protocol, identifying vulnerabilities, and auditing exposed services across sites.' },
+      { name: 'sites', description: 'Use this skill when working with RunZero sites — creating and managing organization sites, defining scan scope, deploying explorers, and organizing assets by location or client.' },
+      { name: 'tasks', description: 'Use this skill when working with RunZero scan tasks — creating scans, scheduling recurring scans, managing explorers, configuring scan parameters, and reviewing scan results.' },
+      { name: 'wireless', description: 'Use this skill when working with RunZero wireless network discovery — listing discovered wireless networks, identifying rogue access points, analyzing wireless security configurations, and auditing SSIDs.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the RunZero MCP tools — available tools, authentication via Bearer token, Export API, pagination, rate limiting, error handling, and best practices.' }
+    ],
+    commands: [
+      { name: '/asset-search', description: 'Search for assets in RunZero by criteria' },
+      { name: '/scan-network', description: 'Initiate a network discovery scan in RunZero' },
+      { name: '/service-inventory', description: 'List discovered services across RunZero assets' },
+      { name: '/site-overview', description: 'Overview of a RunZero site\'s assets, services, and health' },
+      { name: '/vuln-report', description: 'Generate a vulnerability summary report from RunZero data' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'runzero/runzero',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'salesbuildr',
+    name: 'SalesBuildr',
+    vendor: 'SalesBuildr',
+    description: 'SalesBuildr CRM - contacts, companies, opportunities, quotes',
+    category: 'crm',
+    maturity: 'production',
+    features: [
+      'Companies Contacts',
+      'Opportunity Tracking',
+      'Product Catalog',
+      'Quote Generation'
+    ],
+    skills: [
+      { name: 'companies-contacts', description: 'Use this skill when searching for companies or contacts in Salesbuildr, looking up customer information, or creating new contacts.' },
+      { name: 'opportunities', description: 'Use this skill when managing sales opportunities in Salesbuildr - searching the pipeline, creating new opportunities, updating stages, and tracking deal values.' },
+      { name: 'products', description: 'Use this skill when searching for products in the Salesbuildr catalog, looking up pricing, or browsing by category.' },
+      { name: 'quotes', description: 'Use this skill when creating, searching, or viewing quotes in Salesbuildr.' },
+      { name: 'api-patterns', description: 'Use this skill when making API calls to Salesbuildr.' }
+    ],
+    commands: [
+      { name: '/create-contact', description: 'Create a new contact in Salesbuildr' },
+      { name: '/create-opportunity', description: 'Create a new opportunity in Salesbuildr' },
+      { name: '/create-quote', description: 'Create a new quote with line items in Salesbuildr' },
+      { name: '/get-quote', description: 'Get detailed information for a specific Salesbuildr quote' },
+      { name: '/search-companies', description: 'Search for companies in Salesbuildr' },
+      { name: '/search-contacts', description: 'Search for contacts in Salesbuildr, optionally filtered by company' },
+      { name: '/search-opportunities', description: 'Search for opportunities in the Salesbuildr sales pipeline' },
+      { name: '/search-products', description: 'Search the Salesbuildr product catalog' },
+      { name: '/search-quotes', description: 'Search for quotes in Salesbuildr' },
+      { name: '/update-opportunity', description: 'Update an opportunity\'s status, value, or other details' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'salesbuildr/salesbuildr',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'sentinelone',
+    name: 'SentinelOne',
+    vendor: 'SentinelOne',
+    description: 'SentinelOne XDR - threat detection, incident response, and endpoint agent management via the Purple AI MCP server',
+    category: 'security',
+    maturity: 'production',
+    features: [
+      'Alert Handling',
+      'Asset Inventory',
+      'Cloud Security Posture',
+      'Purple AI Threat Hunting',
+      'PowerQuery Analytics',
+      'Vulnerability Management'
+    ],
+    skills: [
+      { name: 'alerts', description: 'Use this skill when working with SentinelOne alerts - triaging new alerts, investigating specific alerts, searching by severity or status, reviewing alert timelines, and managing alert workflows across MSP client environments.' },
+      { name: 'inventory', description: 'Use this skill when working with SentinelOne unified asset inventory - endpoints, cloud resources, identities, and network-discovered devices.' },
+      { name: 'misconfigurations', description: 'Use this skill when working with SentinelOne XSPM misconfigurations - cloud security posture management across AWS, Azure, GCP, Kubernetes, identity, and infrastructure-as-code.' },
+      { name: 'purple-ai', description: 'Use this skill when working with SentinelOne Purple AI - natural language cybersecurity investigation, threat hunting, behavioral anomaly analysis, MITRE ATT&CK TTP mapping, and PowerQuery generation.' },
+      { name: 'threat-hunting', description: 'Use this skill when working with SentinelOne PowerQuery and the Singularity Data Lake - executing threat hunting queries, understanding PowerQuery pipeline syntax, managing time ranges, and analyzing query results.' },
+      { name: 'vulnerabilities', description: 'Use this skill when working with SentinelOne XSPM vulnerabilities - tracking CVEs, reviewing EPSS scores, assessing exploit maturity, managing vulnerability status, prioritizing patches, and generating vulnerability reports across MSP client environments.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the SentinelOne Purple MCP tools - available tools, connection setup, uvx-based installation, Service User token authentication, transport modes, dual API architecture (GraphQL and REST), rate limits, error handling, and best practices.' }
+    ],
+    commands: [
+      { name: '/alert-triage', description: 'Triage new and unresolved SentinelOne alerts by severity' },
+      { name: '/asset-inventory', description: 'Asset inventory summary by surface type across managed environments' },
+      { name: '/hunt-threat', description: 'Threat hunting via Purple AI and PowerQuery execution' },
+      { name: '/investigate-alert', description: 'Deep investigation of a specific SentinelOne alert with timeline and context' },
+      { name: '/posture-review', description: 'Cloud security posture review with compliance gap analysis' },
+      { name: '/vuln-report', description: 'Generate a vulnerability summary report with severity breakdown and top CVEs' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'sentinelone/sentinelone',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'sherweb',
+    name: 'Sherweb',
+    vendor: 'Sherweb',
+    description: 'Sherweb Partner API - distributor billing, service provider management, customer subscriptions',
+    category: 'marketplace',
+    maturity: 'beta',
+    features: [
+      'Billing',
+      'Customer Operations',
+      'Subscription Lifecycle'
+    ],
+    skills: [
+      { name: 'billing', description: 'Use this skill when working with Sherweb distributor billing - payable charges, billing periods, charge types, pricing breakdown, deductions, fees, taxes, invoices, and MSP margin calculations.' },
+      { name: 'customers', description: 'Use this skill when working with Sherweb customers - listing customers, retrieving customer details, accounts receivable, and understanding the distributor > service provider > customer hierarchy.' },
+      { name: 'subscriptions', description: 'Use this skill when working with Sherweb subscriptions - viewing subscriptions, changing quantities, license management, subscription lifecycle, and quantity change workflows.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the Sherweb API and MCP tools - OAuth 2.' }
+    ],
+    commands: [
+      { name: '/billing-summary', description: 'View payable charges for a Sherweb billing period with pricing breakdown' },
+      { name: '/change-quantity', description: 'Change subscription seat/license quantity for a Sherweb customer' },
+      { name: '/list-customers', description: 'List all customers under the Sherweb service provider account' },
+      { name: '/subscription-status', description: 'Check subscription details and quantities for a Sherweb customer' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'sherweb/sherweb',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'superops',
+    name: 'SuperOps.ai',
+    vendor: 'SuperOps',
+    description: 'SuperOps.ai - tickets, assets, clients, runbooks (GraphQL)',
+    category: 'psa',
+    maturity: 'production',
+    features: [
+      'Alert Handling',
+      'Asset Management',
+      'Client Operations',
+      'Runbook Execution',
+      'Ticket Management'
+    ],
+    skills: [
+      { name: 'alerts', description: 'Use this skill when working with SuperOps.' },
+      { name: 'assets', description: 'Use this skill when working with SuperOps.' },
+      { name: 'clients', description: 'Use this skill when working with SuperOps.' },
+      { name: 'runbooks', description: 'Use this skill when working with SuperOps.' },
+      { name: 'tickets', description: 'Use this skill when working with SuperOps.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the SuperOps.' }
+    ],
+    commands: [
+      { name: '/acknowledge-alert', description: 'Acknowledge an RMM alert to indicate investigation is underway' },
+      { name: '/add-ticket-note', description: 'Add a note (internal or public) to an existing SuperOps.ai ticket' },
+      { name: '/create-ticket', description: 'Create a new service ticket in SuperOps.ai' },
+      { name: '/get-asset', description: 'Get detailed asset information including hardware, software, and alerts' },
+      { name: '/list-alerts', description: 'List active RMM alerts across all clients or filtered by criteria' },
+      { name: '/list-assets', description: 'List and filter assets in SuperOps.ai' },
+      { name: '/log-time', description: 'Log a time entry against a SuperOps.ai ticket' },
+      { name: '/resolve-alert', description: 'Resolve an RMM alert and optionally create a ticket' },
+      { name: '/run-script', description: 'Execute a script on a remote asset via SuperOps RMM' },
+      { name: '/update-ticket', description: 'Update fields on an existing SuperOps.ai ticket' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'superops/superops-ai',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'syncro',
+    name: 'Syncro MSP',
+    vendor: 'Syncro',
+    description: 'Syncro MSP - tickets, customers, assets, invoicing',
+    category: 'psa',
+    maturity: 'production',
+    features: [
+      'Asset Management',
+      'Customer Operations',
+      'Invoice Management',
+      'Ticket Management'
+    ],
+    skills: [
+      { name: 'assets', description: 'Use this skill when working with Syncro MSP assets - tracking hardware, software, and devices for customers.' },
+      { name: 'customers', description: 'Use this skill when working with Syncro MSP customers - creating, updating, searching, or managing customer records.' },
+      { name: 'invoices', description: 'Use this skill when working with Syncro MSP invoices - creating, managing, and tracking invoices and payments.' },
+      { name: 'tickets', description: 'Use this skill when working with Syncro MSP tickets - creating, updating, searching, or managing service desk operations.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the Syncro MSP API - authentication, pagination, rate limiting, and error handling.' }
+    ],
+    commands: [
+      { name: '/add-ticket-comment', description: 'Add a comment to an existing Syncro ticket' },
+      { name: '/create-appointment', description: 'Create a calendar appointment in Syncro' },
+      { name: '/create-ticket', description: 'Create a new service ticket in Syncro MSP' },
+      { name: '/get-customer', description: 'Get detailed customer information from Syncro' },
+      { name: '/list-alerts', description: 'List active RMM alerts from Syncro' },
+      { name: '/log-time', description: 'Log a time entry against a Syncro ticket' },
+      { name: '/resolve-alert', description: 'Resolve an RMM alert in Syncro' },
+      { name: '/search-assets', description: 'Search for customer assets in Syncro' },
+      { name: '/search-tickets', description: 'Search for tickets in Syncro MSP by various criteria' },
+      { name: '/update-ticket', description: 'Update fields on an existing Syncro ticket' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'syncro/syncro-msp',
+    compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
+  },
+  {
+    id: 'xero',
+    name: 'Xero',
+    vendor: 'Xero',
+    description: 'Xero accounting - contacts, invoices, payments, accounts, reports',
+    category: 'accounting',
+    maturity: 'production',
+    features: [
+      'Account Hierarchy',
+      'Contact Management',
+      'Invoice Management',
+      'Payment Tracking',
+      'Financial Reporting'
+    ],
+    skills: [
+      { name: 'accounts', description: 'Use this skill when working with Xero chart of accounts - navigating account codes, creating accounts, understanding account types and classes, tax settings, and mapping MSP revenue and expense categories to the general ledger.' },
+      { name: 'contacts', description: 'Use this skill when working with Xero contacts (customers/suppliers) - creating, searching, updating, and managing client organizations.' },
+      { name: 'invoices', description: 'Use this skill when working with Xero invoices - creating, searching, updating, voiding, and managing sales invoices (ACCREC) and supplier bills (ACCPAY).' },
+      { name: 'payments', description: 'Use this skill when working with Xero payments - recording payments, tracking outstanding balances, payment allocation, overpayments, prepayments, and batch payment operations.' },
+      { name: 'reports', description: 'Use this skill when working with Xero financial reports - Profit and Loss, Balance Sheet, Aged Receivables, Aged Payables, Trial Balance, and other management reports.' },
+      { name: 'api-patterns', description: 'Use this skill when working with the Xero API - OAuth2 authentication, REST structure, filtering, pagination, rate limiting, error handling, and best practices.' }
+    ],
+    commands: [
+      { name: '/create-invoice', description: 'Create a sales invoice for a managed services client in Xero' },
+      { name: '/payment-status', description: 'Check payment status and outstanding balances for a client in Xero' },
+      { name: '/reconciliation-summary', description: 'Verify all MSP clients have been billed for the current period and summarize reconciliation status' },
+      { name: '/search-contacts', description: 'Find a contact in Xero by name, email, or account number' }
+    ],
+    apiInfo: {
+      baseUrl: '',
+      auth: '',
+      rateLimit: '',
+      docsUrl: ''
+    },
+    path: 'xero/xero',
     compatibility: { claudeCode: true, claudeDesktop: true, validated: false }
   }
 ];
@@ -978,7 +1331,7 @@ export function getPluginById(id: string): Plugin | undefined {
   return plugins.find(p => p.id === id);
 }
 
-export function getPluginsByCategory(category: 'psa' | 'rmm' | 'documentation' | 'security' | 'sales' | 'accounting' | 'productivity'): Plugin[] {
+export function getPluginsByCategory(category: Plugin['category']): Plugin[] {
   return plugins.filter(p => p.category === category);
 }
 
