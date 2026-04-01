@@ -5,7 +5,7 @@ CRM plugin for Salesbuildr - manage companies, contacts, products, opportunities
 ## Installation
 
 ```
-/plugin marketplace add wyre-technology/msp-claude-plugins --plugin salesbuildr
+/plugin marketplace add drewrox2009/local-msp-claude-plugins --plugin salesbuildr
 ```
 
 ## Configuration

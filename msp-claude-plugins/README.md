@@ -18,7 +18,7 @@ Community-driven Claude Code plugins for Managed Service Providers. This fork de
 ## Quick Start
 
 ```bash
-/plugin marketplace add wyre-technology/msp-claude-plugins
+/plugin marketplace add drewrox2009/local-msp-claude-plugins
 ```
 
 ## Available Plugins

@@ -5,7 +5,7 @@ Claude Code plugin for NinjaOne Remote Monitoring and Management.
 ## Installation
 
 ```
-/plugin marketplace add wyre-technology/msp-claude-plugins --plugin ninjaone-rmm
+/plugin marketplace add drewrox2009/local-msp-claude-plugins --plugin ninjaone-rmm
 ```
 
 ## Configuration

@@ -5,7 +5,7 @@
 This fork is local-first: plugin manifests launch standalone MCP servers on your machine by default instead of routing through Wyre's hosted gateway.
 
 ```
-/plugin marketplace add wyre-technology/msp-claude-plugins
+/plugin marketplace add drewrox2009/local-msp-claude-plugins
 ```
 
 Then restart Claude Code. That's it.
@@ -144,10 +144,10 @@ Most contributions touch skills and commands. In this fork, plugin manifest chan
 Want just one vendor? Install individually:
 
 ```
-/plugin marketplace add wyre-technology/msp-claude-plugins --plugin autotask
-/plugin marketplace add wyre-technology/msp-claude-plugins --plugin syncro
-/plugin marketplace add wyre-technology/msp-claude-plugins --plugin halopsa
-/plugin marketplace add wyre-technology/msp-claude-plugins --plugin liongard
+/plugin marketplace add drewrox2009/local-msp-claude-plugins --plugin autotask
+/plugin marketplace add drewrox2009/local-msp-claude-plugins --plugin syncro
+/plugin marketplace add drewrox2009/local-msp-claude-plugins --plugin halopsa
+/plugin marketplace add drewrox2009/local-msp-claude-plugins --plugin liongard
 ```
 
 ---
