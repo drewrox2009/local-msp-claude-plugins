@@ -1,11 +1,11 @@
 {
   "mcpServers": {
     "hudu": {
-      "type": "http",
-      "url": "https://mcp.wyretechnology.com/v1/hudu/mcp",
-      "headers": {
-        "X-Hudu-Base-URL": "${HUDU_BASE_URL}",
-        "X-Hudu-API-Key": "${HUDU_API_KEY}"
+      "command": "npx",
+      "args": ["-y", "github:wyre-technology/hudu-mcp"],
+      "env": {
+        "HUDU_BASE_URL": "${HUDU_BASE_URL}",
+        "HUDU_API_KEY": "${HUDU_API_KEY}"
       }
     }
   }

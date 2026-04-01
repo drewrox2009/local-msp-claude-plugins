@@ -1,14 +1,14 @@
 {
   "mcpServers": {
     "connectwise-manage": {
-      "type": "http",
-      "url": "https://mcp.wyretechnology.com/v1/connectwise-psa/mcp",
-      "headers": {
-        "X-CW-Company-ID": "${CW_MANAGE_COMPANY_ID}",
-        "X-CW-Public-Key": "${CW_MANAGE_PUBLIC_KEY}",
-        "X-CW-Private-Key": "${CW_MANAGE_PRIVATE_KEY}",
-        "X-CW-Client-ID": "${CW_MANAGE_CLIENT_ID}",
-        "X-CW-URL": "${CW_MANAGE_URL}"
+      "command": "npx",
+      "args": ["-y", "github:wyre-technology/connectwise-manage-mcp"],
+      "env": {
+        "CW_MANAGE_COMPANY_ID": "${CW_MANAGE_COMPANY_ID}",
+        "CW_MANAGE_PUBLIC_KEY": "${CW_MANAGE_PUBLIC_KEY}",
+        "CW_MANAGE_PRIVATE_KEY": "${CW_MANAGE_PRIVATE_KEY}",
+        "CW_MANAGE_CLIENT_ID": "${CW_MANAGE_CLIENT_ID}",
+        "CW_MANAGE_URL": "${CW_MANAGE_URL}"
       }
     }
   }

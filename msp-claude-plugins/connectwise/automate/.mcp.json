@@ -1,13 +1,13 @@
 {
   "mcpServers": {
     "connectwise-automate": {
-      "type": "http",
-      "url": "https://mcp.wyretechnology.com/v1/connectwise-automate/mcp",
-      "headers": {
-        "X-CWA-Server": "${CW_AUTOMATE_SERVER_URL}",
-        "X-CWA-Client-ID": "${CW_AUTOMATE_CLIENT_ID}",
-        "X-CWA-Username": "${CW_AUTOMATE_USERNAME}",
-        "X-CWA-Password": "${CW_AUTOMATE_PASSWORD}"
+      "command": "npx",
+      "args": ["-y", "github:wyre-technology/connectwise-automate-mcp"],
+      "env": {
+        "CW_AUTOMATE_SERVER_URL": "${CW_AUTOMATE_SERVER_URL}",
+        "CW_AUTOMATE_CLIENT_ID": "${CW_AUTOMATE_CLIENT_ID}",
+        "CW_AUTOMATE_USERNAME": "${CW_AUTOMATE_USERNAME}",
+        "CW_AUTOMATE_PASSWORD": "${CW_AUTOMATE_PASSWORD}"
       }
     }
   }

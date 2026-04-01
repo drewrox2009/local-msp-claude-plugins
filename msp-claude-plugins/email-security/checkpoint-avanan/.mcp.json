@@ -1,11 +1,11 @@
 {
   "mcpServers": {
     "checkpoint-avanan": {
-      "type": "http",
-      "url": "https://mcp.wyretechnology.com/v1/avanan/mcp",
-      "headers": {
-        "X-Checkpoint-Client-Id": "${CHECKPOINT_CLIENT_ID}",
-        "X-Checkpoint-Client-Secret": "${CHECKPOINT_CLIENT_SECRET}"
+      "command": "npx",
+      "args": ["-y", "github:wyre-technology/avanan-mcp"],
+      "env": {
+        "CHECKPOINT_CLIENT_ID": "${CHECKPOINT_CLIENT_ID}",
+        "CHECKPOINT_CLIENT_SECRET": "${CHECKPOINT_CLIENT_SECRET}"
       }
     }
   }

@@ -1,12 +1,12 @@
 {
   "mcpServers": {
     "halopsa": {
-      "type": "http",
-      "url": "https://mcp.wyretechnology.com/v1/halopsa/mcp",
-      "headers": {
-        "X-Halo-Client-ID": "${HALOPSA_CLIENT_ID}",
-        "X-Halo-Client-Secret": "${HALOPSA_CLIENT_SECRET}",
-        "X-Halo-Tenant": "${HALOPSA_TENANT}"
+      "command": "npx",
+      "args": ["-y", "github:wyre-technology/halopsa-mcp"],
+      "env": {
+        "HALOPSA_CLIENT_ID": "${HALOPSA_CLIENT_ID}",
+        "HALOPSA_CLIENT_SECRET": "${HALOPSA_CLIENT_SECRET}",
+        "HALOPSA_TENANT": "${HALOPSA_TENANT}"
       }
     }
   }

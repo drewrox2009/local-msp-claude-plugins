@@ -5,7 +5,7 @@
 ![Claude Cowork](https://img.shields.io/badge/Claude_Cowork-✓_Full_Support-blue)
 ![License](https://img.shields.io/badge/License-Apache_2.0-green)
 
-Community-driven Claude Code plugins for Managed Service Providers.
+Community-driven Claude Code plugins for Managed Service Providers. This fork defaults to local MCP server execution instead of the Wyre hosted gateway.
 
 ## Compatibility
 
@@ -13,7 +13,7 @@ Community-driven Claude Code plugins for Managed Service Providers.
 |----------|---------|-------|
 | **Claude Code** | ✅ Full | All skills, commands, and MCP servers (stdio) |
 | **Claude Cowork** | ✅ Full | All MCP servers via HTTP transport |
-| **Claude Desktop** | ⚠️ Partial | MCP servers only. Hosted MCP servers available. |
+| **Claude Desktop** | ⚠️ Partial | MCP servers only. Local config required per server. |
 
 ## Quick Start
 
@@ -47,6 +47,8 @@ All MCP servers support dual transport:
 - **stdio** (default) — for Claude Code local usage
 - **HTTP** — for Claude Cowork, Docker, and cloud deployments
 
+This fork prefers local stdio execution from the plugin manifests whenever a standalone MCP server exists.
+
 ### Self-host with Docker
 
 ```bash
@@ -63,7 +65,7 @@ Each MCP server includes configs for:
 - **Cloudflare Workers** — `wrangler.json` in each repo
 - **DigitalOcean App Platform** — `.do/app.yaml` in each repo
 
-See the [deployment docs](https://wyre-technology.github.io/msp-claude-plugins/deployment/) for full guides.
+See each standalone MCP server repository for deployment details and required environment variables.
 
 ## Commands (71 total)
 
@@ -215,10 +217,6 @@ Each plugin requires API credentials. See the individual plugin READMEs for conf
 | ConnectWise Automate | [connectwise/automate/README.md](./connectwise/automate/README.md) |
 | Datto RMM | [kaseya/datto-rmm/README.md](./kaseya/datto-rmm/README.md) |
 | IT Glue | [kaseya/it-glue/README.md](./kaseya/it-glue/README.md) |
-
-## Documentation
-
-Full documentation: [https://wyre-technology.github.io/msp-claude-plugins/](https://wyre-technology.github.io/msp-claude-plugins/)
 
 ## Contributing
 

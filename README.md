@@ -2,13 +2,15 @@
 
 > One command to supercharge Claude Code for MSP workflows.
 
+This fork is local-first: plugin manifests launch standalone MCP servers on your machine by default instead of routing through Wyre's hosted gateway.
+
 ```
 /plugin marketplace add wyre-technology/msp-claude-plugins
 ```
 
 Then restart Claude Code. That's it.
 
-**Documentation:** [mcp.wyretechnology.com](https://mcp.wyretechnology.com)
+**Upstream reference:** [mcp.wyretechnology.com](https://mcp.wyretechnology.com)
 
 ---
 
@@ -96,19 +98,15 @@ Plus shared skills for MSP terminology, ticket triage, cross-vendor incident cor
 
 ---
 
-## Two Ways to Connect
+## Connection Model
 
-### Hosted Gateway (Recommended)
+### Local MCP Servers (Default)
 
-Use the [MCP Gateway](https://mcp.wyretechnology.com) to connect your MSP tools to Claude Desktop with zero infrastructure. OAuth 2.1 + PKCE authentication, encrypted credential storage, and all 33 vendors available immediately.
+This fork starts vendor integrations locally through each plugin's `.mcp.json`. In practice that means Claude Code launches the corresponding standalone MCP server with `npx` and your local environment variables.
 
-[Get Started Free](https://mcp.wyretechnology.com/waitlist)
+### Official Remote Exceptions
 
-### Self-Hosted
-
-Run MCP servers yourself for full control. Each server is available as an npm package, Docker image, or MCPB bundle for Claude Desktop.
-
-See the [Getting Started guide](https://mcp.wyretechnology.com/getting-started/) for installation instructions.
+Some plugins still intentionally use vendor-hosted or third-party remote MCP servers, including Pax8, HubSpot, PandaDoc, QuickBooks Online, Microsoft 365, SentinelOne, Rootly, and Xero.
 
 ---
 
@@ -137,8 +135,7 @@ Each plugin consists of three layers:
 3. **MCP Servers** — Full server implementations that connect Claude to vendor APIs.
    These handle authentication, rate limiting, and data transformation.
 
-Most contributions touch skills and commands. MCP server changes are more involved
-and benefit from familiarity with the vendor's API.
+Most contributions touch skills and commands. In this fork, plugin manifest changes should prefer local MCP server launches over Wyre-hosted gateway URLs unless a plugin explicitly relies on an official remote MCP server.
 
 ---
 

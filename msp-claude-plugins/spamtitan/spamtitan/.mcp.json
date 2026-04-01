@@ -1,10 +1,10 @@
 {
   "mcpServers": {
     "spamtitan": {
-      "type": "http",
-      "url": "https://mcp.wyretechnology.com/v1/spamtitan/mcp",
-      "headers": {
-        "X-SpamTitan-API-Key": "${SPAMTITAN_API_KEY}"
+      "command": "npx",
+      "args": ["-y", "github:wyre-technology/spamtitan-mcp"],
+      "env": {
+        "SPAMTITAN_API_KEY": "${SPAMTITAN_API_KEY}"
       }
     }
   }
