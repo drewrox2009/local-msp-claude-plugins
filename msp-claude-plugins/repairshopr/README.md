@@ -1,10 +1,15 @@
-# Syncro MSP Plugin
+# RepairShopr Plugin
 
-Claude Code plugin for Syncro MSP integration.
+Claude Code plugin for RepairShopr integration.
+
+> This plugin is rebuilt from the self-contained Syncro MCP fork because the APIs are closely
+> related. The standalone `repairshopr-mcp` server now builds and tests locally, but this plugin
+> still expects that repo to be published at `github:drewrox2009/repairshopr-mcp` before the
+> marketplace install path will work end to end.
 
 ## Overview
 
-This plugin provides Claude with domain knowledge of Syncro MSP, enabling:
+This plugin provides Claude with domain knowledge of RepairShopr, enabling:
 
 - **Ticket Management** - Create, search, update, and manage service tickets
 - **Customer Operations** - Customer and contact management
@@ -20,8 +25,8 @@ Add your credentials to `~/.claude/settings.json` (user scope, encrypted on macO
 ```json
 {
   "env": {
-    "SYNCRO_SUBDOMAIN": "acmemsp",
-    "SYNCRO_API_KEY": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    "REPAIRSHOPR_SUBDOMAIN": "acmemsp",
+    "REPAIRSHOPR_API_KEY": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   }
 }
 ```
@@ -31,8 +36,8 @@ For project-specific configuration, use `.claude/settings.local.json` (gitignore
 ```json
 {
   "env": {
-    "SYNCRO_SUBDOMAIN": "acmemsp",
-    "SYNCRO_API_KEY": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    "REPAIRSHOPR_SUBDOMAIN": "acmemsp",
+    "REPAIRSHOPR_API_KEY": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   }
 }
 ```
@@ -41,33 +46,28 @@ For project-specific configuration, use `.claude/settings.local.json` (gitignore
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `SYNCRO_SUBDOMAIN` | Yes | | Your Syncro subdomain (from `https://{subdomain}.syncromsp.com`) |
-| `SYNCRO_API_KEY` | Yes | | API key from Admin > API Tokens |
+| `REPAIRSHOPR_SUBDOMAIN` | Yes | | Your RepairShopr subdomain (from `https://{subdomain}.repairshopr.com`) |
+| `REPAIRSHOPR_API_KEY` | Yes | | API key from Admin > API Tokens |
 
 ## Local MCP Server
 
-This fork launches a self-contained local Syncro MCP server by default:
+This fork uses local MCP server launches by default. The plugin manifest starts:
 
 ```json
 {
   "mcpServers": {
-    "syncro": {
+    "repairshopr": {
       "command": "npx",
-      "args": ["-y", "github:drewrox2009/syncro-mcp-claude"],
-      "env": {
-        "SYNCRO_API_KEY": "${SYNCRO_API_KEY}",
-        "SYNCRO_SUBDOMAIN": "${SYNCRO_SUBDOMAIN}"
-      }
+      "args": ["-y", "github:drewrox2009/repairshopr-mcp"]
     }
   }
+}
 ```
-
-The MCP server repo used by this fork is [drewrox2009/syncro-mcp-claude](https://github.com/drewrox2009/syncro-mcp-claude).
 
 ### Obtaining API Credentials
 
-1. **Log into Syncro**
-   - Navigate to your Syncro instance at `https://your-subdomain.syncromsp.com`
+1. **Log into RepairShopr**
+   - Navigate to your RepairShopr instance at `https://your-subdomain.repairshopr.com`
 
 2. **Generate an API Token**
    - Go to **Admin > API Tokens**
@@ -76,8 +76,8 @@ The MCP server repo used by this fork is [drewrox2009/syncro-mcp-claude](https:/
    - Copy the generated API key (it will only be shown once)
 
 3. **Find Your Subdomain**
-   - Your subdomain is the first part of your Syncro URL
-   - Example: If your URL is `https://acmemsp.syncromsp.com`, your subdomain is `acmemsp`
+   - Your subdomain is the first part of your RepairShopr URL
+   - Example: If your URL is `https://acmemsp.repairshopr.com`, your subdomain is `acmemsp`
 
 ### Testing Your Connection
 
@@ -85,17 +85,17 @@ Once configured in Claude Code settings, test the connection:
 
 ```bash
 # Test connection (env vars injected by Claude Code)
-curl -s "https://${SYNCRO_SUBDOMAIN}.syncromsp.com/api/v1/me?api_key=${SYNCRO_API_KEY}" | jq
+curl -s "https://${REPAIRSHOPR_SUBDOMAIN}.repairshopr.com/api/v1/me?api_key=${REPAIRSHOPR_API_KEY}" | jq
 ```
 
 ## Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/wyre-technology/msp-claude-plugins.git
+git clone https://github.com/drewrox2009/local-msp-claude-plugins.git
 
 # Navigate to plugin
-cd msp-claude-plugins/syncro/syncro-msp
+cd local-msp-claude-plugins/msp-claude-plugins/repairshopr
 
 # Use with Claude Code
 claude --plugin .
@@ -109,7 +109,7 @@ claude --plugin .
 | `customers` | Customer and contact management |
 | `assets` | Asset tracking and RMM integration |
 | `invoices` | Invoice generation and payments |
-| `api-patterns` | Syncro API authentication, pagination, rate limits |
+| `api-patterns` | RepairShopr API authentication, pagination, rate limits |
 
 ## Commands
 
@@ -120,10 +120,10 @@ claude --plugin .
 
 ## API Reference
 
-- **Base URL**: `https://{subdomain}.syncromsp.com/api/v1`
+- **Base URL**: `https://{subdomain}.repairshopr.com/api/v1`
 - **Auth**: API key passed as query parameter `api_key`
 - **Rate Limit**: 180 requests per minute
-- **Docs**: [Syncro API Documentation](https://api-docs.syncromsp.com/)
+- **Docs**: Check your RepairShopr account documentation and API token settings
 
 ## Contributing
 

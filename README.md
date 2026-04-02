@@ -2,7 +2,7 @@
 
 > One command to supercharge Claude Code for MSP workflows.
 
-This fork is local-first: plugin manifests launch standalone MCP servers on your machine by default instead of routing through Wyre's hosted gateway.
+This fork prefers local MCP servers where the standalone repos are publicly runnable. Plugins whose upstream MCP repos still depend on private packages or missing repos remain gateway-backed until they can be converted cleanly.
 
 ```
 /plugin marketplace add drewrox2009/local-msp-claude-plugins
@@ -16,7 +16,7 @@ Then restart Claude Code. That's it.
 
 ## What you get
 
-Thirty-three vendor-specific plugins with domain knowledge for PSA, RMM, documentation, security, accounting, CRM, and productivity tools:
+Thirty-four vendor-specific plugins with domain knowledge for PSA, RMM, documentation, security, accounting, CRM, and productivity tools:
 
 | Plugin | Description |
 |--------|-------------|
@@ -26,6 +26,7 @@ Thirty-three vendor-specific plugins with domain knowledge for PSA, RMM, documen
 | **Hudu** | IT documentation - companies, assets, articles, passwords, websites |
 | **RocketCyber** | Managed SOC - incidents, agents, events, threat detection |
 | **Syncro** | All-in-one PSA/RMM - tickets, customers, assets, invoicing |
+| **RepairShopr** | PSA for repair workflows - tickets, customers, assets, invoicing |
 | **Atera** | RMM/PSA platform - tickets, agents, customers, alerts, SNMP/HTTP monitors |
 | **SuperOps.ai** | Modern PSA/RMM with GraphQL - tickets, assets, clients, runbooks |
 | **HaloPSA** | Enterprise PSA with OAuth - tickets, clients, assets, contracts |
@@ -65,7 +66,8 @@ Plus shared skills for MSP terminology, ticket triage, cross-vendor incident cor
 | **IT Glue** | ✅ Production | [itglue-mcp](https://github.com/wyre-technology/itglue-mcp) |
 | **Hudu** | 🔨 Beta | [hudu-mcp](https://github.com/wyre-technology/hudu-mcp) |
 | **RocketCyber** | 🔨 Beta | [rocketcyber-mcp](https://github.com/wyre-technology/rocketcyber-mcp) |
-| **Syncro** | 🔨 Beta | [syncro-mcp](https://github.com/wyre-technology/syncro-mcp) |
+| **Syncro** | 🔨 Beta | [syncro-mcp-claude](https://github.com/drewrox2009/syncro-mcp-claude) |
+| **RepairShopr** | 🧪 Local build validated | `github:drewrox2009/repairshopr-mcp` (publish pending) |
 | **Atera** | 🔨 Beta | [atera-mcp](https://github.com/wyre-technology/atera-mcp) |
 | **SuperOps.ai** | 🔨 Beta | [superops-mcp](https://github.com/wyre-technology/superops-mcp) |
 | **HaloPSA** | 🔨 Beta | [halopsa-mcp](https://github.com/wyre-technology/halopsa-mcp) |
@@ -100,13 +102,13 @@ Plus shared skills for MSP terminology, ticket triage, cross-vendor incident cor
 
 ## Connection Model
 
-### Local MCP Servers (Default)
+### Local MCP Servers (When Verified)
 
-This fork starts vendor integrations locally through each plugin's `.mcp.json`. In practice that means Claude Code launches the corresponding standalone MCP server with `npx` and your local environment variables.
+This fork starts vendor integrations locally through each plugin's `.mcp.json` only when the standalone MCP repo appears publicly runnable. In practice that means Claude Code launches the corresponding standalone MCP server with `npx` and your local environment variables.
 
-### Official Remote Exceptions
+### Remote Exceptions
 
-Some plugins still intentionally use vendor-hosted or third-party remote MCP servers, including Pax8, HubSpot, PandaDoc, QuickBooks Online, Microsoft 365, SentinelOne, Rootly, and Xero.
+Some plugins still intentionally use vendor-hosted or third-party remote MCP servers, including Pax8, HubSpot, PandaDoc, QuickBooks Online, Microsoft 365, SentinelOne, Rootly, and Xero. Others remain on the Wyre gateway for now because their supposed standalone repos still depend on private packages, file-based local dependencies, or missing upstream repos.
 
 ---
 
@@ -135,7 +137,7 @@ Each plugin consists of three layers:
 3. **MCP Servers** — Full server implementations that connect Claude to vendor APIs.
    These handle authentication, rate limiting, and data transformation.
 
-Most contributions touch skills and commands. In this fork, plugin manifest changes should prefer local MCP server launches over Wyre-hosted gateway URLs unless a plugin explicitly relies on an official remote MCP server.
+Most contributions touch skills and commands. In this fork, plugin manifest changes should prefer local MCP server launches only after the target MCP repo has been verified to install without private registries or unpublished dependencies.
 
 ---
 
@@ -146,6 +148,7 @@ Want just one vendor? Install individually:
 ```
 /plugin marketplace add drewrox2009/local-msp-claude-plugins --plugin autotask
 /plugin marketplace add drewrox2009/local-msp-claude-plugins --plugin syncro
+/plugin marketplace add drewrox2009/local-msp-claude-plugins --plugin repairshopr
 /plugin marketplace add drewrox2009/local-msp-claude-plugins --plugin halopsa
 /plugin marketplace add drewrox2009/local-msp-claude-plugins --plugin liongard
 ```
@@ -162,6 +165,7 @@ Each plugin uses environment variables for authentication. See the plugin's READ
 - [Hudu](msp-claude-plugins/hudu/hudu/README.md) — API key + base URL
 - [RocketCyber](msp-claude-plugins/kaseya/rocketcyber/README.md) — Bearer API key
 - [Syncro](msp-claude-plugins/syncro/syncro-msp/README.md) — API key query param
+- [RepairShopr](msp-claude-plugins/repairshopr/README.md) — API key + subdomain, standalone MCP server validated locally but not published yet
 - [Atera](msp-claude-plugins/atera/atera/README.md) — X-API-KEY header
 - [SuperOps.ai](msp-claude-plugins/superops/superops-ai/README.md) — Bearer token
 - [HaloPSA](msp-claude-plugins/halopsa/halopsa/README.md) — OAuth 2.0 client credentials

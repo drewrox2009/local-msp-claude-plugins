@@ -1,10 +1,10 @@
 {
   "mcpServers": {
     "pagerduty": {
-      "command": "npx",
-      "args": ["-y", "github:wyre-technology/pagerduty-mcp"],
-      "env": {
-        "PAGERDUTY_API_TOKEN": "${PAGERDUTY_API_TOKEN}"
+      "type": "http",
+      "url": "https://mcp.wyretechnology.com/v1/pagerduty/mcp",
+      "headers": {
+        "X-PagerDuty-Token": "${PAGERDUTY_API_TOKEN}"
       }
     }
   }

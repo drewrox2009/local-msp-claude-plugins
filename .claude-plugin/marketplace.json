@@ -232,6 +232,14 @@
       "tags": ["salesbuildr", "crm", "sales", "quotes", "msp"]
     },
     {
+      "name": "repairshopr",
+      "source": "./msp-claude-plugins/repairshopr",
+      "description": "RepairShopr - tickets, customers, assets, invoicing",
+      "version": "0.1.0",
+      "category": "psa-rmm",
+      "tags": ["repairshopr", "psa", "tickets", "assets", "msp"]
+    },
+    {
       "name": "sentinelone",
       "source": "./msp-claude-plugins/sentinelone/sentinelone",
       "description": "SentinelOne XDR - threat detection, incident response, and endpoint agent management via the Purple AI MCP server",

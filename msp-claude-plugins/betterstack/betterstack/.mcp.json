@@ -1,10 +1,10 @@
 {
   "mcpServers": {
     "betterstack": {
-      "command": "npx",
-      "args": ["-y", "github:wyre-technology/betterstack-mcp"],
-      "env": {
-        "BETTERSTACK_API_TOKEN": "${BETTERSTACK_API_TOKEN}"
+      "type": "http",
+      "url": "https://mcp.wyretechnology.com/v1/betterstack/mcp",
+      "headers": {
+        "Authorization": "Bearer ${BETTERSTACK_API_TOKEN}"
       }
     }
   }

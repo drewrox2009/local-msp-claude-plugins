@@ -1,10 +1,10 @@
 {
   "mcpServers": {
     "atera": {
-      "command": "npx",
-      "args": ["-y", "github:wyre-technology/atera-mcp"],
-      "env": {
-        "ATERA_API_KEY": "${ATERA_API_KEY}"
+      "type": "http",
+      "url": "https://mcp.wyretechnology.com/v1/atera/mcp",
+      "headers": {
+        "X-Atera-API-Key": "${ATERA_API_KEY}"
       }
     }
   }

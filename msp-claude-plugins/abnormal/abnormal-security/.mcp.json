@@ -1,10 +1,10 @@
 {
   "mcpServers": {
     "abnormal-security": {
-      "command": "npx",
-      "args": ["-y", "github:wyre-technology/abnormal-mcp"],
-      "env": {
-        "ABNORMAL_API_TOKEN": "${ABNORMAL_API_TOKEN}"
+      "type": "http",
+      "url": "https://mcp.wyretechnology.com/v1/abnormal-security/mcp",
+      "headers": {
+        "Authorization": "Bearer ${ABNORMAL_API_TOKEN}"
       }
     }
   }

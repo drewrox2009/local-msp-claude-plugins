@@ -1,10 +1,10 @@
 {
   "mcpServers": {
     "blumira": {
-      "command": "npx",
-      "args": ["-y", "github:wyre-technology/blumira-mcp"],
-      "env": {
-        "BLUMIRA_JWT_TOKEN": "${BLUMIRA_JWT_TOKEN}"
+      "type": "http",
+      "url": "https://mcp.wyretechnology.com/v1/blumira/mcp",
+      "headers": {
+        "X-Blumira-JWT-Token": "${BLUMIRA_JWT_TOKEN}"
       }
     }
   }

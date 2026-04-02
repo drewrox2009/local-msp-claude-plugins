@@ -1,12 +1,12 @@
 {
   "mcpServers": {
     "ninjaone": {
-      "command": "npx",
-      "args": ["-y", "github:wyre-technology/ninjaone-mcp"],
-      "env": {
-        "NINJAONE_CLIENT_ID": "${NINJAONE_CLIENT_ID}",
-        "NINJAONE_CLIENT_SECRET": "${NINJAONE_CLIENT_SECRET}",
-        "NINJAONE_REGION": "${NINJAONE_REGION}"
+      "type": "http",
+      "url": "https://mcp.wyretechnology.com/v1/ninjaone/mcp",
+      "headers": {
+        "X-Ninja-Client-ID": "${NINJAONE_CLIENT_ID}",
+        "X-Ninja-Client-Secret": "${NINJAONE_CLIENT_SECRET}",
+        "X-Ninja-Region": "${NINJAONE_REGION}"
       }
     }
   }

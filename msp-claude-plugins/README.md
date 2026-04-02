@@ -5,7 +5,7 @@
 ![Claude Cowork](https://img.shields.io/badge/Claude_Cowork-✓_Full_Support-blue)
 ![License](https://img.shields.io/badge/License-Apache_2.0-green)
 
-Community-driven Claude Code plugins for Managed Service Providers. This fork defaults to local MCP server execution instead of the Wyre hosted gateway.
+Community-driven Claude Code plugins for Managed Service Providers. This fork prefers local MCP server execution where the upstream standalone MCP repos are actually public-runnable.
 
 ## Compatibility
 
@@ -29,6 +29,7 @@ Community-driven Claude Code plugins for Managed Service Providers. This fork de
 | `datto-rmm` | Kaseya | ✅ Validated | ✅ | ✅ | ✅ | Devices, alerts, jobs, patches |
 | `it-glue` | Kaseya | ✅ Validated | ✅ | ✅ | ✅ | Organizations, assets, passwords, documents |
 | `syncro` | Syncro | 🧪 Community | ✅ | ✅ | ✅ | Tickets, customers, assets, invoicing |
+| `repairshopr` | RepairShopr | 🧪 Local build validated | ⚠️ | ⚠️ | ⚠️ | Tickets, customers, assets, invoicing |
 | `atera` | Atera | 🧪 Community | ✅ | ✅ | ✅ | Tickets, agents, alerts, monitors |
 | `superops` | SuperOps | 🧪 Community | ✅ | ✅ | ✅ | Tickets, assets, alerts, runbooks |
 | `halopsa` | Halo | 🧪 Community | ✅ | ✅ | ✅ | Tickets, clients, assets, contracts |
@@ -47,7 +48,7 @@ All MCP servers support dual transport:
 - **stdio** (default) — for Claude Code local usage
 - **HTTP** — for Claude Cowork, Docker, and cloud deployments
 
-This fork prefers local stdio execution from the plugin manifests whenever a standalone MCP server exists.
+This fork prefers local stdio execution from the plugin manifests only after the target standalone MCP server has been verified to install without private registries or unpublished dependencies.
 
 ### Self-host with Docker
 

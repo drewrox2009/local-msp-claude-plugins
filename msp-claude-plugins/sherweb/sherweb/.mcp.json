@@ -1,12 +1,12 @@
 {
   "mcpServers": {
     "sherweb": {
-      "command": "npx",
-      "args": ["-y", "github:wyre-technology/sherweb-mcp"],
-      "env": {
-        "SHERWEB_CLIENT_ID": "${SHERWEB_CLIENT_ID}",
-        "SHERWEB_CLIENT_SECRET": "${SHERWEB_CLIENT_SECRET}",
-        "SHERWEB_SUBSCRIPTION_KEY": "${SHERWEB_SUBSCRIPTION_KEY}"
+      "type": "http",
+      "url": "https://mcp.wyretechnology.com/v1/sherweb/mcp",
+      "headers": {
+        "X-Sherweb-Client-Id": "${SHERWEB_CLIENT_ID}",
+        "X-Sherweb-Client-Secret": "${SHERWEB_CLIENT_SECRET}",
+        "X-Sherweb-Subscription-Key": "${SHERWEB_SUBSCRIPTION_KEY}"
       }
     }
   }

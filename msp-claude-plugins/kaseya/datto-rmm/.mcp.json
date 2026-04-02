@@ -1,12 +1,12 @@
 {
   "mcpServers": {
     "datto-rmm": {
-      "command": "npx",
-      "args": ["-y", "github:wyre-technology/datto-rmm-mcp"],
-      "env": {
-        "DATTO_API_KEY": "${DATTO_API_KEY}",
-        "DATTO_API_SECRET": "${DATTO_API_SECRET}",
-        "DATTO_PLATFORM": "${DATTO_PLATFORM}"
+      "type": "http",
+      "url": "https://mcp.wyretechnology.com/v1/datto-rmm/mcp",
+      "headers": {
+        "X-Datto-API-Key": "${DATTO_API_KEY}",
+        "X-Datto-API-Secret": "${DATTO_API_SECRET}",
+        "X-Datto-Platform": "${DATTO_PLATFORM}"
       }
     }
   }

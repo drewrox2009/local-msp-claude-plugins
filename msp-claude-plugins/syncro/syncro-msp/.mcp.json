@@ -2,7 +2,7 @@
   "mcpServers": {
     "syncro": {
       "command": "npx",
-      "args": ["-y", "github:wyre-technology/syncro-mcp"],
+      "args": ["-y", "github:drewrox2009/syncro-mcp-claude"],
       "env": {
         "SYNCRO_API_KEY": "${SYNCRO_API_KEY}",
         "SYNCRO_SUBDOMAIN": "${SYNCRO_SUBDOMAIN}"
