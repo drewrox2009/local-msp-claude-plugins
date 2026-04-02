@@ -64,7 +64,7 @@ Plus shared skills for MSP terminology, ticket triage, cross-vendor incident cor
 | **Autotask PSA** | ✅ Production | [autotask-mcp](https://github.com/wyre-technology/autotask-mcp) |
 | **Datto RMM** | ✅ Production | [datto-rmm-mcp](https://github.com/wyre-technology/datto-rmm-mcp) |
 | **IT Glue** | ✅ Production | [itglue-mcp](https://github.com/wyre-technology/itglue-mcp) |
-| **Hudu** | 🔨 Beta | [hudu-mcp](https://github.com/wyre-technology/hudu-mcp) |
+| **Hudu** | 🔨 Beta | `msp-claude-plugins/mcp-servers/hudu-mcp` |
 | **RocketCyber** | 🔨 Beta | [rocketcyber-mcp](https://github.com/wyre-technology/rocketcyber-mcp) |
 | **Syncro** | 🔨 Beta | `msp-claude-plugins/mcp-servers/syncro-mcp` |
 | **RepairShopr** | 🧪 Local build validated | `msp-claude-plugins/mcp-servers/repairshopr-mcp` |

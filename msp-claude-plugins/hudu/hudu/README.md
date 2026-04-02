@@ -36,32 +36,31 @@ export HUDU_API_KEY="your-api-key-here"
 |----------|----------|---------|-------------|
 | `HUDU_BASE_URL` | Yes | | Your Hudu instance URL (e.g., `https://your-company.huducloud.com`) |
 | `HUDU_API_KEY` | Yes | | API key from Admin > API Keys |
-| `HUDU_MCP_URL` | No | `https://hudu-mcp.wyre.workers.dev/mcp` | MCP server URL — override to use a self-hosted gateway |
 
-## Self-Hosted Gateway
+## Local MCP Server
 
-If you run the [mcp-gateway](https://github.com/wyre-technology/mcp-gateway), set `HUDU_MCP_URL` to your gateway's endpoint:
+This fork launches the in-repo Hudu MCP server by default:
 
-```
-HUDU_MCP_URL=https://your-gateway-domain/v1/hudu/mcp
-```
-
-**Setting env vars in Claude.ai:** Go to your org → Settings → Integrations → Hudu → Configure and add the variable.
-
-**Setting env vars in Claude Code:** Add to `~/.claude/settings.json`:
 ```json
 {
-  "env": {
-    "HUDU_MCP_URL": "https://your-gateway-domain/v1/hudu/mcp"
+  "mcpServers": {
+    "hudu": {
+      "command": "npx",
+      "args": ["-y", "file:../../mcp-servers/hudu-mcp"],
+      "env": {
+        "HUDU_BASE_URL": "${HUDU_BASE_URL}",
+        "HUDU_API_KEY": "${HUDU_API_KEY}"
+      }
+    }
   }
 }
 ```
 
 ## Installation
 
-1. Clone this plugin to your Claude plugins directory
-2. Configure environment variables
-3. The MCP server will be automatically started when needed
+1. Install the plugin from this marketplace fork
+2. Configure `HUDU_BASE_URL` and `HUDU_API_KEY`
+3. Claude Code will start the in-repo MCP server automatically
 
 ## Available Skills
 
