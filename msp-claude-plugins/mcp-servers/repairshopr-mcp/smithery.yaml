@@ -1,0 +1,17 @@
+# Smithery configuration file: https://smithery.ai/docs/config#smitheryyaml
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - repairshoprApiKey
+      - repairshoprSubdomain
+    properties:
+      repairshoprApiKey:
+        type: string
+        description: Your RepairShopr API key
+      repairshoprSubdomain:
+        type: string
+        description: Your RepairShopr subdomain
+  commandFunction: |-
+    (config) => ({ command: 'node', args: ['dist/index.js'], env: { REPAIRSHOPR_API_KEY: config.repairshoprApiKey, REPAIRSHOPR_SUBDOMAIN: config.repairshoprSubdomain, MCP_TRANSPORT: 'stdio' } })

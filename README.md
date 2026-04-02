@@ -66,8 +66,8 @@ Plus shared skills for MSP terminology, ticket triage, cross-vendor incident cor
 | **IT Glue** | ✅ Production | [itglue-mcp](https://github.com/wyre-technology/itglue-mcp) |
 | **Hudu** | 🔨 Beta | [hudu-mcp](https://github.com/wyre-technology/hudu-mcp) |
 | **RocketCyber** | 🔨 Beta | [rocketcyber-mcp](https://github.com/wyre-technology/rocketcyber-mcp) |
-| **Syncro** | 🔨 Beta | [syncro-mcp-claude](https://github.com/drewrox2009/syncro-mcp-claude) |
-| **RepairShopr** | 🧪 Local build validated | `github:drewrox2009/repairshopr-mcp` (publish pending) |
+| **Syncro** | 🔨 Beta | `msp-claude-plugins/mcp-servers/syncro-mcp` |
+| **RepairShopr** | 🧪 Local build validated | `msp-claude-plugins/mcp-servers/repairshopr-mcp` |
 | **Atera** | 🔨 Beta | [atera-mcp](https://github.com/wyre-technology/atera-mcp) |
 | **SuperOps.ai** | 🔨 Beta | [superops-mcp](https://github.com/wyre-technology/superops-mcp) |
 | **HaloPSA** | 🔨 Beta | [halopsa-mcp](https://github.com/wyre-technology/halopsa-mcp) |
@@ -165,7 +165,7 @@ Each plugin uses environment variables for authentication. See the plugin's READ
 - [Hudu](msp-claude-plugins/hudu/hudu/README.md) — API key + base URL
 - [RocketCyber](msp-claude-plugins/kaseya/rocketcyber/README.md) — Bearer API key
 - [Syncro](msp-claude-plugins/syncro/syncro-msp/README.md) — API key query param
-- [RepairShopr](msp-claude-plugins/repairshopr/README.md) — API key + subdomain, standalone MCP server validated locally but not published yet
+- [RepairShopr](msp-claude-plugins/repairshopr/README.md) — API key + subdomain, in-repo MCP server validated locally
 - [Atera](msp-claude-plugins/atera/atera/README.md) — X-API-KEY header
 - [SuperOps.ai](msp-claude-plugins/superops/superops-ai/README.md) — Bearer token
 - [HaloPSA](msp-claude-plugins/halopsa/halopsa/README.md) — OAuth 2.0 client credentials

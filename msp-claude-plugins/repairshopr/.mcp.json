@@ -2,7 +2,7 @@
   "mcpServers": {
     "repairshopr": {
       "command": "npx",
-      "args": ["-y", "github:drewrox2009/repairshopr-mcp"],
+      "args": ["-y", "file:../mcp-servers/repairshopr-mcp"],
       "env": {
         "REPAIRSHOPR_API_KEY": "${REPAIRSHOPR_API_KEY}",
         "REPAIRSHOPR_SUBDOMAIN": "${REPAIRSHOPR_SUBDOMAIN}"

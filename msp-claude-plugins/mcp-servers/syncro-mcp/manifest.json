@@ -1,0 +1,28 @@
+{
+  "manifest_version": "0.3",
+  "name": "syncro-mcp",
+  "display_name": "Syncro MCP Server",
+  "version": "0.0.0",
+  "description": "MCP server for Syncro MSP - access tickets, customers, assets, and invoices through AI assistants",
+  "long_description": "Provides AI assistants with structured access to your Syncro MSP data. Manage tickets, customers, assets, invoices, and more through the Model Context Protocol.",
+  "author": { "name": "MSP Claude Plugins Community", "url": "https://github.com/drewrox2009/local-msp-claude-plugins" },
+  "repository": { "type": "git", "url": "https://github.com/drewrox2009/local-msp-claude-plugins" },
+  "homepage": "https://github.com/drewrox2009/local-msp-claude-plugins/tree/main/msp-claude-plugins/mcp-servers/syncro-mcp",
+  "license": "Apache-2.0",
+  "keywords": ["syncro", "msp", "rmm", "psa", "tickets", "it-management"],
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/index.js"],
+      "env": { "SYNCRO_API_KEY": "${user_config.syncro_api_key}", "SYNCRO_SUBDOMAIN": "${user_config.syncro_subdomain}", "MCP_TRANSPORT": "stdio" }
+    }
+  },
+  "tools_generated": true,
+  "user_config": {
+    "syncro_api_key": { "type": "string", "title": "Syncro API Key", "description": "Your Syncro API key", "sensitive": true, "required": true },
+    "syncro_subdomain": { "type": "string", "title": "Syncro Subdomain", "description": "Your Syncro subdomain (optional)", "sensitive": false, "required": false }
+  },
+  "compatibility": { "platforms": ["darwin", "win32", "linux"], "runtimes": { "node": ">=18.0.0" }, "claude_desktop": ">=0.10.0" }
+}

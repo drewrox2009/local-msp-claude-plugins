@@ -46,14 +46,14 @@ For project-specific configuration, use `.claude/settings.local.json` (gitignore
 
 ## Local MCP Server
 
-This fork launches a self-contained local Syncro MCP server by default:
+This fork launches the in-repo Syncro MCP server by default:
 
 ```json
 {
   "mcpServers": {
     "syncro": {
       "command": "npx",
-      "args": ["-y", "github:drewrox2009/syncro-mcp-claude"],
+      "args": ["-y", "file:../../mcp-servers/syncro-mcp"],
       "env": {
         "SYNCRO_API_KEY": "${SYNCRO_API_KEY}",
         "SYNCRO_SUBDOMAIN": "${SYNCRO_SUBDOMAIN}"
@@ -62,7 +62,7 @@ This fork launches a self-contained local Syncro MCP server by default:
   }
 ```
 
-The MCP server repo used by this fork is [drewrox2009/syncro-mcp-claude](https://github.com/drewrox2009/syncro-mcp-claude).
+The MCP server source for this fork lives in `msp-claude-plugins/mcp-servers/syncro-mcp`.
 
 ### Obtaining API Credentials
 

@@ -2,10 +2,8 @@
 
 Claude Code plugin for RepairShopr integration.
 
-> This plugin is rebuilt from the self-contained Syncro MCP fork because the APIs are closely
-> related. The standalone `repairshopr-mcp` server now builds and tests locally, but this plugin
-> still expects that repo to be published at `github:drewrox2009/repairshopr-mcp` before the
-> marketplace install path will work end to end.
+> This plugin is rebuilt from the in-repo Syncro MCP server because the APIs are closely related.
+> Its MCP implementation now lives directly in this repository under `msp-claude-plugins/mcp-servers/repairshopr-mcp`.
 
 ## Overview
 
@@ -58,7 +56,7 @@ This fork uses local MCP server launches by default. The plugin manifest starts:
   "mcpServers": {
     "repairshopr": {
       "command": "npx",
-      "args": ["-y", "github:drewrox2009/repairshopr-mcp"]
+      "args": ["-y", "file:../mcp-servers/repairshopr-mcp"]
     }
   }
 }
